@@ -9,11 +9,11 @@ namespace Tickest.Models
 
         [Required]
         [StringLength(50)]
-        public string Nome_Cargo { get; set; }
+        public required string Nome_Cargo { get; set; }
 
         [Required]
-        public bool Gerenciador { get; set; }
+        public required bool Gerenciador { get; set; }
 
-        public ICollection<Usuario> Usuarios { get; set; }
+        public required ICollection<Usuario> Usuarios { get; set; }
     }
 }

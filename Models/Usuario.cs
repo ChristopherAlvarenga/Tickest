@@ -8,19 +8,30 @@ namespace Tickest.Models
         public int Id { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string Email { get; set; }
+        [MaxLength(100)]
+        public required string Nome { get; set; }
 
         [Required]
-        [StringLength(250)]
-        public string Senha { get; set; }
+        [MaxLength(100)]
+        [EmailAddress]
+        public required string Email { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        [RegularExpression("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,10})")]
+        public required string Senha { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        [Compare("Senha")]
+        public required string ConfirmaSenha { get; set; }
 
         public int CargoId { get; set; }
-        public virtual Cargo Cargo { get; set; }
+        public required virtual Cargo Cargo { get; set; }
 
         public int DepartamentoId { get; set; }
-        public virtual Departamento Departamento { get; set; }
+        public required virtual Departamento Departamento { get; set; }
 
-        public ICollection<Ticket> Tickets { get; set; }
+        public required ICollection<UsuarioTicket> UsuarioTickets { get; set; }
     }
 }

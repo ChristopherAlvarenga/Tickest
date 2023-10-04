@@ -9,9 +9,9 @@ namespace Tickest.Models
 
         [Required]
         [StringLength(50)]
-        public string Nome_Area { get; set; }
+        public required string Nome_Area { get; set; }
 
         public int DepartamentoId { get; set; }
-        public virtual Departamento Departamento { get; set; }
+        public required virtual Departamento Departamento { get; set; }
     }
 }

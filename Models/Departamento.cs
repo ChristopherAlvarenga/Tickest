@@ -9,8 +9,8 @@ namespace Tickest.Models
 
         [Required]
         [StringLength(50)]
-        public string Nome_Departamento { get; set; }
+        public required string Nome_Departamento { get; set; }
 
-        public ICollection<Area> Areas { get; set; }
+        public required ICollection<Area> Areas { get; set; }
     }
 }

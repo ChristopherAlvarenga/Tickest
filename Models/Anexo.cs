@@ -9,9 +9,9 @@ namespace Tickest.Models
 
         [Required]
         [StringLength(500)]
-        public string Endereco { get; set; }
+        public required string Endereco { get; set; }
 
         public int TicketId { get; set; }
-        public virtual Ticket Ticket { get; set; }
+        public required virtual Ticket Ticket { get; set; }
     }
 }
