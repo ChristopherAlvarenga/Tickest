@@ -1,7 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using Tickest.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<Contexto>(b=>b.UseSqlServer(builder.Configuration.
+    GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
