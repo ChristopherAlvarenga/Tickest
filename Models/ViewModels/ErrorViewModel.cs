@@ -1,4 +1,4 @@
-namespace Tickest.Models
+namespace Tickest.Models.ViewModels
 {
     public class ErrorViewModel
     {
