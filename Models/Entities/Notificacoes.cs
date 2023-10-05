@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Tickest.Models
+namespace Tickest.Models.Entities
 {
     public class Notificacoes
     {

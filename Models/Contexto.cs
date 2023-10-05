@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Tickest.Models.Entities;
 
 namespace Tickest.Models
 {
     public class Contexto : DbContext
     {
         public Contexto(DbContextOptions<Contexto> options) : base(options)
-        { 
-            this.Database.EnsureCreated();
+        {
+            Database.EnsureCreated();
         }
 
         public DbSet<Anexo> Anexos { get; set; }
