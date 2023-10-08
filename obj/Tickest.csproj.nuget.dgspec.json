@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\ASP.NET\\Teste\\Tickest\\Tickest.csproj": {}
+    "D:\\Projects\\ASP.NET\\Tickest\\Tickest.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\ASP.NET\\Teste\\Tickest\\Tickest.csproj": {
+    "D:\\Projects\\ASP.NET\\Tickest\\Tickest.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\ASP.NET\\Teste\\Tickest\\Tickest.csproj",
+        "projectUniqueName": "D:\\Projects\\ASP.NET\\Tickest\\Tickest.csproj",
         "projectName": "Tickest",
-        "projectPath": "D:\\Projects\\ASP.NET\\Teste\\Tickest\\Tickest.csproj",
+        "projectPath": "D:\\Projects\\ASP.NET\\Tickest\\Tickest.csproj",
         "packagesPath": "C:\\Users\\Christopher\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\ASP.NET\\Teste\\Tickest\\obj\\",
+        "outputPath": "D:\\Projects\\ASP.NET\\Tickest\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Christopher\\AppData\\Roaming\\NuGet\\NuGet.Config",

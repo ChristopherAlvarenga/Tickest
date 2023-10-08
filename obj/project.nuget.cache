@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "YiSUylA3mi9svuy336CWOQK73uvJfgM/eXReXvUy5RGRNvdyT4N6Lus9s5R67HYhFY7AFlu2FYHYpbD/m44AlA==",
+  "dgSpecHash": "lssZ3tzB/uyLj/9xCTR2VmyZ439hyLO7TXiuUcIHiFGb/YAY0DeMnLJs9dIuy2G4KXZRau4hihNssDNwCj+W2g==",
   "success": true,
-  "projectFilePath": "D:\\Projects\\ASP.NET\\Teste\\Tickest\\Tickest.csproj",
+  "projectFilePath": "D:\\Projects\\ASP.NET\\Tickest\\Tickest.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Christopher\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\Christopher\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
