@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\ASP.NET\\Tickest\\Tickest\\Tickest.csproj": {}
+    "D:\\Projects\\ASP.NET\\Teste\\Tickest\\Tickest.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\ASP.NET\\Tickest\\Tickest\\Tickest.csproj": {
+    "D:\\Projects\\ASP.NET\\Teste\\Tickest\\Tickest.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\ASP.NET\\Tickest\\Tickest\\Tickest.csproj",
+        "projectUniqueName": "D:\\Projects\\ASP.NET\\Teste\\Tickest\\Tickest.csproj",
         "projectName": "Tickest",
-        "projectPath": "D:\\Projects\\ASP.NET\\Tickest\\Tickest\\Tickest.csproj",
+        "projectPath": "D:\\Projects\\ASP.NET\\Teste\\Tickest\\Tickest.csproj",
         "packagesPath": "C:\\Users\\Christopher\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\ASP.NET\\Tickest\\Tickest\\obj\\",
+        "outputPath": "D:\\Projects\\ASP.NET\\Teste\\Tickest\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Christopher\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,7 +40,23 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
-            "Microsoft.EntityFrameworkCore": {
+            "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.11, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.11, )"
+            },
+            "Microsoft.AspNetCore.Identity.UI": {
+              "target": "Package",
+              "version": "[7.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[7.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
               "target": "Package",
               "version": "[7.0.11, )"
             }
