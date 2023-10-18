@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tickest", "Tickest.csproj", "{68C56876-B4B0-4BCA-8914-EE188F74B55D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{68C56876-B4B0-4BCA-8914-EE188F74B55D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68C56876-B4B0-4BCA-8914-EE188F74B55D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68C56876-B4B0-4BCA-8914-EE188F74B55D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68C56876-B4B0-4BCA-8914-EE188F74B55D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8A088D15-D3E9-48FD-B5D7-2F7CE7C565F6}
+	EndGlobalSection
+EndGlobal
