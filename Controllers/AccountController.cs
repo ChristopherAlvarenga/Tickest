@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Eventing.Reader;
+using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
 
@@ -12,12 +13,14 @@ namespace Tickest.Controllers
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
+        private readonly TickestContext _context;
 
         public AccountController(UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            SignInManager<IdentityUser> signInManager, TickestContext context)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            _context = context;
         }
 
         [Authorize(Policy = "RequireRole")]
@@ -56,7 +59,7 @@ namespace Tickest.Controllers
                     else
                         await userManager.AddToRoleAsync(user, "Colaborador");
 
-                    new Usuario
+                    var usuario = new Usuario()
                     {
                         Nome = registerModel.Nome,
                         Email = registerModel.Email,
@@ -64,7 +67,8 @@ namespace Tickest.Controllers
                         DepartamentoId = 1
                     };
 
-                    await signInManager.SignInAsync(user, isPersistent: false);
+                    _context.Add(usuario);
+                    await _context.SaveChangesAsync();
                 }
 
                 // Se houver erros, inclui no ModelState e exibe pela tag helper summary na validação

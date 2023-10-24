@@ -45,19 +45,11 @@ namespace Tickest.Controllers
 
         [Authorize(Policy = "RequireRole")]
         [HttpPost]
-        public async Task<IActionResult> Create(UsuarioDepartamentoViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Nome,ResponsavelId")] Departamento departamento)
         {
-            if (ModelState.IsValid)
-            {
-                var departamento = new Departamento()
-                {
-                    Nome = viewModel.Departamento.Nome,
-                    ResponsavelId = viewModel.Departamento.ResponsavelId,
-                };
-
                 _context.Add(departamento);
                 await _context.SaveChangesAsync();
-            }
+
             return RedirectToAction("Index", "Gerenciador", new { area = "Gerenciador" });
         }
     }

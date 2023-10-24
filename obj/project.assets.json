@@ -12083,11 +12083,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\chris\\Desktop\\New folder\\Tickest\\Tickest.csproj",
+      "projectUniqueName": "C:\\Users\\chris\\Desktop\\Work&Study\\Projects\\Tickest\\Tickest.csproj",
       "projectName": "Tickest",
-      "projectPath": "C:\\Users\\chris\\Desktop\\New folder\\Tickest\\Tickest.csproj",
+      "projectPath": "C:\\Users\\chris\\Desktop\\Work&Study\\Projects\\Tickest\\Tickest.csproj",
       "packagesPath": "C:\\Users\\chris\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\chris\\Desktop\\New folder\\Tickest\\obj\\",
+      "outputPath": "C:\\Users\\chris\\Desktop\\Work&Study\\Projects\\Tickest\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\chris\\AppData\\Roaming\\NuGet\\NuGet.Config",

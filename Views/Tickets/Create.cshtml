@@ -1,0 +1,75 @@
+﻿@using Tickest.Models.ViewModels;
+@model TicketViewModel
+
+@{
+    Layout = "_LayoutGerenciador";
+}
+
+<!-- Content wrapper -->
+<div class="content-wrapper">
+    <!-- Content -->
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
+            <form method="post">
+                <!-- Basic -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <h5 class="card-header">Criação de Ticket</h5>
+                        <div class="card-body demo-vertical-spacing demo-only-element">
+                            <label asp-for="Ticket.Título" class="form-label" for="basic-default-password12">Título</label>
+                            <div class="input-group">
+                                <input asp-for="Ticket.Título" type="text"
+                                       class="form-control"
+                                       placeholder="Título"
+                                       aria-label="Username"
+                                       aria-describedby="basic-addon11" />
+                            </div>
+                            <label asp-for="Ticket.Data_Limite" class="form-label" for="basic-default-password12">Data limite</label>
+                            <div class="input-group">
+                                <input asp-for="Ticket.Data_Limite" type="date"
+                                       class="form-control"
+                                       aria-label="Username"
+                                       aria-describedby="basic-addon11" />
+                            </div>
+                            <label asp-for="Ticket.Prioridade" class="form-label" for="basic-default-password12">Prioridade</label>
+                            <div class="input-group">
+                                <div class="input-group">
+                                    <select asp-for="Ticket.Prioridade" class="form-select" id="inputGroupSelect02">
+                                        <option selected>Escolha...</option>
+                                        <option value="1">Baixa</option>
+                                        <option value="2">Média</option>
+                                        <option value="3">Alta</option>
+                                        <option value="4">Urgente</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <label asp-for="Ticket.Descrição" class="form-label" for="basic-default-password12">Descriçao</label>
+                            <div class="input-group">
+                                <textarea asp-for="Ticket.Descrição" class="form-control" aria-label="With textarea" placeholder="Comment"></textarea>
+                            </div>
+                            <label class="form-label" for="basic-default-password12">Departamento</label>
+                            <div class="input-group">
+                                <div class="input-group">
+                                    @Html.DropDownListFor(model => model.Departamentos,
+                                    new SelectList(Model.Departamentos, "Id", "Nome"), new { @class = "form-control" })
+                                </div>
+                            </div>
+                            @* <label class="form-label" for="basic-default-password12">Área</label>
+                            <div class="input-group">
+                            <div class="input-group">
+                            @Html.DropDownListFor(model => model.Areas,
+                            new SelectList(Model.Areas, "Id", "Nome"), new { @class = "form-control" })
+                            </div>
+                            </div> *@
+                            <div class="mb-3">
+                                <label for="formFileMultiple" class="form-label">Anexos</label>
+                                <input class="form-control" type="file" id="formFileMultiple" multiple />
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">Criar Ticket</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

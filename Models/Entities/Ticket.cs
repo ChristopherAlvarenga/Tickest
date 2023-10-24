@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Tickest.Models.Entities
 {
@@ -15,13 +16,14 @@ namespace Tickest.Models.Entities
         [StringLength(1000)]
         public string Descrição { get; set; }
 
-        [Required]
+        [AllowNull]
         [StringLength(1000)]
         public string Comentario { get; set; }
 
         [Required]
         public DateTime Data_Criação { get; set; }
 
+        [Required]
         public DateTime Data_Limite { get; set; }
 
         [Required]
@@ -29,7 +31,7 @@ namespace Tickest.Models.Entities
         public Escolha Prioridade { get; set; }
         public enum Escolha
         {
-            Baixa = 0, Média = 1, Alta = 2, Urgente = 3
+            Baixa = 1, Média = 2, Alta = 3, Urgente = 4
         }
 
         [Required]
@@ -37,7 +39,7 @@ namespace Tickest.Models.Entities
         public Tipo Status { get; set; }
         public enum Tipo
         {
-            Análise = 0, Andamento = 1, Teste = 2, Concluído = 3, Cancelado = 4
+            Aberto = 1, Andamento = 2, Teste = 3, Concluído = 4, Cancelado = 5
         }
 
         public ICollection<UsuarioTicket> UsuarioTickets { get; set; }

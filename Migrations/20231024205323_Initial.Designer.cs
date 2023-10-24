@@ -12,7 +12,7 @@ using Tickest.Data;
 namespace Tickest.Migrations
 {
     [DbContext(typeof(TickestContext))]
-    [Migration("20231024020332_Initial")]
+    [Migration("20231024205323_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

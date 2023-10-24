@@ -11,9 +11,10 @@
     <!-- Content -->
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="row">
-            <!-- Basic -->
-            <div class="col-md-6">
-                <form method="post">
+            <form method="post">
+                <!-- Basic -->
+                <div class="col-md-6">
+
                     <div class="card mb-4">
                         <h5 class="card-header">Adicionar Departamento</h5>
                         <div class="card-body demo-vertical-spacing demo-only-element form-group">
@@ -30,20 +31,15 @@
                                 <div class="input-group">
                                     @Html.DropDownListFor(model => model.Departamento.ResponsavelId, new SelectList(Model.Usuarios, "Id", "Email")
                                     , new { @class = "form-control" })
-
-                                    @* <option selected>Escolha...</option>
-                                    @foreach (var usuario in Model.Usuarios)
-                                    {
-                                    <option>@(usuario.Nome) - @(usuario.Email)</option>
-                                    }; *@
                                 </div>
                             </div>
 
                             <button type="submit" class="btn btn-primary mt-3">Adicionar</button>
                         </div>
                     </div>
-                </form>
-            </div>
+
+                </div>
+            </form>
         </div>
     </div>
 </div>
