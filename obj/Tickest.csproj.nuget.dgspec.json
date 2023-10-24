@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\ASP.NET\\Tickest\\Tickest.csproj": {}
+    "C:\\Users\\chris\\Desktop\\New folder\\Tickest\\Tickest.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\ASP.NET\\Tickest\\Tickest.csproj": {
+    "C:\\Users\\chris\\Desktop\\New folder\\Tickest\\Tickest.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\ASP.NET\\Tickest\\Tickest.csproj",
+        "projectUniqueName": "C:\\Users\\chris\\Desktop\\New folder\\Tickest\\Tickest.csproj",
         "projectName": "Tickest",
-        "projectPath": "D:\\Projects\\ASP.NET\\Tickest\\Tickest.csproj",
-        "packagesPath": "C:\\Users\\Christopher\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\ASP.NET\\Tickest\\obj\\",
+        "projectPath": "C:\\Users\\chris\\Desktop\\New folder\\Tickest\\Tickest.csproj",
+        "packagesPath": "C:\\Users\\chris\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\chris\\Desktop\\New folder\\Tickest\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Christopher\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\chris\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -40,25 +40,37 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
-            "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
+            "Microsoft.AspNetCore.Identity": {
               "target": "Package",
-              "version": "[7.0.11, )"
+              "version": "[2.2.0, )"
             },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[7.0.11, )"
+              "version": "[7.0.12, )"
             },
-            "Microsoft.AspNetCore.Identity.UI": {
+            "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[7.0.11, )"
+              "version": "[7.0.12, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[7.0.12, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[7.0.11, )"
+              "version": "[7.0.12, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
-              "version": "[7.0.11, )"
+              "version": "[7.0.12, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[7.0.10, )"
             }
           },
           "imports": [
@@ -80,7 +92,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Tickest.Models.Entities
 {
@@ -9,8 +10,14 @@ namespace Tickest.Models.Entities
 
         [Required]
         [StringLength(50)]
-        public required string Nome_Departamento { get; set; }
+        public string? Nome { get; set; }
 
-        public required ICollection<Area> Areas { get; set; }
+        public int ResponsavelId { get; set; }
+
+        public ICollection<Usuario> Usuarios { get; set; }
+
+        public ICollection<Cargo> Cargos { get; set; }
+
+        public ICollection<Area> Areas { get; set; }
     }
 }

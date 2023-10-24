@@ -8,12 +8,9 @@ namespace Tickest.Models.Entities
         public int Id { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public required string Nome_Cargo { get; set; }
+        [StringLength(100)]
+        public string? Nome { get; set; }
 
-        [Required]
-        public required bool Gerenciador { get; set; }
-
-        public required ICollection<Usuario> Usuarios { get; set; }
+        public ICollection<Usuario> Usuarios { get; set; }
     }
 }

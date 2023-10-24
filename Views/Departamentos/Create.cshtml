@@ -1,0 +1,49 @@
+﻿@using Tickest.Models.ViewModels;
+@model UsuarioDepartamentoViewModel;
+
+@{
+    Layout = "_LayoutGerenciador";
+    ViewData["Title"] = "Tickest - Adicionar Departamento";
+}
+
+<!-- Content wrapper -->
+<div class="content-wrapper">
+    <!-- Content -->
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
+            <!-- Basic -->
+            <div class="col-md-6">
+                <form method="post">
+                    <div class="card mb-4">
+                        <h5 class="card-header">Adicionar Departamento</h5>
+                        <div class="card-body demo-vertical-spacing demo-only-element form-group">
+                            <label asp-for="Departamento.Nome" class="form-label" for="basic-default-password12">Nome</label>
+                            <div class="input-group">
+                                <input asp-for="Departamento.Nome" type="text"
+                                       class="form-control"
+                                       placeholder="Nome do Departamento"
+                                       aria-label="Username"
+                                       aria-describedby="basic-addon11" />
+                            </div>
+                            <label asp-for="Departamento.ResponsavelId" class="form-label" for="basic-default-password12">Responsável pelo Departamento</label>
+                            <div class="input-group">
+                                <div class="input-group">
+                                    @Html.DropDownListFor(model => model.Departamento.ResponsavelId, new SelectList(Model.Usuarios, "Id", "Email")
+                                    , new { @class = "form-control" })
+
+                                    @* <option selected>Escolha...</option>
+                                    @foreach (var usuario in Model.Usuarios)
+                                    {
+                                    <option>@(usuario.Nome) - @(usuario.Email)</option>
+                                    }; *@
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary mt-3">Adicionar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

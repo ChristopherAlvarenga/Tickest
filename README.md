@@ -1,2 +1,0 @@
-# Tickest
-TCC - FATEC
