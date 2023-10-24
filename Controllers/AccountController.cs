@@ -77,7 +77,7 @@ namespace Tickest.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-            return View();
+            return RedirectToAction("Index", "Gerenciador", new { area = "Gerenciador" });
         }
 
         [AllowAnonymous]
