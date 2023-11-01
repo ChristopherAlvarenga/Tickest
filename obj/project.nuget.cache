@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "glHhHfsE7vsBnahTqTWy90OFTgc03utJSzgIPQrd+daoRFAC/1V60p5/7/rYOzkMaUWby04l3z39ozM96n6Z1w==",
+  "dgSpecHash": "sapmYJzj/xScev3Jry1g/JAelSZdDkpgy9eBzZksiVfA29tnLHB1jpyY6nr3+rZBugxZD3166YnnzP1VWjG8/Q==",
   "success": true,
-  "projectFilePath": "C:\\temp\\Projeto_TCC-Chris\\Tickest.csproj",
+  "projectFilePath": "C:\\temp\\TCC\\Projeto_TCC-Chris\\Tickest.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\rafae\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\rafae\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
