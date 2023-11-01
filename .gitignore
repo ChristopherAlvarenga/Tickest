@@ -5,3 +5,5 @@
 /.vs
 /.vs
 /bin/Release/net7.0
+/bin/Debug/net7.0
+/obj
