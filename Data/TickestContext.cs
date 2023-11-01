@@ -1,15 +1,17 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.WebEncoders.Testing;
 using Tickest.Models.Entities;
 
 namespace Tickest.Data
 {
     public class TickestContext : IdentityDbContext
     {
-        public TickestContext(DbContextOptions<TickestContext> options) : base(options)
+        private readonly IConfiguration _configuration;
+        public TickestContext(
+            DbContextOptions<TickestContext> options, 
+            IConfiguration configuration) : base(options)
         {
-               
+            _configuration = configuration;
         }
 
         public DbSet<Anexo> Anexos { get; set; }
@@ -19,6 +21,11 @@ namespace Tickest.Data
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<UsuarioTicket> UsuarioTickets { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
