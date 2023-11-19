@@ -400,3 +400,5 @@ FodyWeavers.xsd
 /bin/
 /obj/
 /.vs/Tickest/DesignTimeBuild/.dtbcache.v2
+/.vs/ProjectEvaluation/tickest.projects.v7.bin
+/.vs/Tickest/v17/.futdcache.v2
