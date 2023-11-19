@@ -2,22 +2,26 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Tickest.Models;
+using Tickest.Services.Authentication;
 
 namespace Tickest.Controllers
 {
-
     [Authorize]
     public class ColaboradoresController : Controller
     {
         private readonly ILogger<ColaboradoresController> _logger;
+        private readonly IAuthenticationService _authenticationService;
 
-        public ColaboradoresController(ILogger<ColaboradoresController> logger)
+        public ColaboradoresController(
+            ILogger<ColaboradoresController> logger,
+            IAuthenticationService authenticationService)
         {
             _logger = logger;
+            _authenticationService = authenticationService;
         }
 
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             return View();
         }

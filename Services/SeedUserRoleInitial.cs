@@ -1,22 +1,46 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Tickest.Data;
+using Tickest.Models.Entities;
 
 namespace Tickest.Services
 {
     public class SeedUserRoleInitial : ISeedUserRoleInitial
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<Usuario> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly TickestContext _context;
 
-        public SeedUserRoleInitial(UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+        public SeedUserRoleInitial(UserManager<Usuario> userManager,
+            RoleManager<IdentityRole> roleManager,
+            TickestContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _context = context;
+        }
+
+        public async Task SeedCargoAsync()
+        {
+            var cargos = new List<Cargo>
+            {
+                new Cargo{ Nome = "Analista Suporte" },
+                new Cargo{ Nome = "Sistemas" },
+            };
+
+            foreach (var cargo in cargos)
+            {
+                var existeCargo = _context.Cargos.Any(p => p.Nome == cargo.Nome);
+                if (!existeCargo)
+                    await _context.Cargos.AddAsync(cargo);
+            }
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task SeedRolesAsync()
         {
-            if(!await _roleManager.RoleExistsAsync("Admin"))
+            if (!await _roleManager.RoleExistsAsync("Admin"))
             {
                 IdentityRole role = new IdentityRole();
                 role.Name = "Admin";
@@ -59,9 +83,9 @@ namespace Tickest.Services
 
         public async Task SeedUsersAsync()
         {
-            if(await _userManager.FindByEmailAsync("admin@localhost") == null)
+            if (await _userManager.FindByEmailAsync("admin@localhost") == null)
             {
-                IdentityUser user = new IdentityUser();
+                Usuario user = new Usuario();
                 user.UserName = "admin@localhost";
                 user.Email = "admin@localhost";
                 user.NormalizedUserName = "ADMIN@LOCALHOST";
@@ -72,7 +96,7 @@ namespace Tickest.Services
 
                 IdentityResult userResult = await _userManager.CreateAsync(user, "#SecretPass456");
 
-                if(userResult.Succeeded)
+                if (userResult.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "Admin");
                 }
@@ -80,7 +104,7 @@ namespace Tickest.Services
 
             if (await _userManager.FindByEmailAsync("gerenciador@localhost") == null)
             {
-                IdentityUser user = new IdentityUser();
+                Usuario user = new Usuario();
                 user.UserName = "gerenciador@localhost";
                 user.Email = "gerenciador@localhost";
                 user.NormalizedUserName = "GERENCIADOR@LOCALHOST";
@@ -99,7 +123,7 @@ namespace Tickest.Services
 
             if (await _userManager.FindByEmailAsync("responsavel@localhost") == null)
             {
-                IdentityUser user = new IdentityUser();
+                Usuario user = new Usuario();
                 user.UserName = "responsavel@localhost";
                 user.Email = "responsavel@localhost";
                 user.NormalizedUserName = "RESPONSAVEL@LOCALHOST";
@@ -118,7 +142,7 @@ namespace Tickest.Services
 
             if (await _userManager.FindByEmailAsync("colaborador@localhost") == null)
             {
-                IdentityUser user = new IdentityUser();
+                Usuario user = new Usuario();
                 user.UserName = "colaborador@localhost";
                 user.Email = "colaborador@localhost";
                 user.NormalizedUserName = "COLABORADOR@LOCALHOST";

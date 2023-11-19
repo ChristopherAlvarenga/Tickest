@@ -54,8 +54,8 @@ namespace Tickest.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Título,Descrição,Comentário,Data_Criação,Data_Limite,Prioridade,Status")] Ticket ticket)
         {
-                ticket.Data_Criação = DateTime.Now;
-                ticket.Status = Ticket.Tipo.Aberto;
+                ticket.DataCriacao = DateTime.Now;
+                ticket.Status.Add(new TicketStatus(TicketStatusEnum.Aberto));
                 ticket.Comentario = "";
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();

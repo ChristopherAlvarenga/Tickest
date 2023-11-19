@@ -1,8 +1,9 @@
-﻿@{
+﻿@using Tickest.Areas.Gerenciador.ViewModels;
+@model GerenciadorHomeViewModel
+@{
     Layout = "_LayoutGerenciador";
     ViewData["Title"] = "Tickest - Home";
-}
-
+} 
 
 <h3>HOME PAGE - GERENCIADOR</h3>
 
@@ -12,15 +13,21 @@
             <div class="d-flex align-items-end row">
                 <div class="col-sm-7">
                     <div class="card-body">
-                        <h5 class="card-title text-primary">Seja bem-vindo(a) *Usuário*! </h5>
+                        <h5 class="card-title text-primary">Seja bem-vindo(a) @Model.Usuario! </h5>
                         <p class="mb-3 mt-5">
-                            Concluídos essa semana: <span class="fw-bold">*Quantidade*</span>
+                            Concluídos esta semana: <span class="fw-bold">@Model.TicketsConcluidoSemana</span>
                         </p>
                         <p class="mb-3">
-                            Em análise essa semana: <span class="fw-bold">*Quantidade*</span>
+                            Em análise abertos esta semana: <span class="fw-bold">@Model.TicketsAbertoSemana</span>
                         </p>
                         <p class="mb-1">
-                            Não concluídos essa semana: <span class="fw-bold">*Quantidade*</span>
+                            Em andamento esta semana: <span class="fw-bold">@Model.TicketsEmAndamentoSemana</span>
+                        </p>
+                        <p class="mb-1">
+                            Não concluídos esta semana: <span class="fw-bold">@Model.TicketsNaoConcluidoSemana</span>
+                        </p>
+                        <p class="mb-1">
+                            Teste: <span class="fw-bold">@Model.TicketsTesteSemana</span>
                         </p>
                         <!-- <a href="javascript:;" class="btn btn-sm btn-outline-primary">Gerar relatório</a> ISSO AQUI É UMA IDÉIA APENAS -->
                     </div>

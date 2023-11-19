@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Tickest.Data;
 using Tickest.Models.Entities;
+using Tickest.Services.Authentication;
 
 namespace Tickest.Controllers
 {
@@ -15,10 +16,14 @@ namespace Tickest.Controllers
     public class UsuariosController : Controller
     {
         private readonly TickestContext _context;
+        private readonly IAuthenticationService _authenticationService;
 
-        public UsuariosController(TickestContext context)
+        public UsuariosController(
+            TickestContext context,
+            IAuthenticationService authenticationService)
         {
             _context = context;
+            _authenticationService = authenticationService;
         }
 
         // GET: Usuarios
@@ -29,7 +34,7 @@ namespace Tickest.Controllers
         }
 
         // GET: Usuarios/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string id)
         {
             if (id == null || _context.Usuarios == null)
             {
@@ -97,7 +102,7 @@ namespace Tickest.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Email,CargoId,DepartamentoId")] Usuario usuario)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Nome,Email,CargoId,DepartamentoId")] Usuario usuario)
         {
             if (id != usuario.Id)
             {
@@ -130,7 +135,7 @@ namespace Tickest.Controllers
         }
 
         // GET: Usuarios/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string? id)
         {
             if (id == null || _context.Usuarios == null)
             {
@@ -168,7 +173,7 @@ namespace Tickest.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UsuarioExists(int id)
+        private bool UsuarioExists(string id)
         {
             return (_context.Usuarios?.Any(e => e.Id == id)).GetValueOrDefault();
         }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tickest.Data;
 
@@ -11,9 +12,11 @@ using Tickest.Data;
 namespace Tickest.Migrations
 {
     [DbContext(typeof(TickestContext))]
-    partial class TickestContextModelSnapshot : ModelSnapshot
+    [Migration("20231119153557_TicketStatus")]
+    partial class TicketStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

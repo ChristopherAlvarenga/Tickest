@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tickest.Data;
+using Tickest.Models.Entities;
 using Tickest.Services;
+using Tickest.Services.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +15,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<TickestContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<Usuario, IdentityRole>()
     .AddEntityFrameworkStores<TickestContext>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -22,15 +24,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.Name = "AspNetCore.Cookies";
         options.ExpireTimeSpan = TimeSpan.FromHours(20);
         options.SlidingExpiration = true;
+        options.LoginPath = new PathString("/Account/Login");
+        options.AccessDeniedPath = new PathString("/Account/Denied");
     });
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("RequireRole",
+    options.AddPolicy("AdminGerenciadorPolicy",
         policy => policy.RequireRole("Admin", "Gerenciador"));
 });
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 var app = builder.Build();
 
@@ -71,7 +77,11 @@ async Task CriarPerfilUsuarioAsync(WebApplication app)
 
     using (var scope = scopedFactory.CreateScope())
     {
+        var context = scope.ServiceProvider.GetService<TickestContext>();
+        await context.Database.MigrateAsync();
+
         var service = scope.ServiceProvider.GetService<ISeedUserRoleInitial>();
+        await service.SeedCargoAsync();
         await service.SeedRolesAsync();
         await service.SeedUsersAsync();
     }

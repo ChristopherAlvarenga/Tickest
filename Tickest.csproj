@@ -2,9 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Areas\Gerenciador\Models\**" />
+    <Content Remove="Areas\Gerenciador\Models\**" />
+    <EmbeddedResource Remove="Areas\Gerenciador\Models\**" />
+    <None Remove="Areas\Gerenciador\Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20231107155011_Usuario.cs" />
+    <Compile Remove="Migrations\20231107155011_Usuario.Designer.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
@@ -23,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Gerenciador\Models\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 

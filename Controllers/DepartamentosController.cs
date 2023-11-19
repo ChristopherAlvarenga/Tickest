@@ -7,6 +7,7 @@ using Tickest.Models.ViewModels;
 
 namespace Tickest.Controllers
 {
+    //AUTHORIZE = USUÁRIO AUTENTICADO (APENAS USUÁRIOS AUTENTICADOS)
     [Authorize]
     public class DepartamentosController : Controller
     {
@@ -17,13 +18,13 @@ namespace Tickest.Controllers
             _context = context;
         }
 
-        [Authorize(Policy = "RequireRole")]
+        [Authorize(Policy = "AdminGerenciadorPolicy")]
         public IActionResult Index()
         {
             return View();
         }
 
-        [Authorize(Policy = "RequireRole")]
+        [Authorize(Policy = "AdminGerenciadorPolicy")]
         public IActionResult Create()
         {
             var query = _context.Usuarios.AsQueryable();
@@ -43,7 +44,7 @@ namespace Tickest.Controllers
             return View(viewModel);
         }
 
-        [Authorize(Policy = "RequireRole")]
+        [Authorize(Policy = "AdminGerenciadorPolicy")]
         [HttpPost]
         public async Task<IActionResult> Create([Bind("Nome,ResponsavelId")] Departamento departamento)
         {

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tickest.Data;
 
@@ -11,9 +12,11 @@ using Tickest.Data;
 namespace Tickest.Migrations
 {
     [DbContext(typeof(TickestContext))]
-    partial class TickestContextModelSnapshot : ModelSnapshot
+    [Migration("20231107155011_Usuario")]
+    partial class Usuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -353,13 +356,13 @@ namespace Tickest.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<DateTime>("DataCriacao")
+                    b.Property<DateTime>("Data_Criação")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DataLimite")
+                    b.Property<DateTime>("Data_Limite")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Descricao")
+                    b.Property<string>("Descrição")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
@@ -367,7 +370,10 @@ namespace Tickest.Migrations
                     b.Property<int>("Prioridade")
                         .HasColumnType("int");
 
-                    b.Property<string>("Titulo")
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Título")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -375,30 +381,6 @@ namespace Tickest.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tickets");
-                });
-
-            modelBuilder.Entity("Tickest.Models.Entities.TicketStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DataAlteracao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TicketId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TicketId");
-
-                    b.ToTable("TicketStatus");
                 });
 
             modelBuilder.Entity("Tickest.Models.Entities.UsuarioTicket", b =>
@@ -431,10 +413,10 @@ namespace Tickest.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
-                    b.Property<int?>("CargoId")
+                    b.Property<int>("CargoId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DepartamentoId")
+                    b.Property<int>("DepartamentoId")
                         .HasColumnType("int");
 
                     b.Property<string>("Nome")
@@ -529,17 +511,6 @@ namespace Tickest.Migrations
                         .HasForeignKey("DepartamentoId");
                 });
 
-            modelBuilder.Entity("Tickest.Models.Entities.TicketStatus", b =>
-                {
-                    b.HasOne("Tickest.Models.Entities.Ticket", "Ticket")
-                        .WithMany("Status")
-                        .HasForeignKey("TicketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ticket");
-                });
-
             modelBuilder.Entity("Tickest.Models.Entities.UsuarioTicket", b =>
                 {
                     b.HasOne("Tickest.Models.Entities.Ticket", "Ticket")
@@ -561,11 +532,15 @@ namespace Tickest.Migrations
                 {
                     b.HasOne("Tickest.Models.Entities.Cargo", "Cargo")
                         .WithMany("Usuarios")
-                        .HasForeignKey("CargoId");
+                        .HasForeignKey("CargoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Tickest.Models.Entities.Departamento", "Departamento")
                         .WithMany("Usuarios")
-                        .HasForeignKey("DepartamentoId");
+                        .HasForeignKey("DepartamentoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Cargo");
 
@@ -588,8 +563,6 @@ namespace Tickest.Migrations
 
             modelBuilder.Entity("Tickest.Models.Entities.Ticket", b =>
                 {
-                    b.Navigation("Status");
-
                     b.Navigation("UsuarioTickets");
                 });
 

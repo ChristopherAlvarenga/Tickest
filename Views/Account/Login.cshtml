@@ -66,7 +66,8 @@
                         <h4 class="mb-2">Bem-vindo a Tickest! 👋</h4>
                         <p class="mb-4">Faça o login para continuar</p>
 
-                        <form id="formAuthentication" class="mb-3" method="post">
+                        <form method="post" asp-controller="Account" asp-action="Login">
+                       @* <form id="formAuthentication" class="mb-3" method="post">*@
 
                             <div class="form-group mb-3">
                                 <label asp-for="Email" class="form-label">Insira o E-mail</label>
@@ -76,7 +77,7 @@
 
                             <div class="mb-3 form-password-toggle">
                                 <div class="d-flex justify-content-between">
-                                    <label asp-for="Senha" class="form-label">Insira a senha</label>
+                                    <label asp-for="Senha" class="form-label">Insira a senha</label> 
                                     <a>
                                         <small>Esqueceu a senha?</small>
                                     </a>
@@ -87,6 +88,7 @@
                                     <span class="input-group-text cursor-pointer">
                                         <i class="bx bx-hide"></i>
                                     </span>
+                                    <span asp-validation-for="Senha" class="text-danger"></span>
                                 </div>
                             </div>
 

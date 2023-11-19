@@ -19,6 +19,7 @@ namespace Tickest.Data
         public DbSet<Cargo> Cargos { get; set; }
         public DbSet<Departamento> Departamentos { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<TicketStatus> TicketStatus { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<UsuarioTicket> UsuarioTickets { get; set; }
 
@@ -54,15 +55,15 @@ namespace Tickest.Data
                     DepartamentoId = 1
                 });
 
-            modelBuilder.Entity<Usuario>().HasData(
-                new Usuario
-                {
-                    Id = 1,
-                    Nome = "Teste",
-                    Email = "teste@gmail.com",
-                    CargoId = 1,
-                    DepartamentoId= 1
-                });
+            //modelBuilder.Entity<Usuario>().HasData(
+            //    new Usuario
+            //    {
+            //        Id = 1,
+            //        Nome = "Teste",
+            //        Email = "teste@gmail.com",
+            //        CargoId = 1,
+            //        DepartamentoId= 1
+            //    });
         }
 
     }
