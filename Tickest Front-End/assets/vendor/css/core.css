@@ -5117,6 +5117,10 @@ fieldset:disabled .btn {
 
 .modal-dialog-scrollable .modal-body {
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  text-wrap: wrap;
 }
 
 .modal-dialog-centered {
