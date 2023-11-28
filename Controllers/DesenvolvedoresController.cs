@@ -37,6 +37,7 @@ namespace Tickest.Controllers
             var query = _context.Tickets
                 .Include(p => p.Departamento)
                 .Include(p => p.Usuario)
+                .Include(p => p.Anexos)
                 .Where(p => p.AreaId == usuario.AreaId)
                 .Where(p => p.Status != Ticket.Tipo.Concluído)
                 .Where(p => p.Status != Ticket.Tipo.Cancelado)
@@ -54,7 +55,8 @@ namespace Tickest.Controllers
                     Status = p.Status,
                     Prioridade = p.Prioridade,
                     Usuario = p.Usuario,
-                    Departamento = p.Departamento
+                    Departamento = p.Departamento,
+                    Anexos = p.Anexos
                 }).ToList(),
                 Usuario = usuario
             };

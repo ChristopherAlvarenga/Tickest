@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @using Tickest.Models.ViewModels;
 @model TicketViewModel
+
 @inject UserManager<IdentityUser> userManager
 
 @{
@@ -16,14 +17,15 @@
         Layout = "_Layout";
 }
 <style>
-    .fa {
-        color: red;
-        font-size: 20px;
-        margin-left: 3px;
-    }
+.fa{
+    color:red;
 
-    .name {
-        margin: 3px;
+    font-size:20px;
+
+    margin-left:3px;
+}
+.name{
+    margin:3px;
         color: #696cff !important;
     }
 </style>
@@ -32,7 +34,7 @@
     <!-- Content -->
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="row">
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" EncType="multipart/form-data">
                 <!-- Basic -->
                 <div class="col-md-6">
                     <div class="card mb-4">
@@ -84,15 +86,18 @@
                                 <select asp-for="Ticket.AreaId" asp-items="ViewBag.Areas" id="AreasDrop" class="form-select form-control" style="display:none"></select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-3" id="anexos">
                                 <label for="formFileMultiple" class="form-label">Anexos</label>
+                                <br />
 
 
                                 <div class="" id="files">
                                 </div>
 
-
-                                <input id="anexo" class="form-control" type="file" name="files" multiple />
+                                <button class="btn btn-success anexo mb-2" type="button">Adicionar anexo</button>
+   
+                                  
+                              
                             </div>
 
                             <button type="submit" class="btn btn-primary mt-3">Criar Ticket</button>
@@ -104,48 +109,37 @@
     </div>
 </div>
 <script>
-    var dt = new DataTransfer()
     $(document).ready(function () {
+        var id = 0;
+        $(".anexo").click(function () {
 
-        $('#anexo').change(function () {
-  
-            $("#files").html("");
-            for (var i = 0; i < this.files.length; i++) {
-                var file = this.files[i];
-                dt.items.add(file)
-            }
-            this.files = dt.files
+            var input_id = "anexo-" + id;
 
-            for (var i = 0; i < this.files.length; i++) {
-                var file = this.files[i];
+            var html = '<input onchange=teste("' + input_id + '") id="anexo-' + id + '"hidden name="Ticket.Anexos[' + id + '].File" number ="' + id + '" class="form-control input-anexo" type = "file" />'
 
-                name = file.name.toLowerCase();
-                size = file.size;
-                type = file.type;
+            $("#anexos").append(html);
+            $("#anexo-"+id).click();
+            id++;
+        })
+       
+    });
 
-                var html = '<a id="btn-' + i + '" type="button" anexo_id="' + i + '" class="name" >  ' + name + '  <i onclick=delRef("' + i + '")  class="fa fa-times" aria-hidden="true"></i></a>'
-                $("#files").append(html);
-            }
-        });
+    function teste(id){
+        var filename = $("#"+id).val().replace(/.*(\/|\\)/, '');
 
-
-
-
-    })
-    function delRef(index) {
-
-        var input = document.getElementById('anexo')
-        var { files } = input
-        for (var i = 0; i < files.length; i++) {
-            var file = files[i]
-            if (index == i) {
-                dt.items.remove(i)
-            }
-        }
+      
         
-        $("#btn-" + index).remove();
-        $("#anexo").trigger("change");
+        var html = '<a id="btn-'+id+'" type="button" anexo_id="' + id + '" class="name" >  ' + filename + '  <i onclick=remove("' + id + '")  class="fa fa-times" aria-hidden="true"></i></a>'
+        $("#files").append(html);
+
     }
+
+    function remove(id) {
+        $("#" + id).remove();
+        $("#btn-" + id).remove();
+      
+    }
+
     document.getElementById("Departamentos").addEventListener("change", function () {
         var DepId = this.value;
 
@@ -171,5 +165,5 @@
     }
         });
 
-
+  
 </script>

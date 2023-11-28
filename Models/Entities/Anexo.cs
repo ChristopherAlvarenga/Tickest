@@ -8,12 +8,11 @@ namespace Tickest.Models.Entities
         [Key]
         public int Id { get; set; }
 
-        [Required]
         [StringLength(500)]
         public string? Endereco { get; set; }
 
         [NotMapped]
-        IFormFile File { get; set; }
+        public IFormFile? File { get; set; }
 
         public int? TicketId { get; set; }
         [ForeignKey(nameof(TicketId))]

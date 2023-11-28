@@ -53,6 +53,6 @@ namespace Tickest.Models.Entities
         [ForeignKey(nameof(UsuarioId))]
         public virtual Usuario? Usuario { get; set; }
 
-        public ICollection<Anexo> Anexos { get; set; }
+        public List<Anexo> Anexos { get; set; }
     }
 }
