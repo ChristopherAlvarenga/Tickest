@@ -59,18 +59,22 @@ namespace Tickest.Controllers
         }
 
         // GET: TicketsController/Details/5
-        public IActionResult Historic()
+        public IActionResult Details(int id)
+        {
+            return View();
+        }
+
+       public IActionResult Search(string search)
         {
             var usuario = _context.Usuarios
-                .Where(p => p.Email == User.Identity.Name)
-                .FirstOrDefault();
+               .Where(p => p.Email == User.Identity.Name)
+               .FirstOrDefault();
 
             var query = _context.Tickets
                 .Include(p => p.Departamento)
                 .Include(p => p.Usuario)
-                .Where(p => p.Usuario.Email == usuario.Email)
-                .Where(p => p.Status == Ticket.Tipo.Concluído)
-                .Where(p => p.Status == Ticket.Tipo.Cancelado)
+                .Include(p => p.Anexos)
+                .Where(p => p.Usuario.Email == usuario.Email && (EF.Functions.Like(p.Título, "%" + search + "%") || (p.Id.ToString() == search) || (EF.Functions.Like(p.Descrição, "%" + search + "%") || (EF.Functions.Like(p.Departamento.Nome, "%" + search + "%")))))
                 .OrderBy(p => p.Id)
                 .AsQueryable();
 
@@ -86,12 +90,15 @@ namespace Tickest.Controllers
                     Status = p.Status,
                     Prioridade = p.Prioridade,
                     Usuario = p.Usuario,
-                    Departamento = p.Departamento
+                    Departamento = p.Departamento,
+                    Anexos = p.Anexos
                 }).ToList(),
                 Usuario = usuario
             };
-
+            ViewBag.titulo = "Pesquisando por " + search;
             return View(viewModel);
+
+          
         }
 
         // GET: TicketsController/Create
