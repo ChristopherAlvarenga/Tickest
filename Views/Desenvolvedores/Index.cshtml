@@ -9,7 +9,8 @@
         border-color: #fff;
     }
 
-    .d-flex{
+    .d-flex1{
+        display:flex;
         flex-wrap: wrap !important;
         word-break: break-all; /*  */
         word-wrap: break-word; /* if you want to cut the complete word */
@@ -105,7 +106,6 @@
                                             </button>
                                             <!-- Informação -->
                                             <div class="modal fade" id="modalScrollable-@ticket.Id" tabindex="-1" aria-hidden="true">
-            
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-body ">
@@ -114,79 +114,64 @@
                                                             <div class="px-4 py-5">
 
                                                                 <h5 class="text-uppercase">#@ticket.Id</h5>
-
-
-                                                              
                                                                 <h4 class="mt-5 theme-color mb-5">@ticket.Título</h4>
-                                                            
-                                                                <div class="d-flex justify-content-between">
+
+                                                                <div class="d-flex1 justify-content-between">
                                                                     <span class="theme-color">@ticket.Descrição</span>
                                                                 </div>
                                                                 <div class="mb-3">
                                                                     <hr class="new1">
                                                                 </div>
-
-                                                                <div class="d-flex justify-content-between">
+                                                                <div class="d-flex1 justify-content-between">
                                                                     <span class="font-weight-bold">Criado Em:</span>
                                                                     <span class="text-muted">@ticket.Data_Criação</span>
                                                                 </div>
-
-                                                                <div class="d-flex justify-content-between">
+                                                                <div class="d-flex1 justify-content-between">
                                                                     <span class="font-weight-bold">
-                                                                        Prioridade</span>
+                                                                        Prioridade
+                                                                    </span>
                                                                     <span class="text-muted">@ticket.Prioridade</span>
                                                                 </div>
 
-
-                                                                <div class="d-flex justify-content-between">
+                                                                <div class="d-flex1 justify-content-between">
                                                                     <span class="font-weight-bold">
-                                                                        Status</span>
+                                                                        Status
+                                                                    </span>
                                                                     <span class="text-muted">@ticket.Status</span>
                                                                 </div>
-                                                                <div class="d-flex justify-content-between">
+                                                                <div class="d-flex1 justify-content-between">
                                                                     <span class="font-weight-bold">
-                                                                        Enviado por:</span>
+                                                                        Enviado por:
+                                                                    </span>
                                                                     <span class="text-muted">@ticket.Usuario.Nome (@ticket.Usuario.Email)</span>
                                                                 </div>
-                                                                <div class="d-flex justify-content-between">
+                                                                <div class="d-flex1 justify-content-between">
                                                                     <span class="font-weight-bold">
-                                                                        Departamento:</span>
+                                                                        Departamento:
+                                                                    </span>
                                                                     <span class="text-muted">@ticket.Departamento.Nome</span>
                                                                 </div>
-
-
-                                                             
-                                                                    <div class="mt-3">
+                                                                <div class="mt-3">
                                                                     <span class="font-weight-bold">
                                                                         Anexos:
                                                                     </span>
                                                                     <br>
-                                                                        @if (ticket.Anexos != null)
+                                                                    @if (ticket.Anexos != null)
+                                                                    {
+                                                                        @foreach (var anexo in ticket.Anexos)
                                                                         {
-                                                                            @foreach (var anexo in ticket.Anexos)
-                                                                            {
-                                                                                var name = anexo.Endereco.Substring(anexo.Endereco.IndexOf('/') + 1);
+                                                                            var name = anexo.Endereco.Substring(anexo.Endereco.IndexOf('/') + 1);
 
-                                                                                <a href="~/@anexo.Endereco" download>@name</a>
-                                                                                <br />
-                                                                            }
+                                                                            <a href="~/@anexo.Endereco" download>@name</a>
+                                                                            <br />
                                                                         }
-
-                                                                    </div>
-                                                           
-
+                                                                    }
+                                                                </div>
                                                             </div>
-
                                                         </div>
-
                                                         <div class="modal-footer">
                                                             <div class="text-center mt-5">
-
-
                                                                 <button class="btn btn-primary">Comentar</button>
-
-
-
                                                             </div>
                                                         </div>
                                                     </div>
