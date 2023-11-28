@@ -32,6 +32,7 @@ namespace Tickest.Controllers
             var query = _context.Tickets
                 .Include(p => p.Departamento)
                 .Include(p => p.Usuario)
+                .Include(p => p.Anexos)
                 .Where(p => p.Usuario.Email == usuario.Email)
                 .OrderBy(p => p.Id)
                 .AsQueryable();
@@ -48,7 +49,8 @@ namespace Tickest.Controllers
                     Status = p.Status,
                     Prioridade = p.Prioridade,
                     Usuario = p.Usuario,
-                    Departamento = p.Departamento
+                    Departamento = p.Departamento,
+                    Anexos = p.Anexos
                 }).ToList(),
                 Usuario = usuario
             };
@@ -131,13 +133,21 @@ namespace Tickest.Controllers
         // POST: TicketsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Título,Descrição,Comentário,Data_Criação,Data_Limite,Prioridade,Status,AreaId")] Ticket ticket, int departamentoId, IFormFile files)
+        public async Task<IActionResult> Create(Ticket ticket, int departamentoId, List<IFormFile> files)
         {
             ViewBag.Areas = _context.Areas.Where(s => s.DepartamentoId == departamentoId);
-
+            ticket.Anexos = new List<Anexo>();
             var usuario = _context.Usuarios
                 .Where(p => p.Email == User.Identity.Name).FirstOrDefault();
-
+            foreach (IFormFile file in files)
+            {
+                var path = WriteFile(file);
+                var fileName = Path.GetFileName(path);
+                var name = "anexos/" + fileName;
+                Anexo anexo = new Anexo();
+                anexo.Endereco = name;
+                ticket.Anexos.Add(anexo);
+            }
             ticket.Data_Criação = DateTime.Now;
             ticket.Status = Ticket.Tipo.Criado;
             ticket.Comentario = "";
@@ -170,6 +180,30 @@ namespace Tickest.Controllers
             }
         }
 
+        public static string WriteFile(IFormFile file)
+        {
+            string caminhoCompleto = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\anexos");
+
+            if (!Directory.Exists(caminhoCompleto))
+            {
+                Directory.CreateDirectory(caminhoCompleto);
+            }
+            string path = caminhoCompleto + "\\" + GetTimestamp(DateTime.Now) + System.IO.Path.GetExtension(file.FileName);
+            string name = Path.GetFileName(path);
+            using (Stream stream = new FileStream(path, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+            return path;
+
+
+        }
+
+        public static String GetTimestamp(DateTime value)
+        {
+            return value.ToString("yyyyMMddHHmmssffff");
+        }
+
         // GET: TicketsController/Delete/5
         public IActionResult Delete(int id)
         {
@@ -191,4 +225,5 @@ namespace Tickest.Controllers
             }
         }
     }
+
 }
