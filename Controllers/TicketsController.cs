@@ -59,9 +59,39 @@ namespace Tickest.Controllers
         }
 
         // GET: TicketsController/Details/5
-        public IActionResult Details(int id)
+        public IActionResult Historic()
         {
-            return View();
+            var usuario = _context.Usuarios
+                .Where(p => p.Email == User.Identity.Name)
+                .FirstOrDefault();
+
+            var query = _context.Tickets
+                .Include(p => p.Departamento)
+                .Include(p => p.Usuario)
+                .Where(p => p.Usuario.Email == usuario.Email)
+                .Where(p => p.Status == Ticket.Tipo.Concluído)
+                .Where(p => p.Status == Ticket.Tipo.Cancelado)
+                .OrderBy(p => p.Id)
+                .AsQueryable();
+
+            var viewModel = new TicketViewModel()
+            {
+                Tickets = query.Select(p => new Ticket
+                {
+                    Id = p.Id,
+                    Título = p.Título,
+                    Descrição = p.Descrição,
+                    Data_Criação = p.Data_Criação,
+                    Comentario = p.Comentario,
+                    Status = p.Status,
+                    Prioridade = p.Prioridade,
+                    Usuario = p.Usuario,
+                    Departamento = p.Departamento
+                }).ToList(),
+                Usuario = usuario
+            };
+
+            return View(viewModel);
         }
 
         // GET: TicketsController/Create
