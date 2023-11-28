@@ -1,7 +1,20 @@
-﻿@model Tickest.Models.ViewModels.TicketViewModel
+﻿@using Microsoft.AspNetCore.Identity;
+@model Tickest.Models.ViewModels.TicketViewModel
+@inject UserManager<IdentityUser> userManager
 
 @{
-    ViewData["Title"] = "Tickest - Home";
+    ViewData["Title"] = "Tickest - Tickets Criados";
+
+    var user = await userManager.FindByEmailAsync(User.Identity.Name);
+
+    if (await userManager.IsInRoleAsync(user, "Gerenciador"))
+        Layout = "_LayoutGerenciador";
+
+    else if (await userManager.IsInRoleAsync(user, "Responsavel"))
+        Layout = "_LayoutResponsavel";
+
+    else if (await userManager.IsInRoleAsync(user, "Desenvolvedor"))
+        Layout = "_Layout";
 }
 <style>
     .modal-body {
@@ -9,13 +22,14 @@
         border-color: #fff;
     }
 
-    .d-flex1{
-        display:flex;
+    .d-flex1 {
+        display:flex !important;
         flex-wrap: wrap !important;
         word-break: break-all; /*  */
         word-wrap: break-word; /* if you want to cut the complete word */
         white-space: normal;
     }
+
     .close {
         color: #000;
         cursor: pointer;
@@ -32,7 +46,6 @@
         word-break: break-all; /*  */
         word-wrap: break-word; /* if you want to cut the complete word */
         white-space: normal;
-
     }
 
     hr.new1 {
@@ -62,32 +75,12 @@
             padding-left: 30px;
             border-radius: 1px;
             font-size: 17px;
-        }
-</style>
+        }</style>
 <div class="row">
-    <div class="col-lg-12 mb-4 order-0">
-        <div class="card">
-            <div class="d-flex align-items-end row">
-                <div class="col-sm-7">
-                    <div class="card-body p-4">
-                        <h5 class="card-title text-primary">Seja bem-vindo(a) @Model.Usuario.Nome!</h5>
-                        <p class="mb-3 mt-5">Concluídos esse mês: <span class="fw-bold">*Quantidade*</span></p>
-                        <p class="mb-3">Em análise esse mês: <span class="fw-bold">*Quantidade*</span></p>
-                        <p class="mb-1">Não concluídos esse mês: <span class="fw-bold">*Quantidade*</span></p>
-                    </div>
-                </div>
-                <div class="col-sm-5 text-center text-sm-left">
-                    <div class="card-body pb-0 px-0 px-md-4">
-                        <img src="~/img/illustrations/man-with-laptop-light.png" height="140" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
         <div class="card">
             <div class="row row-bordered g-0">
-                <h5 class="card-title text-primary m-4">Tickets em aberto</h5>
+                <h5 class="card-title text-primary m-4">@ViewBag.titulo</h5>
                 <div class="card">
                     <div class="table-responsive text-nowrap">
                         <table class="table table-hover">

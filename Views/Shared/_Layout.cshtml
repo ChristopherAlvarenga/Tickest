@@ -107,7 +107,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a asp-area="" asp-controller="Tickets" asp-action="Historic" class="menu-link">
+                        <a class="menu-link">
                             <i class="menu-icon tf-icons bx bx-history"></i>
                             <div data-i18n="Basic">Histórico de Tickets</div>
                         </a>
@@ -162,10 +162,13 @@
                         <div class="navbar-nav align-items-center">
                             <div class="nav-item d-flex align-items-center">
                                 <i class="bx bx-search fs-4 lh-0"></i>
-                                <input type="text"
+                                   <form  method="post" action="/Tickets/Search">
+                                    <input name="search" type="text"
                                        class="form-control border-0 shadow-none"
                                        placeholder="Pesquisar..."
                                        aria-label="Perquisar..." />
+
+                                       </form>
                             </div>
                         </div>
 
