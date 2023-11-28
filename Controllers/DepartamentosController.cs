@@ -19,16 +19,29 @@ namespace Tickest.Controllers
             _context = context;
         }
 
-        [Authorize(Policy = "RequireRole")]
+        [Authorize]
         public IActionResult Index()
         {
             return View();
         }
 
-        [Authorize(Policy = "RequireRole")]
+        [Authorize(Roles = "Gerenciador")]
         public IActionResult Create()
         {
-            var query = _context.Usuarios.AsQueryable();
+            var usersResponsavel = userManager
+                .GetUsersInRoleAsync("Responsavel").Result;
+
+            List<Usuario> users = new List<Usuario>();
+
+            foreach (var user in usersResponsavel) {
+                var contextUsers = _context.Usuarios
+                    .Where(p => p.Email == user.Email)
+                    .FirstOrDefault();
+
+                users.Add(contextUsers);
+            }
+
+            var query = users.AsQueryable();
 
             var viewModel = new UsuarioViewModel()
             {
@@ -44,14 +57,14 @@ namespace Tickest.Controllers
             return View(viewModel);
         }
 
-        [Authorize(Policy = "RequireRole")]
+        [Authorize(Policy = "Gerenciador")]
         [HttpPost]
         public async Task<IActionResult> Create([Bind("Nome,ResponsavelId")] Departamento departamento)
         {
                 _context.Add(departamento);
                 await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Gerenciador", new { area = "Gerenciador" });
+            return View();
         }
     }
 }

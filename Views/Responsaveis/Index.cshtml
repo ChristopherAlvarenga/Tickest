@@ -5,17 +5,6 @@
 @{
     Layout = "_LayoutResponsavel";
     ViewData["Title"] = "Tickest - Home";
-
-    var user = await userManager.FindByEmailAsync(User.Identity.Name);
-
-    if (await userManager.IsInRoleAsync(user, "Gerenciador"))
-        Layout = "_LayoutGerenciador";
-
-    else if (await userManager.IsInRoleAsync(user, "Responsavel"))
-        Layout = "_LayoutResponsavel";
-
-    else if (await userManager.IsInRoleAsync(user, "Desenvolvedor"))
-        Layout = "_Layout";
 }
 
 <div class="row">

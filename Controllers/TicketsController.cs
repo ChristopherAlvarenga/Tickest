@@ -156,7 +156,9 @@ namespace Tickest.Controllers
             _context.Add(ticket);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Desenvolvedores");
+            var user = await userManager.FindByEmailAsync(User.Identity.Name); ;
+
+            return View();
         }
 
         // GET: TicketsController/Edit/5

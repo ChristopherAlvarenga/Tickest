@@ -1,0 +1,157 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using Tickest.Models.ViewModels;
+@model TicketViewModel
+
+@inject UserManager<IdentityUser> userManager
+
+@{
+    var user = await userManager.FindByEmailAsync(User.Identity.Name);
+
+    if (await userManager.IsInRoleAsync(user, "Gerenciador"))
+        Layout = "_LayoutGerenciador";
+
+    else if (await userManager.IsInRoleAsync(user, "Responsavel"))
+        Layout = "_LayoutResponsavel";
+
+    else if (await userManager.IsInRoleAsync(user, "Desenvolvedor"))
+        Layout = "_Layout";
+}
+
+<!DOCTYPE html>
+
+<div class="row">
+    <!-- Blockquote -->
+    <div class="col-lg">
+        <div class="card mb-4 mb-lg-0">
+            <h5 class="card-header pb-0">Notificações</h5>
+            <div class="card-body"></div>
+            <hr class="m-0" />
+            <div class="card-body">
+                <small class="text-light fw-semibold">*Setor e área da pessoa que enviou essa mensagem*</small>
+                <figure class="mt-2">
+                    <blockquote class="blockquote">
+                        <p class="mb-0">*Mensagem*</p>
+                    </blockquote>
+                    <figcaption class="blockquote-footer">
+                        <cite title="Source Title">*Nome de quem enviou*</cite>
+                    </figcaption>
+                </figure>
+                <div class="mt-3">
+                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEnd" aria-controls="offcanvasEnd">Responder</button>
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEnd" aria-labelledby="offcanvasEndLabel">
+                        <div class="offcanvas-header">
+                            <h5 id="offcanvasEndLabel" class="offcanvas-title">Mandar mensagem para *destinatário*</h5>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body my-auto mx-0 flex-grow-0">
+                            <div>
+                                <label for="defaultFormControlInput" class="form-label">Escreva aqui</label>
+                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" style="height: 400px;"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-outline-secondary d-grid w-100 mt-3" data-bs-dismiss="offcanvas">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-1" />
+
+            <!-- O resto é tudo igual esse aqui -->
+            <!-- Começo do card -->
+            <div class="card-body">
+                <small class="text-light fw-semibold">*Setor e área da pessoa que enviou essa mensagem*</small>
+                <figure class="mt-0">
+                    <blockquote class="blockquote">
+                        <p class="mb-0">*Mensagem*</p>
+                    </blockquote>
+                    <figcaption class="blockquote-footer">
+                        <cite title="Source Title">*Nome de quem enviou*</cite>
+                    </figcaption>
+                </figure>
+                <div class="mt-3">
+                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEnd" aria-controls="offcanvasEnd">Responder</button>
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEnd" aria-labelledby="offcanvasEndLabel">
+                        <div class="offcanvas-header">
+                            <h5 id="offcanvasEndLabel" class="offcanvas-title">Mandar mensagem para *destinatário*</h5>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body my-auto mx-0 flex-grow-0">
+                            <div>
+                                <label for="defaultFormControlInput" class="form-label">Escreva aqui</label>
+                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" style="height: 400px;"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-outline-secondary d-grid w-100 mt-3" data-bs-dismiss="offcanvas">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-1" />
+            <!-- Final do card -->
+            <!-- Começo do card -->
+            <div class="card-body">
+                <small class="text-light fw-semibold">*Setor e área da pessoa que enviou essa mensagem*</small>
+                <figure class="mt-0">
+                    <blockquote class="blockquote">
+                        <p class="mb-0">*Mensagem*</p>
+                    </blockquote>
+                    <figcaption class="blockquote-footer">
+                        <cite title="Source Title">*Nome de quem enviou*</cite>
+                    </figcaption>
+                </figure>
+                <div class="mt-3">
+                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEnd" aria-controls="offcanvasEnd">Responder</button>
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEnd" aria-labelledby="offcanvasEndLabel">
+                        <div class="offcanvas-header">
+                            <h5 id="offcanvasEndLabel" class="offcanvas-title">Mandar mensagem para *destinatário*</h5>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body my-auto mx-0 flex-grow-0">
+                            <div>
+                                <label for="defaultFormControlInput" class="form-label">Escreva aqui</label>
+                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" style="height: 400px;"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-outline-secondary d-grid w-100 mt-3" data-bs-dismiss="offcanvas">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Começo do Pagination -->
+            <div class="mb-4 mb-lg-0 mx-auto">
+                <div class="col">
+                    <div class="demo-inline-spacing">
+                        <!-- Basic Pagination -->
+                        <nav aria-label="">
+                            <ul class="pagination">
+                                <li class="page-item first">
+                                    <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                                </li>
+                                <li class="page-item prev">
+                                    <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevron-left"></i></a>
+                                </li>
+                                <li class="page-item active">
+                                    <a class="page-link" href="javascript:void(0);">1</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="javascript:void(0);">2</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="javascript:void(0);">3</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="javascript:void(0);">...</a>
+                                </li>
+                                <li class="page-item next">
+                                    <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevron-right"></i></a>
+                                </li>
+                                <li class="page-item last">
+                                    <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <!-- Final do Pagination -->
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
@@ -29,5 +30,12 @@ namespace Tickest.Models.Entities
         public virtual Area? Area { get; set; }
 
         public ICollection<Ticket> Tickets { get; set; }
+
+        public ICollection<Notificacao> Notificacoes { get; set; }
+
+        public static implicit operator Usuario?(IdentityUser? v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
