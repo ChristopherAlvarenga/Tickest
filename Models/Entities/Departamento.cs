@@ -13,12 +13,9 @@ namespace Tickest.Models.Entities
         [StringLength(50)]
         public string? Nome { get; set; }
 
-        [AllowNull]
-        public int ResponsavelId { get; set; }
+        public int? ResponsavelId { get; set; }
 
         public ICollection<Usuario> Usuarios { get; set; }
-
-        public ICollection<Cargo> Cargos { get; set; }
 
         public ICollection<Area> Areas { get; set; }
     }

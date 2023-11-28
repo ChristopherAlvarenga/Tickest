@@ -25,6 +25,33 @@
   <ItemGroup>
     <Folder Include="Areas\Gerenciador\Models\" />
     <Folder Include="Migrations\" />
+    <Folder Include="wwwroot\anexos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\config.js" />
+    <None Include="wwwroot\js\dashboards-analytics.js" />
+    <None Include="wwwroot\js\extended-ui-perfect-scrollbar.js" />
+    <None Include="wwwroot\js\form-basic-inputs.js" />
+    <None Include="wwwroot\js\main.js" />
+    <None Include="wwwroot\js\pages-account-settings-account.js" />
+    <None Include="wwwroot\js\ui-modals.js" />
+    <None Include="wwwroot\js\ui-popover.js" />
+    <None Include="wwwroot\js\ui-toasts.js" />
+    <None Include="wwwroot\lib\jquery\dist\jquery.js" />
+    <None Include="wwwroot\lib\jquery\dist\jquery.min.js" />
+    <None Include="wwwroot\lib\jquery\dist\jquery.min.map" />
+    <None Include="wwwroot\vendor\fonts\boxicons\boxicons.svg" />
+    <None Include="wwwroot\vendor\fonts\boxicons\boxicons.woff2" />
+    <None Include="wwwroot\vendor\js\bootstrap.js" />
+    <None Include="wwwroot\vendor\js\helpers.js" />
+    <None Include="wwwroot\vendor\js\menu.js" />
+    <None Include="wwwroot\vendor\libs\apex-charts\apexcharts.js" />
+    <None Include="wwwroot\vendor\libs\highlight\highlight.js" />
+    <None Include="wwwroot\vendor\libs\jquery\jquery.js" />
+    <None Include="wwwroot\vendor\libs\masonry\masonry.js" />
+    <None Include="wwwroot\vendor\libs\perfect-scrollbar\perfect-scrollbar.js" />
+    <None Include="wwwroot\vendor\libs\popper\popper.js" />
   </ItemGroup>
 
 </Project>

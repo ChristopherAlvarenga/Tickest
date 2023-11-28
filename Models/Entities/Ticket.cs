@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Tickest.Models.Entities
@@ -24,9 +25,6 @@ namespace Tickest.Models.Entities
         public DateTime Data_Criação { get; set; }
 
         [Required]
-        public DateTime Data_Limite { get; set; }
-
-        [Required]
         [EnumDataType(typeof(Escolha))]
         public Escolha Prioridade { get; set; }
         public enum Escolha
@@ -39,9 +37,22 @@ namespace Tickest.Models.Entities
         public Tipo Status { get; set; }
         public enum Tipo
         {
-            Aberto = 1, Andamento = 2, Teste = 3, Concluído = 4, Cancelado = 5
+            Criado = 1, Andamento = 2, Teste = 3, Concluído = 4, Cancelado = 5
         }
 
-        public ICollection<UsuarioTicket> UsuarioTickets { get; set; }
+        public int? DepartamentoId { get; set; }
+        [ForeignKey(nameof(DepartamentoId))]
+        public virtual Departamento? Departamento { get; set; }
+
+        public int? AreaId { get; set; }
+        [ForeignKey(nameof(AreaId))]
+        public virtual Area? Area { get; set; }
+
+        public int? DestinatarioId { get; set; }
+        public int? UsuarioId { get; set; }
+        [ForeignKey(nameof(UsuarioId))]
+        public virtual Usuario? Usuario { get; set; }
+
+        public ICollection<Anexo> Anexos { get; set; }
     }
 }

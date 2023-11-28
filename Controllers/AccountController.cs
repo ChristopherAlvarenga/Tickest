@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics.Eventing.Reader;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
@@ -27,6 +26,7 @@ namespace Tickest.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            ViewBag.Departamentos = _context.Departamentos.ToList();
             return View();
         }
 
@@ -39,10 +39,10 @@ namespace Tickest.Controllers
                 // Copia os dados do RegisterViewModel para o IdentityUser
                 var user = new IdentityUser
                 {
-                    UserName = registerModel.Nome,
+                    UserName = registerModel.Email,
                     Email = registerModel.Email,
                     NormalizedUserName = registerModel.Nome.ToUpper(),
-                    NormalizedEmail = registerModel.Email.ToUpper(),
+                    NormalizedEmail = registerModel.Email.ToUpper()
                 };
 
                 // Armazena os dados do usuário na tabela AspNetUsers
@@ -52,32 +52,35 @@ namespace Tickest.Controllers
                 // SignInManager e redireciona para o método Action Index
                 if (result.Succeeded)
                 {
-                    if(registerModel.Gerenciador == true)
+                    if(registerModel.Funcao == 1)
                         await userManager.AddToRoleAsync(user, "Gerenciador");
-                    else if (registerModel.Responsavel == true)
+                    else if (registerModel.Funcao == 2)
                         await userManager.AddToRoleAsync(user, "Responsavel");
-                    else
-                        await userManager.AddToRoleAsync(user, "Colaborador");
+                    else if(registerModel.Funcao == 3)
+                        await userManager.AddToRoleAsync(user, "Desenvolvedor");
 
                     var usuario = new Usuario()
                     {
                         Nome = registerModel.Nome,
-                        Email = registerModel.Email,
-                        CargoId = 1,
-                        DepartamentoId = 1
+                        Email = registerModel.Email
                     };
 
                     _context.Add(usuario);
                     await _context.SaveChangesAsync();
+
+                    return RedirectToAction("Index", "Gerenciador", new { area = "Gerenciador" });
                 }
 
                 // Se houver erros, inclui no ModelState e exibe pela tag helper summary na validação
-                foreach (var error in result.Errors) 
+                if (result.Errors != null) 
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    ModelState.AddModelError(string.Empty, "A senha deve possuir mais de 6 caracteres.");
+                    ModelState.AddModelError(string.Empty, "A senha deve ter pelo menos um caractere especial ('@','#', '&', etc).");
+                    ModelState.AddModelError(string.Empty, "A senha deve ter pelo menos uma letra minúscula ('a'-'z').");
+                    ModelState.AddModelError(string.Empty, "A senha deve ter pelo menos uma letra maiúscula ('A'-'Z').");
                 }
             }
-            return RedirectToAction("Index", "Gerenciador", new { area = "Gerenciador" });
+            return View();
         }
 
         [AllowAnonymous]
@@ -98,29 +101,27 @@ namespace Tickest.Controllers
 
                 if (result.Succeeded)
                 {
+
                     var user = await userManager.FindByEmailAsync(loginModel.Email);
 
                     if (await userManager.IsInRoleAsync(user, "Admin"))
-                    {
                         return RedirectToAction("Index", "Admin", new { area = "Admin" });
-                    }
+
                     else if (await userManager.IsInRoleAsync(user, "Gerenciador"))
-                    {
                         return RedirectToAction("Index", "Gerenciador", new { area = "Gerenciador" });
-                    }
+
                     else if (await userManager.IsInRoleAsync(user, "Responsavel"))
-                    {
                         return RedirectToAction("Index", "Responsavel", new { area = "Responsavel" });
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Colaboradores");
-                    }
+
+                    else if (await userManager.IsInRoleAsync(user, "Desenvolvedor"))
+                        return RedirectToAction("Index", "Desenvolvedores");
 
                 }
 
                 ModelState.AddModelError(string.Empty, "Login Inválido");
+                return View(loginModel);
             }
+            ModelState.AddModelError(string.Empty, "Login Inválido");
             return View(loginModel);
         }
 

@@ -1,8 +1,19 @@
-﻿@using Tickest.Models.ViewModels;
+﻿@using Microsoft.AspNetCore.Identity;
+@using Tickest.Models.ViewModels;
 @model TicketViewModel
+@inject UserManager<IdentityUser> userManager
 
 @{
-    Layout = "_LayoutGerenciador";
+    var user = await userManager.FindByEmailAsync(User.Identity.Name);
+
+    if (await userManager.IsInRoleAsync(user, "Gerenciador"))
+        Layout = "_LayoutGerenciador";
+
+    else if (await userManager.IsInRoleAsync(user, "Responsavel"))
+        Layout = "_LayoutResponsavel";
+
+    else if (await userManager.IsInRoleAsync(user, "Desenvolvedor"))
+        Layout = "_Layout";
 }
 
 <!-- Content wrapper -->
@@ -16,6 +27,7 @@
                     <div class="card mb-4">
                         <h5 class="card-header">Criação de Ticket</h5>
                         <div class="card-body demo-vertical-spacing demo-only-element">
+
                             <label asp-for="Ticket.Título" class="form-label" for="basic-default-password12">Título</label>
                             <div class="input-group">
                                 <input asp-for="Ticket.Título" type="text"
@@ -24,18 +36,12 @@
                                        aria-label="Username"
                                        aria-describedby="basic-addon11" />
                             </div>
-                            <label asp-for="Ticket.Data_Limite" class="form-label" for="basic-default-password12">Data limite</label>
-                            <div class="input-group">
-                                <input asp-for="Ticket.Data_Limite" type="date"
-                                       class="form-control"
-                                       aria-label="Username"
-                                       aria-describedby="basic-addon11" />
-                            </div>
+
                             <label asp-for="Ticket.Prioridade" class="form-label" for="basic-default-password12">Prioridade</label>
                             <div class="input-group">
                                 <div class="input-group">
                                     <select asp-for="Ticket.Prioridade" class="form-select" id="inputGroupSelect02">
-                                        <option selected>Escolha...</option>
+                                        <option value="1" selected>Escolha...</option>
                                         <option value="1">Baixa</option>
                                         <option value="2">Média</option>
                                         <option value="3">Alta</option>
@@ -43,28 +49,35 @@
                                     </select>
                                 </div>
                             </div>
-                            <label asp-for="Ticket.Descrição" class="form-label" for="basic-default-password12">Descriçao</label>
+
+                            <label asp-for="Ticket.Descrição" class="form-label" for="basic-default-password12">Descrição</label>
                             <div class="input-group">
-                                <textarea asp-for="Ticket.Descrição" class="form-control" aria-label="With textarea" placeholder="Comment"></textarea>
+                                <textarea asp-for="Ticket.Descrição" class="form-control" aria-label="With textarea" placeholder="Descreva sua solicitação/problema"></textarea>
                             </div>
-                            <label class="form-label" for="basic-default-password12">Departamento</label>
-                            <div class="input-group">
-                                <div class="input-group">
-                                    @Html.DropDownListFor(model => model.Departamentos,
-                                    new SelectList(Model.Departamentos, "Id", "Nome"), new { @class = "form-control" })
+
+                            <label for="Ticket.DepartamentoId" class="form-label control-label">Departamento</label>
+                            <div class="input-group form-group">
+                                <div class="input-group form-group">
+                                    <select asp-for="Ticket.DepartamentoId" id="Departamentos" class="form-select form-control">
+                                        <option value="">Escolha...</option>
+                                        @foreach (var departamento in ViewBag.Departamentos)
+                                        {
+                                            <option value="@departamento.Id">@departamento.Nome</option>
+                                        }
+                                    </select>
                                 </div>
                             </div>
-                            @* <label class="form-label" for="basic-default-password12">Área</label>
-                            <div class="input-group">
-                            <div class="input-group">
-                            @Html.DropDownListFor(model => model.Areas,
-                            new SelectList(Model.Areas, "Id", "Nome"), new { @class = "form-control" })
+
+                            <label for="Ticket.AreaId" id="AreaLabel" class="form-label control-label" style="display:none">Área</label>
+                            <div class="input-group form-group">
+                                <select asp-for="Ticket.AreaId" asp-items="ViewBag.Areas" id="AreasDrop" class="form-select form-control" style="display:none"></select>
                             </div>
-                            </div> *@
+
                             <div class="mb-3">
                                 <label for="formFileMultiple" class="form-label">Anexos</label>
-                                <input class="form-control" type="file" id="formFileMultiple" multiple />
+                                <input class="form-control" type="file" name="file" multiple />
                             </div>
+
                             <button type="submit" class="btn btn-primary mt-3">Criar Ticket</button>
                         </div>
                     </div>
@@ -73,3 +86,93 @@
         </div>
     </div>
 </div>
+<script>
+    document.getElementById("Departamentos").addEventListener("change", function () {
+        var DepId = this.value;
+
+        // Recupera os elementos do segundo dropdown
+        var Areas = document.getElementById("AreasDrop");
+
+        // Limpa as opções existentes no segundo dropdown
+        Areas.innerHTML = '<option value="">Escolha...</option>';
+
+        // Exibe ou oculta o segundo dropdown com base na escolha no primeiro dropdown
+        var AreaLabel = document.getElementById("AreaLabel");
+        Areas.style.display = DepId ? "block" : "none";
+        AreaLabel.style.display = DepId ? "block" : "none";
+
+        // Adiciona as opções relevantes ao segundo dropdown
+    @foreach (var area in Model.Areas)
+    {
+        <text>
+                        if (DepId == "@area.DepartamentoId") {
+                Areas.innerHTML += '<option value="@area.Id">@area.Nome</option>';
+            }
+        </text>
+    }
+        });
+
+
+    const form = document.querySelector("form"),
+    fileInput = document.querySelector(".file-input"),
+    progressArea = document.querySelector(".progress-area"),
+    uploadedArea = document.querySelector(".uploaded-area");
+
+    form.addEventListener("click", () => {
+        fileInput.click();
+    });
+
+    fileInput.onchange = ({ target }) => {
+        let file = target.files[0]; //getting file [0] this means if user has selected multiple files then get first one only
+        if (file) {
+            let fileName = file.name;
+            if (fileName.length >= 12) { //if file name length is greater than 12 then split it and add ...
+                let splitName = fileName.split('.');
+                fileName = splitName[0].substring(0, 13) + "... ." + splitName[1];
+            }
+            uploadFile(fileName);
+        }
+    }
+
+    function uploadFile(name) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "php/upload.php");
+        xhr.upload.addEventListener("progress", ({ loaded, total }) => {
+            let fileLoaded = Math.floor((loaded / total) * 100);
+            let fileTotal = Math.floor(total / 1000);
+            let fileSize;
+            (fileTotal < 1024) ? fileSize = fileTotal + " KB" : fileSize = (loaded / (1024 * 1024)).toFixed(2) + " MB";
+            let progressHTML = `<li class="row">
+                                  <i class="fas fa-file-alt"></i>
+                                  <div class="content">
+                                    <div class="details">
+                                      <span class="name">${name} • Uploading</span>
+                                      <span class="percent">${fileLoaded}%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                      <div class="progress" style="width: ${fileLoaded}%"></div>
+                                    </div>
+                                  </div>
+                                </li>`;
+            uploadedArea.classList.add("onprogress");
+            progressArea.innerHTML = progressHTML;
+            if (loaded == total) {
+                progressArea.innerHTML = "";
+                let uploadedHTML = `<li class="row">
+                                    <div class="content upload">
+                                      <i class="fas fa-file-alt"></i>
+                                      <div class="details">
+                                        <span class="name">${name} • Uploaded</span>
+                                        <span class="size">${fileSize}</span>
+                                      </div>
+                                    </div>
+                                    <i class="fas fa-check"></i>
+                                  </li>`;
+                uploadedArea.classList.remove("onprogress");
+                uploadedArea.insertAdjacentHTML("afterbegin", uploadedHTML); //remove this line if you don't want to show upload history
+            }
+        });
+        let data = new FormData(form);
+        xhr.send(data);
+    }
+</script>

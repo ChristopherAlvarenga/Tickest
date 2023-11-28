@@ -22,8 +22,6 @@ namespace Tickest.Models.ViewModels
         [Compare("Senha", ErrorMessage = "As Senhas não condizem")]
         public string? ConfirmarSenha { get; set; }
 
-        public bool Gerenciador { get; set; }
-        
-        public bool Responsavel { get; set; }
+        public int Funcao { get; set; }
     }
 }

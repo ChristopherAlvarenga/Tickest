@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tickest.Models.Entities
 {
@@ -11,7 +12,11 @@ namespace Tickest.Models.Entities
         [StringLength(500)]
         public string? Endereco { get; set; }
 
-        public int TicketId { get; set; }
-        public virtual Ticket Ticket { get; set; }
+        [NotMapped]
+        IFormFile File { get; set; }
+
+        public int? TicketId { get; set; }
+        [ForeignKey(nameof(TicketId))]
+        public virtual Ticket? Ticket { get; set; }
     }
 }

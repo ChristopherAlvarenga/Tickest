@@ -81,7 +81,7 @@
   direction: ltr !important;
 }
 
-[dir='rtl'] .rtl-only {
+[dir="rtl"] .rtl-only {
   display: block !important;
 }
 
@@ -111,8 +111,6 @@
   text-align: center;
   margin-top: 1rem;
 }
-
-
 
 .select-btn {
   display: flex;
@@ -210,4 +208,10 @@
 
 .item.checked .check-icon {
   transform: scale(1);
+}
+
+.mensagem {
+  width: 100%;
+  height: auto;
+  background-color: #272727;
 }

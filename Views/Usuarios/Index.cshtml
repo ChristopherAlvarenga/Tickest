@@ -1,53 +1,57 @@
-﻿@model IEnumerable<Tickest.Models.Entities.Usuario>
+﻿@using Microsoft.AspNetCore.Identity;
+@model Tickest.Models.Entities.Usuario
+@inject UserManager<IdentityUser> userManager
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Tickest - Perfil Usuário";
+
+    var user = await userManager.FindByEmailAsync(User.Identity.Name);
+
+    if (await userManager.IsInRoleAsync(user, "Gerenciador"))
+        Layout = "_LayoutGerenciador";
+
+    else if (await userManager.IsInRoleAsync(user, "Responsavel"))
+        Layout = "_LayoutResponsavel";
+
+    else if (await userManager.IsInRoleAsync(user, "Desenvolvedor"))
+        Layout = "_Layout";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cargo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Departamento)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cargo.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Departamento.Nome)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <!-- Account -->
+                <div class="card-body">
+                    <div class="d-flex align-items-start align-items-sm-center gap-4">
+                        <img src="~/img/avatars/Perfil.jpg" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+                        <div class="button-wrapper">
+                            <p class="text-muted mb-0">@Model.Nome</p>
+                            <p class="text-muted mb-0">@Model.Email</p>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-0" />
+                <div class="card-body">
+                    <form id="formAccountSettings" method="POST">
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label for="firstName" class="form-label">Departamento</label>
+                                <input class="form-control" type="text" id="exampleFormControlReadOnlyInput1" placeholder="@Model.Departamento.Nome" readonly="">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="firstName" class="form-label">Cargo</label>
+                                <input class="form-control" type="text" id="exampleFormControlReadOnlyInput1" placeholder="@Model.Cargo" readonly="">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="lastName" class="form-label">Área</label>
+                                <input class="form-control" type="text" id="exampleFormControlReadOnlyInput1" placeholder="@Model.Area.Nome" readonly="">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- /Account -->
+            </div>
+        </div>
+    </div>
+</div>

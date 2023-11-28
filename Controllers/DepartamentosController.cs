@@ -10,10 +10,12 @@ namespace Tickest.Controllers
     [Authorize]
     public class DepartamentosController : Controller
     {
+        private readonly UserManager<IdentityUser> userManager;
         private readonly TickestContext _context;
 
-        public DepartamentosController(TickestContext context)
+        public DepartamentosController(UserManager<IdentityUser> userManager, TickestContext context)
         {
+            this.userManager = userManager;
             _context = context;
         }
 
@@ -28,14 +30,13 @@ namespace Tickest.Controllers
         {
             var query = _context.Usuarios.AsQueryable();
 
-            var viewModel = new UsuarioDepartamentoViewModel()
+            var viewModel = new UsuarioViewModel()
             {
                 Usuarios = query.Select(p => new Usuario
                 {
                     Id = p.Id,
                     Nome = p.Nome,
                     Email = p.Email,
-                    CargoId = p.CargoId,
                     DepartamentoId = p.DepartamentoId
                 }).ToList()
             };

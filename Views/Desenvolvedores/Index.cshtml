@@ -1,0 +1,96 @@
+﻿@model Tickest.Models.ViewModels.TicketViewModel
+
+@{
+    ViewData["Title"] = "Tickest - Home";
+}
+
+<div class="row">
+    <div class="col-lg-12 mb-4 order-0">
+        <div class="card">
+            <div class="d-flex align-items-end row">
+                <div class="col-sm-7">
+                    <div class="card-body p-4">
+                        <h5 class="card-title text-primary">Seja bem-vindo(a) @Model.Usuario.Nome!</h5>
+                        <p class="mb-3 mt-5">Concluídos esse mês: <span class="fw-bold">*Quantidade*</span></p>
+                        <p class="mb-3">Em análise esse mês: <span class="fw-bold">*Quantidade*</span></p>
+                        <p class="mb-1">Não concluídos esse mês: <span class="fw-bold">*Quantidade*</span></p>
+                    </div>
+                </div>
+                <div class="col-sm-5 text-center text-sm-left">
+                    <div class="card-body pb-0 px-0 px-md-4">
+                        <img src="~/img/illustrations/man-with-laptop-light.png" height="140" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        <div class="card">
+            <div class="row row-bordered g-0">
+                <h5 class="card-title text-primary m-4">Tickets em aberto</h5>
+                <div class="card">
+                    <div class="table-responsive text-nowrap">
+                        <table class="table table-hover">
+                            <tbody class="table-border-bottom-0">
+                                @foreach (var ticket in Model.Tickets)
+                                {
+                                    <tr>
+                                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>#@ticket.Id</strong></td>
+                                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>@ticket.Título</strong></td>
+                                        <td>@ticket.Departamento.Nome</td>
+                                        <td><span class="badge bg-label-dark me-1">@ticket.Status</span></td>
+                                        <td>
+                                            <!-- Botão -->
+                                            <button type="button" class="btn btn" data-bs-toggle="modal" data-bs-target="#modalScrollable">
+                                                Ver mais
+                                            </button>
+                                            <!-- Informação -->
+                                            <div class="modal fade" id="modalScrollable" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <span>#@ticket.Id</span>&nbsp; | &nbsp;<h5 class="modal-title me-2" id="modalScrollableTitle">@ticket.Título</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div>
+                                                                <h6>Criado em: @ticket.Data_Criação</h6>
+                                                            </div>
+                                                            <div>
+                                                                <h6>Prioridade: @ticket.Prioridade</h6>
+                                                            </div>
+                                                            <div>
+                                                                <h6>Status: @ticket.Status</h6>
+                                                            </div>
+                                                            <div>
+                                                                <h6>Enviado por: @ticket.Usuario.Nome (@ticket.Usuario.Email)</h6>
+                                                            </div>
+                                                            <div>
+                                                                <h6>Departamento: @ticket.Departamento.Nome</h6>
+                                                            </div>
+                                                            <br/>
+                                                            <div>
+                                                                @ticket.Descrição
+                                                            </div>
+                                                            <div class="mt-3">
+                                                                <a type="download">*Arquivos*</a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary">Comentar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Informação -->
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

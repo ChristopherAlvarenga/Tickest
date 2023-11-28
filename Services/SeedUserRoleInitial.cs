@@ -46,11 +46,11 @@ namespace Tickest.Services
                 IdentityResult roleResult = await _roleManager.CreateAsync(role);
             }
 
-            if (!await _roleManager.RoleExistsAsync("Colaborador"))
+            if (!await _roleManager.RoleExistsAsync("Desenvolvedor"))
             {
                 IdentityRole role = new IdentityRole();
-                role.Name = "Colaborador";
-                role.NormalizedName = "COLABORADOR";
+                role.Name = "Desenvolvedor";
+                role.NormalizedName = "DESENVOLVEDOR";
                 role.ConcurrencyStamp = Guid.NewGuid().ToString();
 
                 IdentityResult roleResult = await _roleManager.CreateAsync(role);
@@ -116,13 +116,13 @@ namespace Tickest.Services
                 }
             }
 
-            if (await _userManager.FindByEmailAsync("colaborador@localhost") == null)
+            if (await _userManager.FindByEmailAsync("desenvolvedor@localhost") == null)
             {
                 IdentityUser user = new IdentityUser();
-                user.UserName = "colaborador@localhost";
-                user.Email = "colaborador@localhost";
-                user.NormalizedUserName = "COLABORADOR@LOCALHOST";
-                user.NormalizedEmail = "COLABORADOR@LOCALHOST";
+                user.UserName = "desenvolvedor@localhost";
+                user.Email = "desenvolvedor@localhost";
+                user.NormalizedUserName = "DESENVOLVEDOR@LOCALHOST";
+                user.NormalizedEmail = "DESENVOLVEDOR@LOCALHOST";
                 user.EmailConfirmed = true;
                 user.LockoutEnabled = false;
                 user.SecurityStamp = Guid.NewGuid().ToString();
@@ -131,7 +131,7 @@ namespace Tickest.Services
 
                 if (userResult.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "Colaborador");
+                    await _userManager.AddToRoleAsync(user, "Desenvolvedor");
                 }
             }
         }

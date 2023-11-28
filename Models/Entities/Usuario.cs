@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Tickest.Models.Entities
 {
@@ -16,12 +18,16 @@ namespace Tickest.Models.Entities
         [MaxLength(100)]
         public string? Email { get; set; }
 
-        public int CargoId { get; set; }
-        public virtual Cargo Cargo { get; set; }
+        public string? Cargo { get; set; }
 
-        public int DepartamentoId { get; set; }
-        public virtual Departamento Departamento { get; set; }
+        public int? DepartamentoId { get; set; }
+        [ForeignKey(nameof(DepartamentoId))]
+        public virtual Departamento? Departamento { get; set; }
 
-        public ICollection<UsuarioTicket> UsuarioTickets { get; set; }
+        public int? AreaId { get; set; }
+        [ForeignKey(nameof(AreaId))]
+        public virtual Area? Area { get; set; }
+
+        public ICollection<Ticket> Tickets { get; set; }
     }
 }

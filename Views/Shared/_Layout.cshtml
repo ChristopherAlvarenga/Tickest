@@ -1,5 +1,23 @@
-﻿<!DOCTYPE html>
-<html lang="en"
+﻿@inject Tickest.Data.TickestContext _context
+
+@{
+    var Usuario = _context.Usuarios
+        .Where(p => p.Email == User.Identity.Name).FirstOrDefault();
+
+    var departamento = _context.Departamentos
+        .Where(p => p.Id == Usuario.DepartamentoId).FirstOrDefault();
+
+    var area = _context.Areas
+        .Where(p => p.Id == Usuario.AreaId).FirstOrDefault();
+
+    if(area != null)
+        Usuario.Area.Nome = area.Nome;
+    if(departamento != null)
+        Usuario.Departamento.Nome = departamento.Nome;
+}
+
+<!DOCTYPE html>
+<html lang="pt-br"
       class="light-style layout-menu-fixed"
       dir="ltr"
       data-theme="theme-default"
@@ -14,7 +32,7 @@
     <title>Tickest</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="~/img/favicon/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="~/img/logo/Logo2.png" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -52,7 +70,15 @@
             <!-- Menu -->
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
-                   
+                    <!-- Logo -->
+                    <div class="app-brand justify-content-center">
+                        <a class="app-brand-link gap-2">
+                            <span class="app-brand-logo demo">
+                                <img src="~/img/logo/Logo.png" alt="" style="width:15%">
+                            </span>
+                        </a>
+                    </div>
+                    <!-- /Logo -->
                 </div>
 
                 <div class="menu-inner-shadow"></div>
@@ -60,70 +86,62 @@
                 <ul class="menu-inner py-1">
                     <!-- Dashboard -->
                     <li class="menu-item active">
-                        <a asp-controller="Home" asp-action="Index" class="menu-link">
+                        <a asp-area="" asp-controller="Desenvolvedores" asp-action="Index" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
                             <div data-i18n="Analytics">Home</div>
                         </a>
                     </li>
 
-
                     <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">Departamentos</span>
+                        <span class="menu-header-text">Pessoal</span>
                     </li>
+
                     <li class="menu-item">
-                        <a href="" class="menu-link">
+                        <a asp-area="" asp-controller="Tickets" asp-action="Index" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-dock-top"></i>
-                            <div data-i18n="Account Settings">*Departamento*</div>
+                            <div data-i18n="Account Settings">Tickets Criados</div>
                         </a>
                     </li>
 
+                    <li class="menu-item">
+                        <a class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-history"></i>
+                            <div data-i18n="Basic">Histórico de Tickets</div>
+                        </a>
+                    </li>
 
-                    <!-- Components -->
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Ações</span></li>
-                    <!-- Cards -->
+                    <li class="menu-header small text-uppercase">
+                        <span class="menu-header-text">Ações</span>
+                    </li>
+
                     <li class="menu-item">
                         <a asp-area="" asp-action="Create" asp-controller="Tickets" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <i class="menu-icon tf-icons bx bx-add-to-queue"></i>
                             <div data-i18n="Basic">Criar Ticket</div>
                         </a>
                     </li>
 
                     <li class="menu-item">
-                        <a href="#" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Tickets Criados</div>
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-archive"></i>
+                            <div data-i18n="Account Settings">Exibir</div>
                         </a>
-                    </li>
-
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Meus Tickets</div>
-                        </a>
-                    </li>
-
-                    <!-- Misc -->
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">???</span></li>
-                    <li class="menu-item">
-                        <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                           target="_blank"
-                           class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-support"></i>
-                            <div data-i18n="Support">Suporte</div>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                           target="_blank"
-                           class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-file"></i>
-                            <div data-i18n="Documentation">Documentation</div>
-                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a class="menu-link">
+                                    <div data-i18n="Basic">Departamentos</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link">
+                                    <div data-i18n="Basic">Usuários</div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </aside>
             <!-- Menu -->
-
             <!-- Layout page -->
             <div class="layout-page">
 
@@ -147,38 +165,44 @@
                                        aria-label="Perquisar..." />
                             </div>
                         </div>
+
                         <!-- /Search -->
 
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
 
+                            <li class="avatar avatar btn rounded-pill btn-icon btn-outline-primary bg-light">
+                                <a class="text-dark"><span class="tf-icons bx bx-bell"></span></a>
+                            </li>
 
                             <!-- User -->
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-                                    <div class="avatar avatar-online">
+                                    <div class="avatar">
                                         <img src="~/img/avatars/Perfil.jpg" class="w-px-40 h-auto rounded-circle" />
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a asp-area="" asp-controller="Usuarios" asp-action="Index" class="dropdown-item">
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-3">
-                                                    <div class="avatar avatar-online">
-                                                        <img src="~/img/avatars/Perfil.jpg" alt class="w-px-40 h-auto rounded-circle" />
+                                                    <div class="avatar">
+                                                        <img src="~/img/avatars/Perfil.jpg" class="w-px-40 h-auto rounded-circle" />
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block">*Nome*</span>
-                                                    <small class="text-muted">*Cargo*</small>
+                                                    <span class="fw-semibold d-block">@Usuario.Nome</span>
+                                                    @if (departamento != null)
+                                                    {
+                                                        <small class="text-muted">@Usuario.Departamento.Nome</small>
+                                                    }
+                                                    <br />
+                                                    @if(area != null)
+                                                    {
+                                                        <small class="text-muted">@Usuario.Area.Nome</small>
+                                                    }
                                                 </div>
                                             </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="bx bxs-bell me-2"></i>
-                                            <span class="align-middle">Notificações</span>
                                         </a>
                                     </li>
                                     <li>
@@ -212,30 +236,6 @@
                             </main>
                         </div>
 
-                        <!-- Footer -->
-                        <footer class="content-footer footer bg-footer-theme">
-                            <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
-                                <div class="mb-2 mb-md-0">
-                                    ©
-                                    <script>
-                                        document.write(new Date().getFullYear());
-                                    </script>
-                                </div>
-                                <div>
-                                    <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
-
-                                    <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                                       target="_blank"
-                                       class="footer-link me-4">Documentation</a>
-
-                                    <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                                       target="_blank"
-                                       class="footer-link me-4">Support</a>
-                                </div>
-                            </div>
-                        </footer>
-                        <!-- / Footer -->
-
                         <div class="content-backdrop fade"></div>
                     </div>
                     <!-- Content wrapper -->
@@ -243,14 +243,12 @@
                 </div>
             </div>
             <!-- Layout page -->
-
             <!-- Overlay -->
             <div class="layout-overlay layout-menu-toggle"></div>
             <!-- Overlay -->
         </div>
     </div>
     <!-- Layout wrapper -->
-
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     <script src="~/vendor/libs/jquery/jquery.js"></script>

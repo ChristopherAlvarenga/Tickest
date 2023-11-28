@@ -1,17 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tickest.Models.Entities
 {
     public class Area
     {
-        [Key]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string? Nome { get; set; }
+        public string Nome { get; set; }
 
-        public int DepartamentoId { get; set; }
-        public virtual Departamento Departamento { get; set; }
+        public int? DepartamentoId { get; set; }
+        [ForeignKey(nameof(DepartamentoId))]
+        public virtual Departamento? Departamento { get; set; }
+
+        public ICollection<Usuario> Usuarios { get; set; }
     }
 }
