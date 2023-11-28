@@ -1,14 +1,58 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Tickest.Data;
+using Tickest.Models.Entities;
+using Tickest.Models.ViewModels;
 
 namespace Tickest.Controllers
 {
     public class ResponsaveisController : Controller
     {
+        private readonly UserManager<IdentityUser> userManager;
+        private readonly TickestContext _context;
+
+        public ResponsaveisController(UserManager<IdentityUser> userManager, TickestContext context)
+        {
+            this.userManager = userManager;
+            _context = context;
+        }
+
         // GET: ResponsaveisController
         public ActionResult Index()
         {
-            return View();
+            var usuario = _context.Usuarios
+                .Include(p => p.Departamento)
+                .Where(p => p.Email == User.Identity.Name)
+                .FirstOrDefault();
+
+            var query = _context.Tickets
+                .Include(p => p.Departamento)
+                .Include(p => p.Usuario)
+                .Where(p => p.DepartamentoId == usuario.DepartamentoId)
+                .Where(p => p.Status != Ticket.Tipo.Concluído)
+                .Where(p => p.Status != Ticket.Tipo.Cancelado)
+                .AsQueryable();
+
+            var viewModel = new TicketViewModel()
+            {
+                Tickets = query.Select(p => new Ticket
+                {
+                    Id = p.Id,
+                    Título = p.Título,
+                    Descrição = p.Descrição,
+                    Data_Criação = p.Data_Criação,
+                    Comentario = p.Comentario,
+                    Status = p.Status,
+                    Prioridade = p.Prioridade,
+                    Usuario = p.Usuario,
+                    Departamento = p.Departamento
+                }).ToList(),
+                Usuario = usuario
+            };
+
+            return View(viewModel);
         }
 
         // GET: ResponsaveisController/Details/5

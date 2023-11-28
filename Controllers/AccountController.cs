@@ -105,13 +105,13 @@ namespace Tickest.Controllers
                     var user = await userManager.FindByEmailAsync(loginModel.Email);
 
                     if (await userManager.IsInRoleAsync(user, "Admin"))
-                        return RedirectToAction("Index", "Admin", new { area = "Admin" });
+                        return RedirectToAction("Index", "Admin");
 
                     else if (await userManager.IsInRoleAsync(user, "Gerenciador"))
                         return RedirectToAction("Index", "Gerenciador", new { area = "Gerenciador" });
 
                     else if (await userManager.IsInRoleAsync(user, "Responsavel"))
-                        return RedirectToAction("Index", "Responsavel", new { area = "Responsavel" });
+                        return RedirectToAction("Index", "Responsaveis");
 
                     else if (await userManager.IsInRoleAsync(user, "Desenvolvedor"))
                         return RedirectToAction("Index", "Desenvolvedores");
