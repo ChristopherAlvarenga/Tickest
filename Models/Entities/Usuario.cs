@@ -9,10 +9,10 @@ namespace Tickest.Models.Entities
         [MaxLength(100)]
         public string Nome { get; set; }
 
-        public int? CargoId { get; set; }
+        public int CargoId { get; set; }
         public virtual Cargo Cargo { get; set; }
 
-        public int? DepartamentoId { get; set; }
+        public int DepartamentoId { get; set; }
         public virtual Departamento Departamento { get; set; }
 
         public ICollection<UsuarioTicket> UsuarioTickets { get; set; }

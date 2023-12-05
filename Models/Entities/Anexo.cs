@@ -9,7 +9,7 @@ namespace Tickest.Models.Entities
 
         [Required]
         [StringLength(500)]
-        public string? Endereco { get; set; }
+        public string Endereco { get; set; }
 
         public int TicketId { get; set; }
         public virtual Ticket Ticket { get; set; }

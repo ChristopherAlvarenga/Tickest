@@ -1,6 +1,4 @@
-﻿using NuGet.Packaging;
-
-namespace Tickest.Services
+﻿namespace Tickest.Services
 {
     public class ServiceResult
     {
@@ -10,7 +8,10 @@ namespace Tickest.Services
 
         public object Data { get; set; }
 
-        public void AddError(string key, string error) => Errors.Add(new(key, error));
+        public void AddError(string key, string error)
+        {
+            Errors.Add(new(key, error));
+        }
 
         public ServiceResult(object data)
         {

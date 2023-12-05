@@ -1,0 +1,88 @@
+﻿@using Tickest.Models.ViewModels
+@model UsuarioRegisterViewModel
+
+@{
+    Layout = "_LayoutGerenciador";
+    ViewData["Title"] = "Tickest - Cadastrar funcionário";
+}
+
+<div class="row">
+    @using (Html.BeginForm("CadastarFuncionario", "Gerenciador", new { area = "Gerenciador" }))
+    {
+        <!-- Basic -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <h5 class="card-header">Funcionário</h5>
+                <div class="card-body demo-vertical-spacing demo-only-element">
+                    <label class="form-label" for="basic-default-password12">Nome</label>
+                    
+                    <div class="input-group">
+                        <input type="text"
+                               asp-for="Nome"
+                               class="form-control"
+                               placeholder="Nome"
+                               aria-label="Nome"
+                               aria-describedby="basic-addon11" />
+                        <span asp-validation-for="Nome" class="text-danger"></span>
+                    </div>
+
+                    <label class="form-label" asp-for=Email for="basic-default-password12">Email</label>
+                    <div class="input-group">
+                        <input type="text"
+                               asp-for="Email"
+                               class="form-control"
+                               placeholder="Email"
+                               aria-label="Email"
+                               aria-describedby="basic-addon11" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <label class="form-label" asp-for=Senha for="basic-default-password12">Senha</label>
+                    <div class="input-group">
+                        <input type="password"
+                               asp-for="Senha"
+                               class="form-control"
+                               placeholder="Senha"
+                               aria-label="Senha"
+                               aria-describedby="basic-addon11" />
+                        <span asp-validation-for="Senha" class="text-danger"></span>
+                    </div>
+
+                    <label class="form-label" asp-for="ConfirmarSenha" for="basic-default-password12">Senha</label>
+                    <div class="input-group">
+                        <input type="password"
+                               asp-for="ConfirmarSenha"
+                               class="form-control"
+                               placeholder="ConfirmarSenha"
+                               aria-label="ConfirmarSenha"
+                               aria-describedby="basic-addon11" />
+                        <span asp-validation-for="ConfirmarSenha" class="text-danger"></span>
+                    </div>
+
+                    <label class="form-label" for="basic-default-password12">Departamento</label>
+                    <div class="input-group">
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.DepartamentoSelecionado, new SelectList(Model.Departamentos, "Id", "Nome"), "Selecione um departamento", new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <label class="form-label" for="basic-default-password12">Área</label>
+                    <div class="input-group">
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.AreaSelecionada, new SelectList(Model.Areas, "Id", "Nome"), "Selecione uma área", new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="formFileMultiple" class="form-label">Anexos</label>
+                        <input class="form-control" type="file" id="formFileMultiple" multiple />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3">Enviar</button>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+

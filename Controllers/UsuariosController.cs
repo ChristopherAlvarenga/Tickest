@@ -16,11 +16,11 @@ namespace Tickest.Controllers
     public class UsuariosController : Controller
     {
         private readonly TickestContext _context;
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IAccountService _authenticationService;
 
         public UsuariosController(
             TickestContext context,
-            IAuthenticationService authenticationService)
+            IAccountService authenticationService)
         {
             _context = context;
             _authenticationService = authenticationService;

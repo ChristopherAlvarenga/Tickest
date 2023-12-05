@@ -52,94 +52,54 @@
             <!-- Menu -->
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
-                   
+                    <a href="index.html" class="app-brand-link">
+                        <div class="mb-2">
+                            <img src="../assets/img/logo/Logo.png" alt="" style="width: 100%;">
+                        </div>
+
+                    </a>
+                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+                        <i class="bx bx-chevron-left bx-sm align-middle"></i>
+                    </a>
                 </div>
-
                 <div class="menu-inner-shadow"></div>
-
                 <ul class="menu-inner py-1">
-                    <!-- Dashboard -->
-                    <li class="menu-item active">
-                        <a asp-area="Gerenciador" asp-controller="Gerenciador" asp-action="Index" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                            <div data-i18n="Analytics">Home</div>
-                        </a>
-                    </li>
-
-
-                    <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">Departamentos</span>
-                    </li>
+                    <li class="menu-item"><a href="index.html" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div data-i18n="Analytics">Home</div></a></li>
+                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Pessoal</span></li>
                     <li class="menu-item">
-                        <a href="" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-dock-top"></i>
-                            <div data-i18n="Account Settings">*Departamento*</div>
-                        </a>
+                        <a href="javascript:void(0);" class="menu-link menu-toggle"><i class="menu-icon tf-icons bx bx-bookmark"></i><div data-i18n="Account Settings">Minhas áreas</div></a>
+                        <ul class="menu-sub">
+                            <li class="menu-item"><a href="pages-account-settings-account.html" class="menu-link"><div data-i18n="Account">*Área*</div></a></li>
+                            <li class="menu-item"><a href="pages-account-settings-notifications.html" class="menu-link"><div data-i18n="Notifications">*Área*</div></a></li>
+                            <li class="menu-item"><a href="pages-account-settings-connections.html" class="menu-link"><div data-i18n="Connections">*Área*</div></a></li>
+                        </ul>
                     </li>
-
-
-                    <!-- Components -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Ações</span></li>
-                    <!-- Cards -->
                     <li class="menu-item">
-                        <a asp-area="" asp-action="Create" asp-controller="Tickets" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Criar Ticket</div>
-                        </a>
-                    </li>
-
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Tickets Criados</div>
-                        </a>
-                    </li>
-
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Meus Tickets</div>
-                        </a>
-                    </li>
-
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Gerenciamento</span></li>
-                    <!-- Cards -->
-                    <li class="menu-item">
-                        <a asp-area="" asp-action="Register" asp-controller="Account" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Adicionar Colaborador</div>
-                        </a>
-                    </li>
-
-                    <li class="menu-item">
-                        <a asp-area="" asp-action="Create" asp-controller="Departamentos" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Adicionar Departamento</div>
-                        </a>
-                    </li>
-
-                    <!-- Misc -->
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">???</span></li>
-                    <li class="menu-item">
-                        <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                           target="_blank"
-                           class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-support"></i>
-                            <div data-i18n="Support">Suporte</div>
-                        </a>
+                        <a href="javascript:void(0);" class="menu-link menu-toggle"><i class="menu-icon tf-icons bx bx-plus-circle"></i><div data-i18n="Account Settings">Adicionar</div></a>
+                        <ul class="menu-sub">
+                            <li class="menu-item"><a asp-area="Gerenciador" asp-controller="Gerenciador" asp-action="CadastarFuncionario" class="menu-link"><div data-i18n="Basic">Colaborador</div></a></li>
+                            <li class="menu-item"><a href="criarSetor.html" class="menu-link"><div data-i18n="Basic">Setor</div></a></li>
+                            <li class="menu-item"><a href="#" class="menu-link"><div data-i18n="Basic">Área</div></a></li>
+                        </ul>
                     </li>
                     <li class="menu-item">
-                        <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                           target="_blank"
-                           class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-file"></i>
-                            <div data-i18n="Documentation">Documentation</div>
-                        </a>
+                        <a href="javascript:void(0);" class="menu-link menu-toggle"><i class="menu-icon tf-icons bx bx-archive"></i><div data-i18n="Account Settings">Exibir</div></a>
+                        <ul class="menu-sub">
+                            <li class="menu-item"><a href="cadastroFunc.html" class="menu-link"><div data-i18n="Basic">Colaboradores</div></a></li>
+                            <li class="menu-item"><a href="criarSetor.html" class="menu-link"><div data-i18n="Basic">Setores</div></a></li>
+                            <li class="menu-item"><a href="#" class="menu-link"><div data-i18n="Basic">Áreas</div></a></li>
+                        </ul>
                     </li>
+                    <li class="menu-item"><a href="criarTicket.html" class="menu-link"><i class="menu-icon tf-icons bx bx-add-to-queue"></i><div data-i18n="Basic">Criar Ticket</div></a></li>
+                    <li class="menu-item"><a href="#" class="menu-link"><i class="menu-icon tf-icons bx bx-message"></i><div data-i18n="Basic">Enviar mensagem</div></a></li>
+                    <li class="menu-item"><a href="#" class="menu-link"><i class="menu-icon tf-icons bx bx-history"></i><div data-i18n="Basic">Histórico</div></a></li>
+                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Ajuda</span></li>
+                    <li class="menu-item"><a href="https://github.com/themeselection/sneat-html-admin-template-free/issues" target="_blank" class="menu-link"><i class="menu-icon tf-icons bx bx-support"></i><div data-i18n="Support">Suporte</div></a></li>
+                    <li class="menu-item"><a href="#" target="_blank" class="menu-link"><i class="menu-icon tf-icons bx bx-file"></i><div data-i18n="Documentation">Como usar?</div></a></li>
                 </ul>
             </aside>
             <!-- Menu -->
-
             <!-- Layout page -->
             <div class="layout-page">
 
@@ -259,14 +219,12 @@
                 </div>
             </div>
             <!-- Layout page -->
-
             <!-- Overlay -->
             <div class="layout-overlay layout-menu-toggle"></div>
             <!-- Overlay -->
         </div>
     </div>
     <!-- Layout wrapper -->
-
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     <script src="~/vendor/libs/jquery/jquery.js"></script>

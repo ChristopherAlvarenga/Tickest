@@ -15,11 +15,11 @@ namespace Tickest.Controllers
         private readonly SignInManager<Usuario> signInManager;
         private readonly TickestContext _context;
 
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IAccountService _authenticationService;
 
         public AccountController(UserManager<Usuario> userManager,
             SignInManager<Usuario> signInManager, TickestContext context,
-            IAuthenticationService authenticationService)
+            IAccountService authenticationService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -36,11 +36,8 @@ namespace Tickest.Controllers
 
         [Authorize("Admin")]
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel registerModel)
+        public async Task<IActionResult> Register(UsuarioRegisterViewModel registerModel)
         {
-            //if (!ModelState.IsValid)
-            //    return View(registerModel);
-
             var registerResult = await _authenticationService.RegisterAsync(registerModel);
             if (!registerResult.Success)
             {
@@ -51,52 +48,6 @@ namespace Tickest.Controllers
             }
 
             return RedirectToAction("Index", "Gerenciador", new { area = "Gerenciador" });
-
-
-            //if (ModelState.IsValid)
-            //{
-            //    // Copia os dados do RegisterViewModel para o IdentityUser
-            //    var user = new Usuario
-            //    {
-            //        UserName = registerModel.Nome,
-            //        Email = registerModel.Email,
-            //        NormalizedUserName = registerModel.Nome.ToUpper(),
-            //        NormalizedEmail = registerModel.Email.ToUpper(),
-            //    };
-
-            //    // Armazena os dados do usuário na tabela AspNetUsers
-            //    var result = await userManager.CreateAsync(user, registerModel.Senha);
-
-            //    // Se o usuário foi criado com sucesso, faz o login do usuário usando o serviço
-            //    // SignInManager e redireciona para o método Action Index
-            //    if (result.Succeeded)
-            //    {
-            //        if (registerModel.Gerenciador)
-            //            await userManager.AddToRoleAsync(user, "Gerenciador");
-            //        else if (registerModel.Responsavel)
-            //            await userManager.AddToRoleAsync(user, "Responsavel");
-            //        else
-            //            await userManager.AddToRoleAsync(user, "Colaborador");
-
-            //        var usuario = new Usuario()
-            //        {
-            //            Nome = registerModel.Nome,
-            //            Email = registerModel.Email,
-            //            CargoId = 1,
-            //            DepartamentoId = 1
-            //        };
-
-            //        _context.Add(usuario);
-            //        await _context.SaveChangesAsync();
-            //    }
-
-            //    // Se houver erros, inclui no ModelState e exibe pela tag helper summary na validação
-            //    foreach (var error in result.Errors)
-            //    {
-            //        ModelState.AddModelError(string.Empty, error.Description);
-            //    }
-            //}
-            //return RedirectToAction("Index", "Gerenciador", new { area = "Gerenciador" });
         }
 
         [AllowAnonymous]

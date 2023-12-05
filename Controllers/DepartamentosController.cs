@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Tickest.Data;
 using Tickest.Models.Entities;
@@ -24,6 +23,7 @@ namespace Tickest.Controllers
             return View();
         }
 
+        //Dúvida
         [Authorize(Policy = "AdminGerenciadorPolicy")]
         public IActionResult Create()
         {
@@ -44,12 +44,19 @@ namespace Tickest.Controllers
             return View(viewModel);
         }
 
+        public IActionResult InserirDepartamento()
+        {
+            
+
+            return RedirectToAction("Index");
+        }
+
         [Authorize(Policy = "AdminGerenciadorPolicy")]
         [HttpPost]
         public async Task<IActionResult> Create([Bind("Nome,ResponsavelId")] Departamento departamento)
         {
-                _context.Add(departamento);
-                await _context.SaveChangesAsync();
+            _context.Add(departamento);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", "Gerenciador", new { area = "Gerenciador" });
         }

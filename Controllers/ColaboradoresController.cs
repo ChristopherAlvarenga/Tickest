@@ -10,11 +10,11 @@ namespace Tickest.Controllers
     public class ColaboradoresController : Controller
     {
         private readonly ILogger<ColaboradoresController> _logger;
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IAccountService _authenticationService;
 
         public ColaboradoresController(
             ILogger<ColaboradoresController> logger,
-            IAuthenticationService authenticationService)
+            IAccountService authenticationService)
         {
             _logger = logger;
             _authenticationService = authenticationService;

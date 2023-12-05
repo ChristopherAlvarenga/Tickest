@@ -1,17 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
 
 namespace Tickest.Services.Authentication
 {
-    public class AuthenticationService : IAuthenticationService
+    public class AccountService : IAccountService
     {
         private readonly UserManager<Usuario> _userManager;
         private readonly SignInManager<Usuario> _signInManager;
@@ -19,7 +14,7 @@ namespace Tickest.Services.Authentication
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly TickestContext _context; // Adicionei a palavra-chave readonly
 
-        public AuthenticationService(
+        public AccountService(
             UserManager<Usuario> userManager,
             SignInManager<Usuario> signInManager,
             IHttpContextAccessor httpContextAccessor,
@@ -33,6 +28,7 @@ namespace Tickest.Services.Authentication
             _roleManager = roleManager;
         }
 
+        //Obter usuário logado
         public async Task<Usuario> GetCurrentUserAsync()
         {
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
@@ -42,7 +38,7 @@ namespace Tickest.Services.Authentication
             return await _context.Usuarios.FirstOrDefaultAsync(p => p.Id == currentUser.Id);
         }
 
-        public async Task<ServiceResult> RegisterAsync(RegisterViewModel model)
+        public async Task<ServiceResult> RegisterAsync(UsuarioRegisterViewModel model)
         {
             if (model == null)
                 return new ServiceResult(new List<string> { "Dados inválidos" });
@@ -51,20 +47,20 @@ namespace Tickest.Services.Authentication
 
             // Validação
             if (string.IsNullOrEmpty(model.Email))
-                serviceResult.AddError(nameof(RegisterViewModel.Email), "Email não pode ser vazio");
+                serviceResult.AddError(nameof(UsuarioRegisterViewModel.Email), "Email não pode ser vazio");
 
             if (string.IsNullOrEmpty(model.Nome))
-                serviceResult.AddError(nameof(RegisterViewModel.Nome), "Nome não pode ser vazio");
+                serviceResult.AddError(nameof(UsuarioRegisterViewModel.Nome), "Nome não pode ser vazio");
 
             if (string.IsNullOrEmpty(model.Senha))
-                serviceResult.AddError(nameof(RegisterViewModel.Senha), "Senha não pode ser vazia");
+                serviceResult.AddError(nameof(UsuarioRegisterViewModel.Senha), "Senha não pode ser vazia");
 
             // Confirmação
             if (string.IsNullOrEmpty(model.ConfirmarSenha))
-                serviceResult.AddError(nameof(RegisterViewModel.ConfirmarSenha), "Confirmação de senha não pode ser vazia");
+                serviceResult.AddError(nameof(UsuarioRegisterViewModel.ConfirmarSenha), "Confirmação de senha não pode ser vazia");
 
             if (model.Senha != model.ConfirmarSenha)
-                serviceResult.AddError(nameof(RegisterViewModel.ConfirmarSenha), "As senhas não coincidem");
+                serviceResult.AddError(nameof(UsuarioRegisterViewModel.ConfirmarSenha), "As senhas não coincidem");
 
             if (!serviceResult.Success)
                 return serviceResult;
@@ -77,8 +73,8 @@ namespace Tickest.Services.Authentication
                 NormalizedUserName = model.Nome.ToUpper(),
                 NormalizedEmail = model.Email.ToUpper(),
                 Nome = model.Nome,
-                //CargoId = 1,
-                //DepartamentoId = 1
+                //CargoId = model.car,
+                DepartamentoId = model.DepartamentoSelecionado
             };
 
             // Armazena os dados do usuário na tabela AspNetUsers
@@ -90,7 +86,7 @@ namespace Tickest.Services.Authentication
             if (!serviceResult.Success)
                 return serviceResult;
 
-           await _userManager.AddToRoleAsync(user, model.GetRole());
+            await _userManager.AddToRoleAsync(user, model.UserRole.Nome);
 
             return serviceResult;
         }

@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics.X86;
 using Tickest.Areas.Gerenciador.ViewModels;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
 using Tickest.Services.Authentication;
-using static Tickest.Models.Entities.Ticket;
 
 namespace Tickest.Controllers
 {
@@ -18,107 +14,20 @@ namespace Tickest.Controllers
     [Authorize(Policy = "AdminGerenciadorPolicy")]
     public class GerenciadorController : Controller
     {
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IAccountService _accountService;
         private readonly TickestContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public GerenciadorController(
-            IAuthenticationService authenticationService,
-            TickestContext context)
+            IAccountService accountService,
+            TickestContext context,
+            RoleManager<IdentityRole> roleManager)
         {
-            _authenticationService = authenticationService;
+            _accountService = accountService;
             _context = context;
+            _roleManager = roleManager;
         }
 
-        #region Seed Ticket
-
-        private async Task SeedTicket()
-        {
-            var tickets = new List<Ticket>()
-            {
-                new Ticket
-                {
-                    Titulo = "Problema no Carrinho",
-                    Descricao = "Eu como usuário não estou conseguindo acessar meu Carrinho",
-                    Comentario = "Recebo erro de Carrinho inválido",
-                    DataCriacao = DateTime.Now.AddDays(3),
-                    DataLimite = DateTime.Now.AddDays(4),
-                    Prioridade = Escolha.Baixa,
-                    Status = new List<TicketStatus>
-                    {
-                        new TicketStatus{ Status = TicketStatusEnum.Aberto, DataAlteracao =  DateTime.Now.AddDays(3)},
-                    }
-                },
-
-                new Ticket
-                {
-                    Titulo = "Problema no Login",
-                    Descricao = "Eu como usuário não estou conseguindo acessar minha conta",
-                    Comentario = "Recebo erro de usuário inválido",
-                    DataCriacao = DateTime.Now.AddDays(1),
-                    DataLimite = DateTime.Now.AddDays(4),
-                    Prioridade = Escolha.Baixa,
-                    Status = new List<TicketStatus>
-                    {
-                        new TicketStatus{ Status = TicketStatusEnum.Aberto, DataAlteracao =  DateTime.Now.AddDays(1)},
-                        new TicketStatus{ Status = TicketStatusEnum.Andamento, DataAlteracao =  DateTime.Now.AddMinutes(120)},
-                    }
-                },
-                new Ticket
-                {
-                    Titulo = "Problema na conta",
-                    Descricao = "Eu como usuário não estou conseguindo acessar minha conta pessoal",
-                    Comentario = "Recebo erro de conta inválida",
-                    DataCriacao = DateTime.Now,
-                    DataLimite = DateTime.Now.AddDays(5),
-                    Prioridade = Escolha.Media,
-                    Status = new List<TicketStatus>
-                    {
-                        new TicketStatus{ Status = TicketStatusEnum.Aberto, DataAlteracao =  DateTime.Now},
-                        new TicketStatus{ Status = TicketStatusEnum.Andamento, DataAlteracao =  DateTime.Now.AddHours(4)},
-                    }
-                },
-
-                new Ticket
-                {
-                    Titulo = "Problema no cadastro de usuario",
-                    Descricao = "Nâo consigo cadastr um usuario",
-                    Comentario = "Recebo erro de entrar em contato com o suporte",
-                    DataCriacao = DateTime.Now,
-                    DataLimite = DateTime.Now.AddDays(6),
-                    Prioridade = Escolha.Alta,
-                    Status = new List<TicketStatus>
-                    {
-                        new TicketStatus{ Status = TicketStatusEnum.Aberto, DataAlteracao =  DateTime.Now},
-                        new TicketStatus{ Status = TicketStatusEnum.Andamento, DataAlteracao =  DateTime.Now.AddHours(5)},
-                        new TicketStatus{ Status = TicketStatusEnum.Teste, DataAlteracao =  DateTime.Now.AddHours(8)},
-                        new TicketStatus{ Status = TicketStatusEnum.Concluido, DataAlteracao =  DateTime.Now.AddDays(3)},
-                    }
-                },
-
-                new Ticket
-                {
-                    Titulo = "Problema no computador",
-                    Descricao = "Não liga",
-                    Comentario = "Nenhuma luz ascende",
-                    DataCriacao = DateTime.Now,
-                    DataLimite = DateTime.Now.AddDays(7),
-                    Prioridade = Escolha.Urgente,
-                    Status = new List<TicketStatus>
-                    {
-                        new TicketStatus{ Status = TicketStatusEnum.Aberto, DataAlteracao =  DateTime.Now},
-                        new TicketStatus{ Status = TicketStatusEnum.Andamento, DataAlteracao =  DateTime.Now.AddHours(6)},
-                        new TicketStatus{ Status = TicketStatusEnum.Teste, DataAlteracao =  DateTime.Now.AddDays(2)},
-                    }
-                }
-            };
-
-            _context.Tickets.AddRange(tickets);
-            await _context.SaveChangesAsync();
-        }
-
-        #endregion
-
-        // Recuperar o primeiro dia da semana atual 
         public DateTime GetPrimeiroDiaSemana(DateTime date)
         {
             int daysUntilSunday = (int)date.DayOfWeek;
@@ -134,7 +43,7 @@ namespace Tickest.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var currentuser = await _authenticationService.GetCurrentUserAsync();
+            var currentuser = await _accountService.GetCurrentUserAsync();
 
             //TICKECTSTATUS
             //TicketId
@@ -196,10 +105,42 @@ namespace Tickest.Controllers
                     Quantidade = ticktesHoje.Count(p => p.Status.OrderByDescending(x => x.DataAlteracao).FirstOrDefault().Status == TicketStatusEnum.Concluido),
                     //setor
                 },
-
-
             };
             return View(viewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CadastarFuncionario()
+        {
+            //Áreas e Departamentos 
+            var viewModel = new UsuarioRegisterViewModel();
+            viewModel.Areas = await _context.Areas.Select(p => new AreaViewModel { Id = p.Id, Nome = p.Nome }).ToListAsync();
+            viewModel.Departamentos = await _context.Departamentos.Select(p => new DepartamentoViewModel { Id = p.Id, Nome = p.Nome }).ToListAsync();
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CadastarFuncionario(UsuarioRegisterViewModel registerModel)
+        {
+            if (!ModelState.IsValid)
+                return View(registerModel);
+
+            IdentityRole role = await _roleManager.FindByNameAsync("Colaborador");
+
+            registerModel.UserRole = new(role.Id, role.Name);
+
+            var registerResult = await _accountService.RegisterAsync(registerModel);
+
+            if (!registerResult.Success)
+            {
+                foreach (var keyError in registerResult.Errors)
+                    ModelState.AddModelError(keyError.Key, keyError.Error);
+
+                return View(registerModel);
+            }
+
+            return View(new UsuarioRegisterViewModel());
         }
     }
 }
