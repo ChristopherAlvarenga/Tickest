@@ -18329,15 +18329,14 @@ html:not(.layout-footer-fixed) .content-wrapper {
   background-color: #f0f0f0; /* Highlight on hover */
 }
 
-/* Style for submenu items */
 .cs2 .submenu {
   display: none;
   position: absolute;
-  top: 0;
-  left: 100%;
+  top: 100%; /* Alterado para "100%" para que o submenu apareça abaixo do menu principal */
+  left: 0; /* Alterado para "0" para alinhar o submenu com o lado esquerdo do menu principal */
   z-index: 1;
   background-color: #f9f9f9;
-  border-radius: 0 5px 5px 0;
+  border-radius: 0 0 5px 5px; /* Ajustado o border-radius para melhorar a aparência */
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
