@@ -1,0 +1,38 @@
+﻿@using Tickest.Models.ViewModels;
+@model IEnumerable<DepartamentoListViewModel>;
+
+@{
+    Layout = "_LayoutGerenciador";
+    ViewData["Title"] = "Tickest - Adicionar Departamento";
+}
+
+<div class="container">
+    <h2>Departamentos</h2>
+    <p>Departamentos cadastrados no sistema:</p>
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Responsável</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var departamento in Model)
+            {
+                <tr>
+                    <td>@departamento.Nome</td>
+                    <td>@departamento.Responsavel.Nome</td>
+                    <td>
+                        <a href="@Url.Action("Edit", "Departamentos", new { id = departamento.Id })">Editar</a>
+                    </td>
+
+                    <td>
+                        <a href="@Url.Action("Delete", "Departamentos", new { id = departamento.Id })">Deletar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tickest.Data;
+using Tickest.Models.Entities;
 using Tickest.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -68,11 +69,15 @@ app.Run();
 
 async Task CriarPerfilUsuarioAsync(WebApplication app)
 {
-    var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
+    var scopedFactory = app.Services.GetService<IServiceScopeFactory>(); 
 
     using (var scope = scopedFactory.CreateScope())
     {
         var service = scope.ServiceProvider.GetService<ISeedUserRoleInitial>();
+        var context = scope.ServiceProvider.GetService<TickestContext>();
+
+        context.Database.Migrate();
+
         await service.SeedRolesAsync();
         await service.SeedUsersAsync();
     }
