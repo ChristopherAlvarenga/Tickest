@@ -1,4 +1,4 @@
-﻿@model Tickest.Models.Entities.Usuario
+﻿@model Tickest.Models.ViewModels.UsuarioEditViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -6,11 +6,18 @@
 
 <h1>Edit</h1>
 
+@{
+    if (ViewBag.Error != null)
+    {
+        <span style="color: red">@ViewBag.Error</span>
+    }
+}
+
 <h4>Usuario</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" asp-controller="Usuarios">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -18,16 +25,13 @@
                 <input asp-for="Nome" class="form-control" />
                 <span asp-validation-for="Nome" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DepartamentoId" class="control-label"></label>
-                <select asp-for="DepartamentoId" class="form-control" asp-items="ViewBag.DepartamentoId"></select>
-                <span asp-validation-for="DepartamentoId" class="text-danger"></span>
-            </div>
+
+           @* <div class="form-group">
+                <label asp-for="x" class="control-label"></label>
+                <input asp-for="x" class="form-control" />
+                <span asp-validation-for="x" class="text-danger"></span>
+            </div>*@
+           
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -40,5 +44,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

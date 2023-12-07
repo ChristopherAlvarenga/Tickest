@@ -1,0 +1,54 @@
+﻿@using Tickest.Models.ViewModels;
+@using Microsoft.AspNetCore.Identity;
+
+@model IEnumerable<UsuarioListViewModel>;
+@inject UserManager<IdentityUser> userManager
+
+@{
+    async Task<bool> PodeEditarOuDeletar()
+    {
+        var user = await userManager.FindByEmailAsync(User.Identity.Name);
+        return await userManager.IsInRoleAsync(user, "Gerenciador");
+    }
+}
+
+@{
+    Layout = "_LayoutGerenciador";
+    ViewData["Title"] = "Tickest - Adicionar Departamento";
+}
+
+<div class="container">
+    <h2>Usuários</h2>
+    <p>Usuários cadastrados no sistema:</p>
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Área</th>
+                <th>Departamento</th>
+                @if (await PodeEditarOuDeletar())
+                {
+                    <th></th>
+                    <th></th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usuario in Model)
+            {
+                <tr>
+                    <td>@usuario.Nome</td>
+                    <td>@usuario.Email</td>
+                    <td>@usuario.Area</td>
+                    <td>@usuario.Departamento</td>
+                    @if (await PodeEditarOuDeletar())
+                    {
+                        <td><a href="@Url.Action("Edit", "Usuarios", new { id = usuario.Id })">Editar</a></td>
+                        <td><a href="@Url.Action("Delete", "Usuarios", new { id = usuario.Id })">Deletar</a></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

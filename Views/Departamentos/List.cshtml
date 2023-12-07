@@ -24,13 +24,7 @@
                 <tr>
                     <td>@departamento.Nome</td>
                     <td>@departamento.Responsavel.Nome</td>
-                    <td>
-                        <a href="@Url.Action("Edit", "Departamentos", new { id = departamento.Id })">Editar</a>
-                    </td>
-
-                    <td>
-                        <a href="@Url.Action("Delete", "Departamentos", new { id = departamento.Id })">Deletar</a>
-                    </td>
+                    <td><a href="@Url.Action("Edit", "Departamentos", new { id = departamento.Id })">Editar</a></td>
                 </tr>
             }
         </tbody>

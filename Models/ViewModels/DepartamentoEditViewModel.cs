@@ -1,4 +1,6 @@
-﻿namespace Tickest.Models.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Tickest.Models.ViewModels
 {
     public class DepartamentoEditViewModel
     {
@@ -9,8 +11,10 @@
 
         public int Id { get; set; }
 
+        [Required]
         public string Nome { get; set; }
 
+        [Required]
         public int ResponsavelSelecionado { get; set; }
 
         public ICollection<ResponsavelViewModel> ResponsaveisDisponiveis { get; set; }

@@ -99,11 +99,6 @@ namespace Tickest.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(DepartamentoEditViewModel viewModel)
         {
-            if (string.IsNullOrEmpty(viewModel.Nome))
-                ModelState.AddModelError(nameof(DepartamentoEditViewModel.Nome), "Nome não informado");
-
-            //Continuar validação
-
             if (!ModelState.IsValid)
                 return View(viewModel);
 
