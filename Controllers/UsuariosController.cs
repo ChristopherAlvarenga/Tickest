@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Tickest.Data;
+using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Tickest.Controllers
 {
@@ -20,7 +23,7 @@ namespace Tickest.Controllers
         }
 
         // GET: Usuarios
-        public IActionResult Index(string email)
+        public IActionResult Index(string? email)
         {
             email = User.Identity.Name;
 
@@ -38,13 +41,15 @@ namespace Tickest.Controllers
             var usuarios = await _context.Usuarios
                 .Include(p => p.Departamento)
                 .Include(p => p.Area)
+                .Where(p => p.Id != 1)
                 .Select(usuario => new UsuarioListViewModel
                 {
                     Id = usuario.Id,
                     Nome = usuario.Nome,
                     Email = usuario.Email,
                     Area = usuario.Area.Nome,
-                    Departamento = usuario.Departamento.Nome
+                    Departamento = usuario.Departamento.Nome,
+                    Cargo = usuario.Cargo
                 })
                 .ToListAsync();
 
@@ -56,12 +61,40 @@ namespace Tickest.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             var usuario = await _context.Usuarios
+                .Include(p => p.Departamento)
+                .Include(p => p.Area)
                 .Select(usuario => new UsuarioEditViewModel
                 {
                     Id = usuario.Id,
-                    Nome = usuario.Nome
+                    Nome = usuario.Nome,
+                    Cargo = usuario.Cargo
                 })
                 .FirstOrDefaultAsync(usuario => usuario.Id == id);
+
+            var query = _context.Departamentos
+                .OrderBy(p => p.Nome)
+                .AsQueryable();
+
+            var query1 = _context.Areas
+                .OrderBy(p => p.Nome)
+                .AsQueryable();
+
+            usuario.Departamentos = query.Select(p => new Departamento
+            {
+                Id = p.Id,
+                Nome = p.Nome,
+                ResponsavelId = p.ResponsavelId
+            }).ToList();
+
+            usuario.Areas = query1.Select(p => new Area
+            {
+                Id = p.Id,
+                Nome = p.Nome,
+                DepartamentoId = p.DepartamentoId
+            }).ToList();
+
+            ViewBag.Departamentos = _context.Departamentos.OrderBy(p => p.Nome).ToList();
+            ViewBag.Areas = new SelectList(query1);
 
             return View(usuario);
         }
@@ -70,13 +103,16 @@ namespace Tickest.Controllers
         [Authorize(Roles = "Gerenciador, Responsavel")]
         public async Task<IActionResult> Edit(UsuarioEditViewModel viewModel)
         {
-            if (!ModelState.IsValid)
-                return View(viewModel);
+            //if (!ModelState.IsValid)
+            //    return View(viewModel);
 
             var identityUser = await userManager.GetUserAsync(User);
             var usuarioLogado = await _context.Usuarios.FirstOrDefaultAsync(usuario => usuario.Email == identityUser.Email);
 
-            var usuarioEditar = await _context.Usuarios.FirstOrDefaultAsync(usuario => usuario.Id == viewModel.Id);
+            var usuarioEditar = await _context.Usuarios
+                .Include(p => p.Departamento)
+                .Include(p => p.Area)
+                .FirstOrDefaultAsync(usuario => usuario.Id == viewModel.Id);
 
             bool isResponsavel = await userManager.IsInRoleAsync(identityUser, "Responsavel");
             bool mesmoDepartamento = usuarioEditar.DepartamentoId == usuarioLogado.DepartamentoId;
@@ -84,10 +120,13 @@ namespace Tickest.Controllers
             if (isResponsavel && !mesmoDepartamento)
             {
                 ViewBag.Error = "Não pode alterar usuario de outro departamento";
-                return View(viewModel);
+                return RedirectToAction(nameof(Edit));
             }
 
             usuarioEditar.Nome = viewModel.Nome;
+            usuarioEditar.Cargo = viewModel.Cargo;
+            usuarioEditar.DepartamentoId = viewModel.DepartamentoId;
+            usuarioEditar.AreaId = viewModel.AreaId;
 
             await _context.SaveChangesAsync();
 

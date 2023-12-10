@@ -26,12 +26,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("RequireRole",
-        policy => policy.RequireRole("Admin", "Gerenciador"));
-});
-
 builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
 
 var app = builder.Build();
@@ -56,10 +50,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCookiePolicy();
-
-app.MapControllerRoute(
-    name: "areas",
-      pattern: "{area:exists}/{controller=Gerenciador}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

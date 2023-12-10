@@ -40,7 +40,8 @@ namespace Tickest.Controllers
                     .Where(p => p.Email == user.Email)
                     .FirstOrDefault();
 
-                users.Add(contextUsers);
+                if (contextUsers != null)
+                    users.Add(contextUsers);
             }
 
             var query = users.AsQueryable();
@@ -111,7 +112,7 @@ namespace Tickest.Controllers
             return RedirectToAction(nameof(List));
         }
 
-        [Authorize(Roles = "Gerenciador")]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> List()
         {

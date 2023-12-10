@@ -11,5 +11,7 @@
         public string Area { get; set; }
 
         public string Departamento { get; set; }
+
+        public string Cargo { get; set; }
     }
 }

@@ -58,6 +58,45 @@ namespace Tickest.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public IActionResult Historic()
+        {
+            var usuario = _context.Usuarios
+                .Where(p => p.Email == User.Identity.Name)
+                .FirstOrDefault();
+
+            var query = _context.Tickets
+                .Include(p => p.Departamento)
+                .Include(p => p.Usuario)
+                .Include(p => p.Anexos)
+                .Where(p => p.Usuario.Email == usuario.Email)
+                .Where(p => p.DestinatarioId == usuario.Id)
+                .Where(p => p.Status == Ticket.Tipo.Concluído)
+                .Where(p => p.Status == Ticket.Tipo.Cancelado)
+                .OrderBy(p => p.Id)
+                .AsQueryable();
+
+            var viewModel = new TicketViewModel()
+            {
+                Tickets = query.Select(p => new Ticket
+                {
+                    Id = p.Id,
+                    Título = p.Título,
+                    Descrição = p.Descrição,
+                    Data_Criação = p.Data_Criação,
+                    Comentario = p.Comentario,
+                    Status = p.Status,
+                    Prioridade = p.Prioridade,
+                    Usuario = p.Usuario,
+                    Departamento = p.Departamento,
+                    Anexos = p.Anexos
+                }).ToList(),
+                Usuario = usuario
+            };
+
+            return View(viewModel);
+        }
+
         // GET: TicketsController/Details/5
         public IActionResult Details(int id)
         {
@@ -105,9 +144,11 @@ namespace Tickest.Controllers
         public IActionResult Create()
         {
             var query = _context.Departamentos
+                .OrderBy(p => p.Nome)
                 .AsQueryable();
 
             var query1 = _context.Areas
+                .OrderBy(p => p.Nome)
                 .AsQueryable();
 
             var viewModel = new TicketViewModel()
@@ -126,7 +167,7 @@ namespace Tickest.Controllers
                 }).ToList()
             };
 
-            ViewBag.Departamentos = _context.Departamentos.ToList();
+            ViewBag.Departamentos = _context.Departamentos.OrderBy(p => p.Nome).ToList();
             ViewBag.Areas = new SelectList(query1);
 
             return View(viewModel);
@@ -163,7 +204,7 @@ namespace Tickest.Controllers
             _context.Add(ticket);
             await _context.SaveChangesAsync();
 
-            var user = await userManager.FindByEmailAsync(User.Identity.Name); ;
+            var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
             return View();
         }

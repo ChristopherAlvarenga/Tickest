@@ -59,7 +59,7 @@ namespace Tickest.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    ResponsavelId = table.Column<int>(type: "int", nullable: true)
+                    ResponsavelId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -178,8 +178,8 @@ namespace Tickest.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DepartamentoId = table.Column<int>(type: "int", nullable: true)
+                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DepartamentoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -188,7 +188,8 @@ namespace Tickest.Migrations
                         name: "FK_Areas_Departamentos_DepartamentoId",
                         column: x => x.DepartamentoId,
                         principalTable: "Departamentos",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -261,7 +262,7 @@ namespace Tickest.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Endereco = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Endereco = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     TicketId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -274,6 +275,30 @@ namespace Tickest.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Notificacao",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UsuarioId = table.Column<int>(type: "int", nullable: true),
+                    TicketId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notificacao", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notificacao_Tickets_TicketId",
+                        column: x => x.TicketId,
+                        principalTable: "Tickets",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Notificacao_Usuarios_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuarios",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.InsertData(
                 table: "Departamentos",
                 columns: new[] { "Id", "Nome", "ResponsavelId" },
@@ -281,18 +306,14 @@ namespace Tickest.Migrations
                 {
                     { 1, "Tecnologia da Informação", 3 },
                     { 2, "Recursos Humanos", 3 },
-                    { 3, "Suporte", 3 }
+                    { 3, "Almoxarifado", 3 },
+                    { 4, "Gerenciadores", 2 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
                 columns: new[] { "Id", "AreaId", "Cargo", "DepartamentoId", "Email", "Nome" },
-                values: new object[,]
-                {
-                    { 1, null, null, null, "admin@localhost", "Admin" },
-                    { 2, null, null, null, "gerenciador@localhost", "Gerenciador" },
-                    { 3, null, null, null, "responsavel@localhost", "Responsável" }
-                });
+                values: new object[] { 1, null, null, null, "admin@localhost", "Admin" });
 
             migrationBuilder.InsertData(
                 table: "Areas",
@@ -301,13 +322,20 @@ namespace Tickest.Migrations
                 {
                     { 1, 1, "BI" },
                     { 2, 2, "Recrutamento" },
-                    { 3, 3, "Componentes Eletrônicos" }
+                    { 3, 3, "Componentes Eletrônicos" },
+                    { 4, 1, "Gestão" },
+                    { 5, 4, "Gerenciamento" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
                 columns: new[] { "Id", "AreaId", "Cargo", "DepartamentoId", "Email", "Nome" },
-                values: new object[] { 4, 1, null, 1, "desenvolvedor@localhost", "Desenvolvedor" });
+                values: new object[,]
+                {
+                    { 2, 5, "Gerenciador", 4, "gerenciador@localhost", "Gerenciador" },
+                    { 3, 4, "Gestor", 1, "responsavel@localhost", "Responsável" },
+                    { 4, 1, "Analista", 1, "desenvolvedor@localhost", "Desenvolvedor" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Anexos_TicketId",
@@ -359,6 +387,16 @@ namespace Tickest.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notificacao_TicketId",
+                table: "Notificacao",
+                column: "TicketId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notificacao_UsuarioId",
+                table: "Notificacao",
+                column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tickets_AreaId",
                 table: "Tickets",
                 column: "AreaId");
@@ -406,13 +444,16 @@ namespace Tickest.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Tickets");
+                name: "Notificacao");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Tickets");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");

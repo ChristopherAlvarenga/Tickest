@@ -111,7 +111,7 @@ namespace Tickest.Controllers
                         return RedirectToAction("Index", "Gerenciador");
 
                     else if (await userManager.IsInRoleAsync(user, "Responsavel"))
-                        return RedirectToAction("Index", "Responsavel", new { area = "Responsavel" });
+                        return RedirectToAction("Index", "Responsaveis");
 
                     else
                         return RedirectToAction("Index", "Desenvolvedores");

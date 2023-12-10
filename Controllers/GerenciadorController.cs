@@ -20,7 +20,7 @@ namespace Tickest.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? pageNumber)
         {
             var usuario = _context.Usuarios
                 .Where(p => p.Email == User.Identity.Name)

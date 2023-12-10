@@ -28,22 +28,24 @@ namespace Tickest.Data
                     Id = 1,
                     Nome = "Tecnologia da Informação",
                     ResponsavelId = 3
-                });
-
-            modelBuilder.Entity<Departamento>().HasData(
+                },
                 new Departamento
                 {
                     Id = 2,
                     Nome = "Recursos Humanos",
                     ResponsavelId = 3
-                });
-
-            modelBuilder.Entity<Departamento>().HasData(
+                },
                 new Departamento
                 {
                     Id = 3,
-                    Nome = "Suporte",
+                    Nome = "Almoxarifado",
                     ResponsavelId = 3
+                },
+                new Departamento
+                {
+                    Id = 4,
+                    Nome = "Gerenciadores",
+                    ResponsavelId = 2
                 });
 
             modelBuilder.Entity<Area>().HasData(
@@ -52,22 +54,30 @@ namespace Tickest.Data
                     Id = 1,
                     Nome = "BI",
                     DepartamentoId = 1
-                });
-
-            modelBuilder.Entity<Area>().HasData(
+                },
                 new Area
                 {
                     Id = 2,
                     Nome = "Recrutamento",
                     DepartamentoId = 2
-                });
-
-            modelBuilder.Entity<Area>().HasData(
+                },
                 new Area
                 {
                     Id = 3,
                     Nome = "Componentes Eletrônicos",
                     DepartamentoId = 3
+                },
+                new Area
+                {
+                    Id = 4,
+                    Nome = "Gestão",
+                    DepartamentoId = 1
+                },
+                new Area
+                {
+                    Id = 5,
+                    Nome = "Gerenciamento",
+                    DepartamentoId = 4
                 });
 
             modelBuilder.Entity<Usuario>().HasData(
@@ -81,13 +91,19 @@ namespace Tickest.Data
                 {
                     Id = 2,
                     Nome = "Gerenciador",
-                    Email = "gerenciador@localhost"
+                    Email = "gerenciador@localhost",
+                    Cargo = "Gerenciador",
+                    DepartamentoId = 4,
+                    AreaId = 5
                 },
                 new Usuario
                 {
                     Id = 3,
                     Nome = "Responsável",
-                    Email = "responsavel@localhost"
+                    Email = "responsavel@localhost",
+                    Cargo = "Gestor",
+                    DepartamentoId = 1,
+                    AreaId = 4
                 },
                 new Usuario
                 {

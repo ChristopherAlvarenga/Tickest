@@ -12,7 +12,7 @@ namespace Tickest.Models.Entities
 
         [Required]
         [StringLength(50)]
-        public string Nome { get; set; }
+        public string? Nome { get; set; }
 
         public int ResponsavelId { get; set; }
 
