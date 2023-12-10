@@ -23,7 +23,7 @@
     }
 
     .d-flex1 {
-        display:flex !important;
+        display: flex !important;
         flex-wrap: wrap !important;
         word-break: break-all; /*  */
         word-wrap: break-word; /* if you want to cut the complete word */
@@ -75,7 +75,12 @@
             padding-left: 30px;
             border-radius: 1px;
             font-size: 17px;
-        }</style>
+        }
+</style>
+
+<!-- DataTable -->
+<link href="https://cdn.datatables.net/v/dt/dt-1.13.8/datatables.min.css" rel="stylesheet">
+
 <div class="row">
     <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
         <div class="card">
@@ -83,7 +88,7 @@
                 <h5 class="card-title text-primary m-4">Tickets Criados</h5>
                 <div class="card">
                     <div class="table-responsive text-nowrap">
-                        <table class="table table-hover">
+                        <table class="table table-hover" id="Tickets">
                             <tbody class="table-border-bottom-0">
                                 @foreach (var ticket in Model.Tickets)
                                 {
@@ -164,7 +169,7 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <div class="text-center mt-5">
-                                                                <button class="btn btn-primary">Comentar</button>
+                                                                <button class="btn btn-primary">Editar</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -178,45 +183,18 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Começo do Pagination -->
-                <div class="mb-4 mb-lg-0" style="margin-left:38%">
-                    <div class="col">
-                        <div class="demo-inline-spacing">
-                            <!-- Basic Pagination -->
-                            <nav aria-label="">
-                                <ul class="pagination">
-                                    <li class="page-item first">
-                                        <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a>
-                                    </li>
-                                    <li class="page-item prev">
-                                        <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevron-left"></i></a>
-                                    </li>
-                                    <li class="page-item active">
-                                        <a class="page-link" href="javascript:void(0);">1</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="javascript:void(0);">2</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="javascript:void(0);">3</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="javascript:void(0);">...</a>
-                                    </li>
-                                    <li class="page-item next">
-                                        <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevron-right"></i></a>
-                                    </li>
-                                    <li class="page-item last">
-                                        <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-                <!-- Final do Pagination -->
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTable JS -->
+<script src="https://cdn.datatables.net/v/dt/dt-1.13.8/datatables.min.js"></script>
+
+<script>
+    window.onload = function () {
+        let table = new DataTable('#Tickets');
+    }
+</script>

@@ -134,7 +134,9 @@ namespace Tickest.Controllers
                 }).ToList(),
                 Usuario = usuario
             };
+
             ViewBag.titulo = "Pesquisando por " + search;
+
             return View(viewModel);
 
           
@@ -187,6 +189,7 @@ namespace Tickest.Controllers
             ticket.Anexos = new List<Anexo>();
             var usuario = _context.Usuarios
                 .Where(p => p.Email == User.Identity.Name).FirstOrDefault();
+
             foreach (IFormFile file in files)
             {
                 var path = WriteFile(file);
@@ -206,7 +209,7 @@ namespace Tickest.Controllers
 
             var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
-            return View();
+            return View(nameof(Create));
         }
 
         // GET: TicketsController/Edit/5
