@@ -17,8 +17,8 @@ namespace Tickest.Data
         public DbSet<Departamento> Departamentos { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		public DbSet<Message> Mensagens { get; set; }
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
