@@ -1,0 +1,174 @@
+﻿@model Tickest.Models.ViewModels.TicketViewModel;
+
+@{
+    Layout = "_LayoutGerenciador";
+    ViewData["Title"] = "Tickest - Home";
+}
+
+<div class="row">
+    <div class="col-lg-12 mb-4 order-0">
+        <div class="card" style="width:100%">
+            <div class="d-flex align-items-end row">
+                <div class="col-sm-7">
+                    <div class="card-body p-4">
+                        <h5 class="card-title text-primary">Seja bem-vindo(a) @Model.Usuario.Nome!</h5>
+                        <p class="mb-3 mt-5">Concluídos esse mês: <span class="fw-bold">*Quantidade*</span></p>
+                        <p class="mb-3">Em análise esse mês: <span class="fw-bold">*Quantidade*</span></p>
+                        <p class="mb-1">Não concluídos esse mês: <span class="fw-bold">*Quantidade*</span></p>
+                    </div>
+                </div>
+                <div class="col-sm-5 text-center text-sm-left">
+                    <div class="card-body pb-0 px-0 px-md-4">
+                        <img src="~/img/illustrations/man-with-laptop-light.png" height="140" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        <div class="card">
+            <div class="row row-bordered g-0">
+                <h5 class="card-title text-primary m-4">Tickets em Aberto</h5>
+                <div class="card">
+                    <div class="table-responsive text-nowrap p-4">
+                        <table class="table table-hover" id="Tickets">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Título</th>
+                                    <th scope="col">Departamento</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0">
+                                @foreach (var ticket in Model.Tickets)
+                                {
+                                    <tr>
+                                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>#@ticket.Id</strong></td>
+                                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>@ticket.Título</strong></td>
+                                        <td>@ticket.Departamento.Nome</td>
+                                        <td><span class="badge bg-label-dark me-1">@ticket.Status</span></td>
+                                        <td>
+                                            <!-- Botão -->
+                                            <button type="button" class="btn btn" data-bs-toggle="modal" data-bs-target="#modalScrollable-@ticket.Id">
+                                                Ver mais
+                                            </button>
+                                            <!-- Informação -->
+                                            <div class="modal fade" id="modalScrollable-@ticket.Id" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-body ">
+                                                            <div class="text-right"> <i class="fa fa-close close" data-bs-dismiss="modal" aria-label="Close" data-dismiss="modal"></i> </div>
+
+                                                            <div class="px-4 py-5">
+
+                                                                <h5 class="text-uppercase">#@ticket.Id</h5>
+                                                                <h4 class="mt-5 theme-color mb-5">@ticket.Título</h4>
+
+                                                                <div class="d-flex1 justify-content-between">
+                                                                    <span class="theme-color">@ticket.Descrição</span>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <hr class="new1">
+                                                                </div>
+                                                                <div class="d-flex1 justify-content-between">
+                                                                    <span class="font-weight-bold">Criado Em:</span>
+                                                                    <span class="text-muted">@ticket.Data_Criação</span>
+                                                                </div>
+                                                                <div class="d-flex1 justify-content-between">
+                                                                    <span class="font-weight-bold">
+                                                                        Prioridade
+                                                                    </span>
+                                                                    <span class="text-muted">@ticket.Prioridade</span>
+                                                                </div>
+
+                                                                <div class="d-flex1 justify-content-between">
+                                                                    <span class="font-weight-bold">
+                                                                        Status
+                                                                    </span>
+                                                                    <span class="text-muted">@ticket.Status</span>
+                                                                </div>
+                                                                <div class="d-flex1 justify-content-between">
+                                                                    <span class="font-weight-bold">
+                                                                        Enviado por:
+                                                                    </span>
+                                                                    <span class="text-muted">@ticket.Usuario.Nome (@ticket.Usuario.Email)</span>
+                                                                </div>
+                                                                <div class="d-flex1 justify-content-between">
+                                                                    <span class="font-weight-bold">
+                                                                        Departamento:
+                                                                    </span>
+                                                                    <span class="text-muted">@ticket.Departamento.Nome</span>
+                                                                </div>
+                                                                <div class="mt-3">
+                                                                    <span class="font-weight-bold">
+                                                                        Anexos:
+                                                                    </span>
+                                                                    <br>
+                                                                    @if (ticket.Anexos != null)
+                                                                    {
+                                                                        @foreach (var anexo in ticket.Anexos)
+                                                                        {
+                                                                            var name = anexo.Endereco.Substring(anexo.Endereco.IndexOf('/') + 1);
+
+                                                                            <a href="~/@anexo.Endereco" download>@name</a>
+                                                                            <br />
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <div class="text-center mt-5">
+                                                                <button class="btn btn-primary">Comentar</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Informação -->
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function () {
+        $('#Tickets').DataTable({
+            "ordering": true,
+            "paging": true,
+            "searching": true,
+            "oLanguage": {
+                "sEmptyTable": "Nenhum registro encontrado na tabela",
+                "sInfo": "Mostrar _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrar 0 até 0 de 0 Registros",
+                "sInfoFiltered": "(Filtrar de _MAX_ total registros)",
+                "sInfoPostFix": "",
+                "sInfoThousands": ".",
+                "sLengthMenu": "Mostrar _MENU_ registros por pagina",
+                "sLoadingRecords": "Carregando...",
+                "sProcessing": "Processando...",
+                "sZeroRecords": "Nenhum registro encontrado",
+                "sSearch": "Pesquisar",
+                "oPaginate": {
+                    "sNext": "Proximo",
+                    "sPrevious": "Anterior",
+                    "sFirst": "Primeiro",
+                    "sLast": "Ultimo"
+                },
+                "oAria": {
+                    "sSortAscending": ": Ordenar colunas de forma ascendente",
+                    "sSortDescending": ": Ordenar colunas de forma descendente"
+                }
+            }
+        });
+    }
+</script>

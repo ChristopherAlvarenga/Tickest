@@ -12,7 +12,7 @@
     else if (await userManager.IsInRoleAsync(user, "Responsavel"))
         Layout = "_LayoutResponsavel";
 
-    else if (await userManager.IsInRoleAsync(user, "Desenvolvedor"))
+    else
         Layout = "_Layout";
 }
 <style>
@@ -84,7 +84,7 @@
                                 <select asp-for="Ticket.AreaId" asp-items="ViewBag.Areas" id="AreasDrop" class="form-select form-control" style="display:none"></select>
                             </div>
 
-                            <div class="mb-3">
+                            <div>
                                 <label for="formFileMultiple" class="form-label">Anexos</label>
 
 
@@ -95,7 +95,9 @@
                                 <input id="anexo" class="form-control" type="file" name="files" multiple />
                             </div>
 
-                            <button type="submit" class="btn btn-primary mt-3">Criar Ticket</button>
+                            <br />
+
+                            <button type="submit" class="btn btn-primary">Criar Ticket</button>
                         </div>
                     </div>
                 </div>
@@ -103,73 +105,73 @@
         </div>
     </div>
 </div>
-<script>
-    var dt = new DataTransfer()
-    $(document).ready(function () {
+@section Scripts {
+    <script>
+        var dt = new DataTransfer()
+        $(document).ready(function () {
 
-        $('#anexo').change(function () {
-  
-            $("#files").html("");
-            for (var i = 0; i < this.files.length; i++) {
-                var file = this.files[i];
-                dt.items.add(file)
+            $('#anexo').change(function () {
+
+                $("#files").html("");
+                for (var i = 0; i < this.files.length; i++) {
+                    var file = this.files[i];
+                    dt.items.add(file)
+                }
+                this.files = dt.files
+
+                for (var i = 0; i < this.files.length; i++) {
+                    var file = this.files[i];
+
+                    name = file.name.toLowerCase();
+                    size = file.size;
+                    type = file.type;
+
+                    var html = '<a id="btn-' + i + '" type="button" anexo_id="' + i + '" class="name" >  ' + name + '  <i onclick=delRef("' + i + '")  class="fa fa-times" aria-hidden="true"></i></a>'
+                    $("#files").append(html);
+                }
+            });
+
+
+
+
+        })
+        function delRef(index) {
+
+            var input = document.getElementById('anexo')
+            var { files } = input
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i]
+                if (index == i) {
+                    dt.items.remove(i)
+                }
             }
-            this.files = dt.files
 
-            for (var i = 0; i < this.files.length; i++) {
-                var file = this.files[i];
-
-                name = file.name.toLowerCase();
-                size = file.size;
-                type = file.type;
-
-                var html = '<a id="btn-' + i + '" type="button" anexo_id="' + i + '" class="name" >  ' + name + '  <i onclick=delRef("' + i + '")  class="fa fa-times" aria-hidden="true"></i></a>'
-                $("#files").append(html);
-            }
-        });
-
-
-
-
-    })
-    function delRef(index) {
-
-        var input = document.getElementById('anexo')
-        var { files } = input
-        for (var i = 0; i < files.length; i++) {
-            var file = files[i]
-            if (index == i) {
-                dt.items.remove(i)
-            }
+            $("#btn-" + index).remove();
+            $("#anexo").trigger("change");
         }
-        
-        $("#btn-" + index).remove();
-        $("#anexo").trigger("change");
-    }
-    document.getElementById("Departamentos").addEventListener("change", function () {
-        var DepId = this.value;
+        document.getElementById("Departamentos").addEventListener("change", function () {
+            var DepId = this.value;
 
-        // Recupera os elementos do segundo dropdown
-        var Areas = document.getElementById("AreasDrop");
+            // Recupera os elementos do segundo dropdown
+            var Areas = document.getElementById("AreasDrop");
 
-        // Limpa as opções existentes no segundo dropdown
-        Areas.innerHTML = '<option value="">Escolha...</option>';
+            // Limpa as opções existentes no segundo dropdown
+            Areas.innerHTML = '';
 
-        // Exibe ou oculta o segundo dropdown com base na escolha no primeiro dropdown
-        var AreaLabel = document.getElementById("AreaLabel");
-        Areas.style.display = DepId ? "block" : "none";
-        AreaLabel.style.display = DepId ? "block" : "none";
+            // Exibe ou oculta o segundo dropdown com base na escolha no primeiro dropdown
+            var AreaLabel = document.getElementById("AreaLabel");
+            Areas.style.display = DepId ? "block" : "none";
+            AreaLabel.style.display = DepId ? "block" : "none";
 
-        // Adiciona as opções relevantes ao segundo dropdown
-    @foreach (var area in Model.Areas)
-    {
-        <text>
-                        if (DepId == "@area.DepartamentoId") {
-                Areas.innerHTML += '<option value="@area.Id">@area.Nome</option>';
-            }
-        </text>
-    }
+            // Adiciona as opções relevantes ao segundo dropdown
+        @foreach (var area in Model.Areas)
+        {
+            <text>
+                if (DepId == "@area.DepartamentoId") {
+                    Areas.innerHTML += '<option value="@area.Id">@area.Nome</option>';
+                }
+            </text>
+        }
         });
-
-
-</script>
+    </script>
+}

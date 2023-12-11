@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Tickest.Models.Entities
@@ -13,7 +14,7 @@ namespace Tickest.Models.Entities
         [StringLength(50)]
         public string? Nome { get; set; }
 
-        public int? ResponsavelId { get; set; }
+        public int ResponsavelId { get; set; }
 
         public ICollection<Usuario> Usuarios { get; set; }
 

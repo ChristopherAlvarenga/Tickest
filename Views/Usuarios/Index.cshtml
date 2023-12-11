@@ -13,7 +13,7 @@
     else if (await userManager.IsInRoleAsync(user, "Responsavel"))
         Layout = "_LayoutResponsavel";
 
-    else if (await userManager.IsInRoleAsync(user, "Desenvolvedor"))
+    else
         Layout = "_Layout";
 }
 

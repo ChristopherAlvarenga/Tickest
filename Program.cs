@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tickest.Data;
+using Tickest.Models.Entities;
 using Tickest.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,12 +25,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromHours(20);
         options.SlidingExpiration = true;
     });
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("RequireRole",
-        policy => policy.RequireRole("Admin", "Gerenciador"));
-});
 
 builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
 
@@ -57,10 +52,6 @@ app.UseAuthorization();
 app.UseCookiePolicy();
 
 app.MapControllerRoute(
-    name: "areas",
-      pattern: "{area:exists}/{controller=Gerenciador}/{action=Index}/{id?}");
-
-app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
@@ -68,11 +59,15 @@ app.Run();
 
 async Task CriarPerfilUsuarioAsync(WebApplication app)
 {
-    var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
+    var scopedFactory = app.Services.GetService<IServiceScopeFactory>(); 
 
     using (var scope = scopedFactory.CreateScope())
     {
         var service = scope.ServiceProvider.GetService<ISeedUserRoleInitial>();
+        var context = scope.ServiceProvider.GetService<TickestContext>();
+
+        context.Database.Migrate();
+
         await service.SeedRolesAsync();
         await service.SeedUsersAsync();
     }

@@ -22,7 +22,7 @@ namespace Tickest.Controllers
             _context = context;
         }
 
-        [Authorize(Policy = "RequireRole")]
+        [Authorize(Roles = "Gerenciador")]
         [HttpGet]
         public IActionResult Register()
         {
@@ -30,7 +30,7 @@ namespace Tickest.Controllers
             return View();
         }
 
-        [Authorize(Policy = "RequireRole")]
+        [Authorize(Roles = "Gerenciador")]
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerModel)
         {
@@ -68,7 +68,7 @@ namespace Tickest.Controllers
                     _context.Add(usuario);
                     await _context.SaveChangesAsync();
 
-                    return RedirectToAction("Index", "Gerenciador", new { area = "Gerenciador" });
+                    return RedirectToAction("Index", "Gerenciador");
                 }
 
                 // Se houver erros, inclui no ModelState e exibe pela tag helper summary na validação
@@ -108,12 +108,12 @@ namespace Tickest.Controllers
                         return RedirectToAction("Index", "Admin", new { area = "Admin" });
 
                     else if (await userManager.IsInRoleAsync(user, "Gerenciador"))
-                        return RedirectToAction("Index", "Gerenciador", new { area = "Gerenciador" });
+                        return RedirectToAction("Index", "Gerenciador");
 
                     else if (await userManager.IsInRoleAsync(user, "Responsavel"))
-                        return RedirectToAction("Index", "Responsavel", new { area = "Responsavel" });
+                        return RedirectToAction("Index", "Responsaveis");
 
-                    else if (await userManager.IsInRoleAsync(user, "Desenvolvedor"))
+                    else
                         return RedirectToAction("Index", "Desenvolvedores");
 
                 }

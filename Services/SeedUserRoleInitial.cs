@@ -116,6 +116,25 @@ namespace Tickest.Services
                 }
             }
 
+            if (await _userManager.FindByEmailAsync("rafael@localhost") == null)
+            {
+                IdentityUser user = new IdentityUser();
+                user.UserName = "rafael@localhost";
+                user.Email = "rafael@localhost";
+                user.NormalizedUserName = "RAFAEL@LOCALHOST";
+                user.NormalizedEmail = "RAFAEL@LOCALHOST";
+                user.EmailConfirmed = true;
+                user.LockoutEnabled = false;
+                user.SecurityStamp = Guid.NewGuid().ToString();
+
+                IdentityResult userResult = await _userManager.CreateAsync(user, "#SecretPass456");
+
+                if (userResult.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Responsavel");
+                }
+            }
+
             if (await _userManager.FindByEmailAsync("desenvolvedor@localhost") == null)
             {
                 IdentityUser user = new IdentityUser();

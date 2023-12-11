@@ -1,0 +1,98 @@
+﻿@using Tickest.Models.ViewModels;
+@using Microsoft.AspNetCore.Identity;
+@model IEnumerable<UsuarioListViewModel>;
+@inject UserManager<IdentityUser> userManager
+
+@{
+    async Task<bool> PodeEditarOuDeletar()
+    {
+        var user = await userManager.FindByEmailAsync(User.Identity.Name);
+        return await userManager.IsInRoleAsync(user, "Gerenciador");
+    }
+}
+
+@{
+    ViewData["Title"] = "Tickest - Usuarios";
+
+    var user = await userManager.FindByEmailAsync(User.Identity.Name);
+
+    if (await userManager.IsInRoleAsync(user, "Gerenciador"))
+        Layout = "_LayoutGerenciador";
+
+    else if (await userManager.IsInRoleAsync(user, "Responsavel"))
+        Layout = "_LayoutResponsavel";
+
+    else
+        Layout = "_Layout";
+}
+
+<div class="container p-4">
+    <h2>Usuários</h2>
+    <p>Usuários cadastrados no sistema:</p>
+    <table class="table table-condensed" id="Tickets">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Cargo</th>
+                <th>Departamento</th>
+                <th>Área</th>
+                @if (await PodeEditarOuDeletar())
+                {
+                    <th>Editar</th>
+                    <th>Deletar</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usuario in Model)
+            {
+                <tr>
+                    <td>@usuario.Nome</td>
+                    <td>@usuario.Email</td>
+                    <td>@usuario.Cargo</td>
+                    <td>@usuario.Departamento</td>
+                    <td>@usuario.Area</td>
+                    @if (await PodeEditarOuDeletar())
+                    {
+                        <td><a href="@Url.Action("Edit", "Usuarios", new { id = usuario.Id })">Editar</a></td>
+                        <td><a href="@Url.Action("Delete", "Usuarios", new { id = usuario.Id })">Deletar</a></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    window.onload = function () {
+        $('#Tickets').DataTable({
+            "ordering": true,
+            "paging": true,
+            "searching": true,
+            "oLanguage": {
+                "sEmptyTable": "Nenhum registro encontrado na tabela",
+                "sInfo": "Mostrar _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrar 0 até 0 de 0 Registros",
+                "sInfoFiltered": "(Filtrar de _MAX_ total registros)",
+                "sInfoPostFix": "",
+                "sInfoThousands": ".",
+                "sLengthMenu": "Mostrar _MENU_ registros por pagina",
+                "sLoadingRecords": "Carregando...",
+                "sProcessing": "Processando...",
+                "sZeroRecords": "Nenhum registro encontrado",
+                "sSearch": "Pesquisar",
+                "oPaginate": {
+                    "sNext": "Proximo",
+                    "sPrevious": "Anterior",
+                    "sFirst": "Primeiro",
+                    "sLast": "Ultimo"
+                },
+                "oAria": {
+                    "sSortAscending": ": Ordenar colunas de forma ascendente",
+                    "sSortDescending": ": Ordenar colunas de forma descendente"
+                }
+            }
+        });
+    }
+</script>
