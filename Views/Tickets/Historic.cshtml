@@ -23,8 +23,17 @@
             <div class="row row-bordered g-0">
                 <h5 class="card-title text-primary m-4">Histórico de Tickets</h5>
                 <div class="card">
-                    <div class="table-responsive text-nowrap">
-                        <table class="table table-hover">
+                    <div class="table-responsive text-nowrap p-4">
+                        <table class="table table-hover" id="Tickets">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Título</th>
+                                    <th scope="col">Departamento</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Ação</th>
+                                </tr>
+                            </thead>
                             <tbody class="table-border-bottom-0">
                                 @foreach (var ticket in Model.Tickets)
                                 {
@@ -84,45 +93,40 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Começo do Pagination -->
-                <div class="mb-4 mb-lg-0" style="margin-left:38%">
-                    <div class="col">
-                        <div class="demo-inline-spacing">
-                            <!-- Basic Pagination -->
-                            <nav aria-label="">
-                                <ul class="pagination">
-                                    <li class="page-item first">
-                                        <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a>
-                                    </li>
-                                    <li class="page-item prev">
-                                        <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevron-left"></i></a>
-                                    </li>
-                                    <li class="page-item active">
-                                        <a class="page-link" href="javascript:void(0);">1</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="javascript:void(0);">2</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="javascript:void(0);">3</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="javascript:void(0);">...</a>
-                                    </li>
-                                    <li class="page-item next">
-                                        <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevron-right"></i></a>
-                                    </li>
-                                    <li class="page-item last">
-                                        <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-                <!-- Final do Pagination -->
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    window.onload = function () {
+        $('#Tickets').DataTable({
+            "ordering": true,
+            "paging": true,
+            "searching": true,
+            "oLanguage": {
+                "sEmptyTable": "Nenhum registro encontrado na tabela",
+                "sInfo": "Mostrar _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrar 0 até 0 de 0 Registros",
+                "sInfoFiltered": "(Filtrar de _MAX_ total registros)",
+                "sInfoPostFix": "",
+                "sInfoThousands": ".",
+                "sLengthMenu": "Mostrar _MENU_ registros por pagina",
+                "sLoadingRecords": "Carregando...",
+                "sProcessing": "Processando...",
+                "sZeroRecords": "Nenhum registro encontrado",
+                "sSearch": "Pesquisar",
+                "oPaginate": {
+                    "sNext": "Proximo",
+                    "sPrevious": "Anterior",
+                    "sFirst": "Primeiro",
+                    "sLast": "Ultimo"
+                },
+                "oAria": {
+                    "sSortAscending": ": Ordenar colunas de forma ascendente",
+                    "sSortDescending": ": Ordenar colunas de forma descendente"
+                }
+            }
+        });
+    }
+</script>

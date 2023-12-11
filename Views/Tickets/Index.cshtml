@@ -78,17 +78,23 @@
         }
 </style>
 
-<!-- DataTable -->
-<link href="https://cdn.datatables.net/v/dt/dt-1.13.8/datatables.min.css" rel="stylesheet">
-
 <div class="row">
     <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
         <div class="card">
             <div class="row row-bordered g-0">
                 <h5 class="card-title text-primary m-4">Tickets Criados</h5>
                 <div class="card">
-                    <div class="table-responsive text-nowrap">
+                    <div class="table-responsive text-nowrap p-4">
                         <table class="table table-hover" id="Tickets">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Título</th>
+                                    <th scope="col">Departamento</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Ação</th>
+                                </tr>
+                            </thead>
                             <tbody class="table-border-bottom-0">
                                 @foreach (var ticket in Model.Tickets)
                                 {
@@ -188,13 +194,35 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- DataTable JS -->
-<script src="https://cdn.datatables.net/v/dt/dt-1.13.8/datatables.min.js"></script>
-
 <script>
     window.onload = function () {
-        let table = new DataTable('#Tickets');
+        $('#Tickets').DataTable({
+            "ordering": true,
+            "paging": true,
+            "searching": true,
+            "oLanguage": {
+                "sEmptyTable": "Nenhum registro encontrado na tabela",
+                "sInfo": "Mostrar _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrar 0 até 0 de 0 Registros",
+                "sInfoFiltered": "(Filtrar de _MAX_ total registros)",
+                "sInfoPostFix": "",
+                "sInfoThousands": ".",
+                "sLengthMenu": "Mostrar _MENU_ registros por pagina",
+                "sLoadingRecords": "Carregando...",
+                "sProcessing": "Processando...",
+                "sZeroRecords": "Nenhum registro encontrado",
+                "sSearch": "Pesquisar",
+                "oPaginate": {
+                    "sNext": "Proximo",
+                    "sPrevious": "Anterior",
+                    "sFirst": "Primeiro",
+                    "sLast": "Ultimo"
+                },
+                "oAria": {
+                    "sSortAscending": ": Ordenar colunas de forma ascendente",
+                    "sSortDescending": ": Ordenar colunas de forma descendente"
+                }
+            }
+        });
     }
 </script>

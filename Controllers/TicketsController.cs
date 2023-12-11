@@ -209,7 +209,7 @@ namespace Tickest.Controllers
 
             var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
-            return View(nameof(Create));
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: TicketsController/Edit/5
