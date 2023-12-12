@@ -63,6 +63,10 @@
                         {
                             <td><a href="@Url.Action("Edit", "Departamentos", new { id = departamento.Id })">Editar</a></td>
                         }
+                        else
+                        {
+                            <td></td>
+                        }
                     }
                     else if (await Gerenciador())
                     {

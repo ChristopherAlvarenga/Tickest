@@ -20,7 +20,7 @@ namespace Tickest.Controllers
             _context = context;
         }
 
-        public IActionResult Index(int? pageNumber)
+        public IActionResult Index()
         {
             var usuario = _context.Usuarios
                 .Where(p => p.Email == User.Identity.Name)
@@ -76,6 +76,35 @@ namespace Tickest.Controllers
                 .Where(p => p.Status == Ticket.Tipo.Concluído)
                 .Where(p => p.Data_Status.Month == DateTime.Now.Month)
                 .Count();
+
+            return View(viewModel);
+        }
+
+        public IActionResult AllTickets()
+        {
+            var query = _context.Tickets
+                .Include(p => p.Departamento)
+                .Include(p => p.Usuario)
+                .Include(p => p.Anexos)
+                .AsQueryable();
+
+            var viewModel = new TicketViewModel()
+            {
+                Tickets = query.Select(p => new Ticket
+                {
+                    Id = p.Id,
+                    Título = p.Título,
+                    Descrição = p.Descrição,
+                    Data_Criação = p.Data_Criação,
+                    Status = p.Status,
+                    Data_Status = p.Data_Status,
+                    Prioridade = p.Prioridade,
+                    Usuario = p.Usuario,
+                    Departamento = p.Departamento,
+                    DestinatarioId = p.DestinatarioId,
+                    Anexos = p.Anexos
+                }).ToList(),
+            };
 
             return View(viewModel);
         }

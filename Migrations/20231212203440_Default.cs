@@ -334,7 +334,15 @@ namespace Tickest.Migrations
                     { 1, "Tecnologia da Informação", 3 },
                     { 2, "Recursos Humanos", 3 },
                     { 3, "Almoxarifado", 3 },
-                    { 4, "Gerenciadores", 2 }
+                    { 4, "Gerenciadores", 2 },
+                    { 5, "Contabilidade", 3 },
+                    { 6, "Controladoria", 3 },
+                    { 7, "Suprimentos", 3 },
+                    { 8, "Marketing", 3 },
+                    { 9, "Compras", 3 },
+                    { 10, "Jurídico", 3 },
+                    { 11, "Logística", 3 },
+                    { 12, "Atendimento", 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -347,11 +355,13 @@ namespace Tickest.Migrations
                 columns: new[] { "Id", "DepartamentoId", "Nome" },
                 values: new object[,]
                 {
-                    { 1, 1, "BI" },
-                    { 2, 2, "Recrutamento" },
-                    { 3, 3, "Componentes Eletrônicos" },
+                    { 1, 1, "Redes" },
+                    { 2, 1, "Suporte Técnico" },
+                    { 3, 1, "Segurança" },
                     { 4, 1, "Gestão" },
-                    { 5, 4, "Gerenciamento" }
+                    { 5, 4, "Gerenciamento" },
+                    { 6, 1, "Business Intelligence" },
+                    { 7, 1, "Infraestrutura" }
                 });
 
             migrationBuilder.InsertData(

@@ -1,36 +1,54 @@
-﻿@model Tickest.Models.ViewModels.TicketViewModel;
+﻿@using Microsoft.AspNetCore.Identity;
+@model Tickest.Models.ViewModels.TicketViewModel
 
 @{
-    Layout = "_Layout";
-    ViewData["Title"] = "Tickest - Home";
-
-    string none = "";
+    ViewData["Title"] = "Tickest - Tickets Departamento";
+    Layout = "_LayoutResponsavel";
 }
+<style>
+    .modal-body {
+        background-color: #fff;
+        border-color: #fff;
+    }
+
+    .d-flex1 {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        word-break: break-all; /*  */
+        word-wrap: break-word; /* if you want to cut the complete word */
+        white-space: normal;
+    }
+
+    .close {
+        color: #000;
+        cursor: pointer;
+    }
+
+        .close:hover {
+            color: #000;
+        }
+
+
+    .theme-color {
+        flex-wrap: wrap !important;
+        color: #004cb9;
+        word-break: break-all; /*  */
+        word-wrap: break-word; /* if you want to cut the complete word */
+        white-space: normal;
+    }
+
+    hr.new1 {
+        border-top: 2px dashed #fff;
+        margin: 0.4rem 0;
+    }
+</style>
+
 <link rel="stylesheet" href="~/css/chat.css" />
 <div class="row">
-    <div class="col-lg-12 mb-4 order-0">
-        <div class="card" style="width:100%">
-            <div class="d-flex align-items-end row">
-                <div class="col-sm-7">
-                    <div class="card-body p-4">
-                        <h5 class="card-title text-primary">Seja bem-vindo(a) @Model.Usuario.Nome!</h5>
-                        <p class="mb-3 mt-5">Tickets em aberto: <span class="fw-bold">@ViewBag.TicketsAberto</span></p>
-                        <p class="mb-3">Tickets recebidos esse mês: <span class="fw-bold">@ViewBag.TicketsRecebidos</span></p>
-                        <p class="mb-1">Tickets concluídos esse mês: <span class="fw-bold">@ViewBag.TicketConcluidos</span></p>
-                    </div>
-                </div>
-                <div class="col-sm-5 text-center text-sm-left">
-                    <div class="card-body pb-0 px-0 px-md-4">
-                        <img src="~/img/illustrations/man-with-laptop-light.png" height="140" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
         <div class="card">
             <div class="row row-bordered g-0">
-                <h5 class="card-title text-primary m-4">Tickets em Aberto</h5>
+                <h5 class="card-title text-primary m-4">Tickets Departamento</h5>
                 <div class="card">
                     <div class="table-responsive text-nowrap p-4">
                         <table class="table table-hover" id="Tickets">
@@ -120,8 +138,7 @@
                                                                     }
                                                                 </div>
                                                             </div>
-                                                            @if (ticket.Status == Tickest.Models.Entities.Ticket.Tipo.Criado) { none = "d-none"; }
-                                                            <div class="card card-chat @none">
+                                                            <div class="card card-chat">
                                                                 <div class="card-header msg_head">
                                                                     <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
                                                                     <div class="action_menu">
@@ -135,44 +152,26 @@
                                                                 </div>
                                                                 <div class="card-body msg_card_body" id="chat-@ticket.Id">
                                                                 </div>
-                                                                @if (ticket.Status != Tickest.Models.Entities.Ticket.Tipo.Concluído && ticket.Status != Tickest.Models.Entities.Ticket.Tipo.Cancelado)
-                                                                {
-                                                                    <div class="card-footer">
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-append">
-                                                                                <span ticket_id="@ticket.Id" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
-                                                                                <input type="file" class="input-attach" ticket_id="@ticket.Id" id="attach-@ticket.Id" style="display:none;">
-                                                                            </div>
-                                                                            <textarea name="" id="text-@ticket.Id" class="form-control type_msg" placeholder="Escreva sua mensagem..."></textarea>
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text send_btn" id="enviar-@ticket.Id" ticket_id="@ticket.Id"><i class="fas fa-location-arrow"></i></span>
-                                                                            </div>
+                                                                <div class="card-footer">
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-append">
+                                                                            <span ticket_id="@ticket.Id" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                                                                            <input type="file" class="input-attach" ticket_id="@ticket.Id" id="attach-@ticket.Id" style="display:none;">
+                                                                        </div>
+                                                                        <textarea name="" id="text-@ticket.Id" class="form-control type_msg" placeholder="Escreva sua mensagem..."></textarea>
+                                                                        <div class="input-group-append">
+                                                                            <span class="input-group-text send_btn" id="enviar-@ticket.Id" ticket_id="@ticket.Id"><i class="fas fa-location-arrow"></i></span>
                                                                         </div>
                                                                     </div>
-                                                                }
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            @if (ticket.Status == Tickest.Models.Entities.Ticket.Tipo.Criado)
-                                                            {
-                                                                <form method="post" action="/Tickets/MudarStatus/@ticket.Id?status=1">
-                                                                    <div class="text-center mt-5">
-                                                                        <button class="btn btn-primary">Assumir Ticket</button>
-                                                                    </div>
-                                                                </form>
-                                                            }
-                                                            else if (ticket.Status == Tickest.Models.Entities.Ticket.Tipo.Andamento)
-                                                            {
-                                                                <form method="post" action="/Tickets/MudarStatus/@ticket.Id?status=2">
-                                                                    <div class="text-center mt-5">
-                                                                        <button class="btn btn-primary">Colocar para Teste</button>
-                                                                    </div>
-                                                                </form>
-                                                            }
-                                                            else
-                                                            {
-                                                                <br />
-                                                            }
+                                                            <form method="post">
+                                                                <div class="text-center mt-5">
+                                                                    <button class="btn btn-primary">Editar</button>
+                                                                </div>
+                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -192,6 +191,7 @@
 
 <script>
     window.onload = function () {
+
 
         $(".modal-ticket").click(function () {
             var ticket_id = $(this).attr("ticket_id");
@@ -213,7 +213,6 @@
 
             $("#attach-" + ticket_id).click();
         })
-
 
         $(".input-attach").change(function () {
 
@@ -279,7 +278,6 @@
 
         })
 
-
         $(".send_btn").click(function () {
 
             var formData = new FormData();
@@ -310,7 +308,6 @@
                 }
             });
         })
-
         $('#Tickets').DataTable({
             "ordering": true,
             "paging": true,
@@ -340,6 +337,7 @@
             }
         });
 
+
     @foreach (var ticket in Model.Tickets)
     {
         <text>
@@ -356,6 +354,7 @@
                         if ($("#chat-@ticket.Id")[0].scrollHeight - $("#chat-@ticket.Id").scrollTop() == $("#chat-@ticket.Id").outerHeight()) {
                             $("#chat-@ticket.Id").html(data);
                             $("#chat-@ticket.Id").scrollTop($("#chat-@ticket.Id")[0].scrollHeight);
+                            console.log("entrou");
                         } else {
                             $("#chat-@ticket.Id").html(data);
                             $("#chat-@ticket.Id").scrollTop(scroll);
@@ -371,6 +370,5 @@
 
 
     }
-
-                }
+                    }
 </script>

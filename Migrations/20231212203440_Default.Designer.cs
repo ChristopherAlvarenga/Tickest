@@ -12,7 +12,7 @@ using Tickest.Data;
 namespace Tickest.Migrations
 {
     [DbContext(typeof(TickestContext))]
-    [Migration("20231212003309_Default")]
+    [Migration("20231212203440_Default")]
     partial class Default
     {
         /// <inheritdoc />
@@ -271,19 +271,19 @@ namespace Tickest.Migrations
                         {
                             Id = 1,
                             DepartamentoId = 1,
-                            Nome = "BI"
+                            Nome = "Redes"
                         },
                         new
                         {
                             Id = 2,
-                            DepartamentoId = 2,
-                            Nome = "Recrutamento"
+                            DepartamentoId = 1,
+                            Nome = "Suporte Técnico"
                         },
                         new
                         {
                             Id = 3,
-                            DepartamentoId = 3,
-                            Nome = "Componentes Eletrônicos"
+                            DepartamentoId = 1,
+                            Nome = "Segurança"
                         },
                         new
                         {
@@ -296,6 +296,18 @@ namespace Tickest.Migrations
                             Id = 5,
                             DepartamentoId = 4,
                             Nome = "Gerenciamento"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            DepartamentoId = 1,
+                            Nome = "Business Intelligence"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            DepartamentoId = 1,
+                            Nome = "Infraestrutura"
                         });
                 });
 
@@ -343,6 +355,54 @@ namespace Tickest.Migrations
                             Id = 4,
                             Nome = "Gerenciadores",
                             ResponsavelId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Nome = "Contabilidade",
+                            ResponsavelId = 3
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Nome = "Controladoria",
+                            ResponsavelId = 3
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Nome = "Suprimentos",
+                            ResponsavelId = 3
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Nome = "Marketing",
+                            ResponsavelId = 3
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Nome = "Compras",
+                            ResponsavelId = 3
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Nome = "Jurídico",
+                            ResponsavelId = 3
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Nome = "Logística",
+                            ResponsavelId = 3
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Nome = "Atendimento",
+                            ResponsavelId = 3
                         });
                 });
 

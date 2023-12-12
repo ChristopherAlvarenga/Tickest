@@ -46,26 +46,74 @@ namespace Tickest.Data
                     Id = 4,
                     Nome = "Gerenciadores",
                     ResponsavelId = 2
+                },
+                new Departamento
+                {
+                    Id = 5,
+                    Nome = "Contabilidade",
+                    ResponsavelId = 3
+                },
+                new Departamento
+                {
+                    Id = 6,
+                    Nome = "Controladoria",
+                    ResponsavelId = 3
+                },
+                new Departamento
+                {
+                    Id = 7,
+                    Nome = "Suprimentos",
+                    ResponsavelId = 3
+                },
+                new Departamento
+                {
+                    Id = 8,
+                    Nome = "Marketing",
+                    ResponsavelId = 3
+                },
+                new Departamento
+                {
+                    Id = 9,
+                    Nome = "Compras",
+                    ResponsavelId = 3
+                },
+                new Departamento
+                {
+                    Id = 10,
+                    Nome = "Jurídico",
+                    ResponsavelId = 3
+                },
+                new Departamento
+                {
+                    Id = 11,
+                    Nome = "Logística",
+                    ResponsavelId = 3
+                },
+                new Departamento
+                {
+                    Id = 12,
+                    Nome = "Atendimento",
+                    ResponsavelId = 3
                 });
 
             modelBuilder.Entity<Area>().HasData(
                 new Area
                 {
                     Id = 1,
-                    Nome = "BI",
+                    Nome = "Redes",
                     DepartamentoId = 1
                 },
                 new Area
                 {
                     Id = 2,
-                    Nome = "Recrutamento",
-                    DepartamentoId = 2
+                    Nome = "Suporte Técnico",
+                    DepartamentoId = 1
                 },
                 new Area
                 {
                     Id = 3,
-                    Nome = "Componentes Eletrônicos",
-                    DepartamentoId = 3
+                    Nome = "Segurança",
+                    DepartamentoId = 1
                 },
                 new Area
                 {
@@ -78,6 +126,18 @@ namespace Tickest.Data
                     Id = 5,
                     Nome = "Gerenciamento",
                     DepartamentoId = 4
+                },
+                new Area
+                {
+                    Id = 6,
+                    Nome = "Business Intelligence",
+                    DepartamentoId = 1
+                },
+                new Area
+                {
+                    Id = 7,
+                    Nome = "Infraestrutura",
+                    DepartamentoId = 1
                 });
 
             modelBuilder.Entity<Usuario>().HasData(
