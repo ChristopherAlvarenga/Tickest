@@ -92,7 +92,8 @@
                                 </div>
 
 
-                                <input id="anexo" class="form-control" type="file" name="files" multiple />
+                                <input id="anexo" class="form-control d-none" type="file" name="files" multiple />
+                                <button id="btn-anexo" type="button" class="btn btn-primary"><i class="fas fa-attach"></i>Anexar Arquivos</button>
                             </div>
 
                             <br />
@@ -132,7 +133,9 @@
             });
 
 
-
+            $("#btn-anexo").click(function(){
+                $("#anexo").click();
+            })
 
         })
         function delRef(index) {
