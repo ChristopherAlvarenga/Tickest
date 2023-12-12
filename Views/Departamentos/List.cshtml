@@ -2,16 +2,30 @@
 @using Tickest.Models.ViewModels;
 @model IEnumerable<DepartamentoListViewModel>
 @inject UserManager<IdentityUser> userManager
+@inject Tickest.Data.TickestContext _context
 
 @{
-    ViewData["Title"] = "Tickest - Adicionar Departamento";
+    ViewData["Title"] = "Tickest - Departamentos";
 
     var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
-    if (await userManager.IsInRoleAsync(user, "Gerenciador"))
+    var usuario = _context.Usuarios
+        .Where(p => p.Email == User.Identity.Name)
+        .FirstOrDefault();
+
+    async Task<bool> Gerenciador()
+    {
+        return await userManager.IsInRoleAsync(user, "Gerenciador");
+    }
+    async Task<bool> Responsavel()
+    {
+        return await userManager.IsInRoleAsync(user, "Responsavel");
+    }
+
+    if (await Gerenciador())
         Layout = "_LayoutGerenciador";
 
-    else if (await userManager.IsInRoleAsync(user, "Responsavel"))
+    else if (await Responsavel())
         Layout = "_LayoutResponsavel";
 
     else
@@ -24,9 +38,17 @@
     <table class="table table-condensed" id="Tickets">
         <thead>
             <tr>
-                <th>Nome</th>
-                <th>Responsável</th>
-                <th>Ação</th>
+                @if (await Responsavel() || await Gerenciador())
+                {
+                    <th>Nome</th>
+                    <th>Responsável</th>
+                    <th>Ação</th>
+                }
+                else
+                {
+                    <th>Nome</th>
+                    <th>Responsável</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -35,7 +57,17 @@
                 <tr>
                     <td>@departamento.Nome</td>
                     <td>@departamento.Responsavel.Nome</td>
-                    <td><a href="@Url.Action("Edit", "Departamentos", new { id = departamento.Id })">Editar</a></td>
+                    @if (await Responsavel())
+                    {
+                        if (usuario.DepartamentoId == departamento.Id)
+                        {
+                            <td><a href="@Url.Action("Edit", "Departamentos", new { id = departamento.Id })">Editar</a></td>
+                        }
+                    }
+                    else if (await Gerenciador())
+                    {
+                        <td><a href="@Url.Action("Edit", "Departamentos", new { id = departamento.Id })">Editar</a></td>
+                    }
                 </tr>
             }
         </tbody>

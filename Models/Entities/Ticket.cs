@@ -17,12 +17,14 @@ namespace Tickest.Models.Entities
         [StringLength(1000)]
         public string Descrição { get; set; }
 
-        [AllowNull]
-        [StringLength(1000)]
-        public string Comentario { get; set; }
-
         [Required]
         public DateTime Data_Criação { get; set; }
+
+        [Required]
+        public DateTime Data_Status { get; set; }
+
+        //[Required]
+        //public DateTime Data_Status { get; set; }
 
         [Required]
         [EnumDataType(typeof(Escolha))]

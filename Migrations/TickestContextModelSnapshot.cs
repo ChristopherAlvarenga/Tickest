@@ -343,6 +343,39 @@ namespace Tickest.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tickest.Models.Entities.Message", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime?>("dataHora")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("msg_content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ticket_id")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("user_id_from")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("visu_status")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("ticket_id");
+
+                    b.HasIndex("user_id_from");
+
+                    b.ToTable("Message");
+                });
+
             modelBuilder.Entity("Tickest.Models.Entities.Notificacao", b =>
                 {
                     b.Property<int>("Id")
@@ -377,12 +410,10 @@ namespace Tickest.Migrations
                     b.Property<int?>("AreaId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Comentario")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
                     b.Property<DateTime>("Data_Criação")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Data_Status")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("DepartamentoId")
@@ -561,6 +592,21 @@ namespace Tickest.Migrations
                         .IsRequired();
 
                     b.Navigation("Departamento");
+                });
+
+            modelBuilder.Entity("Tickest.Models.Entities.Message", b =>
+                {
+                    b.HasOne("Tickest.Models.Entities.Ticket", "Ticket")
+                        .WithMany()
+                        .HasForeignKey("ticket_id");
+
+                    b.HasOne("Tickest.Models.Entities.Usuario", "User_from")
+                        .WithMany()
+                        .HasForeignKey("user_id_from");
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("User_from");
                 });
 
             modelBuilder.Entity("Tickest.Models.Entities.Notificacao", b =>

@@ -227,8 +227,8 @@ namespace Tickest.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Título = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Descrição = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    Comentario = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     Data_Criação = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Data_Status = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Prioridade = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     DepartamentoId = table.Column<int>(type: "int", nullable: true),
@@ -272,6 +272,33 @@ namespace Tickest.Migrations
                         name: "FK_Anexos_Tickets_TicketId",
                         column: x => x.TicketId,
                         principalTable: "Tickets",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Message",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    msg_content = table.Column<string>(type: "text", nullable: false),
+                    user_id_from = table.Column<int>(type: "int", nullable: true),
+                    dataHora = table.Column<DateTime>(type: "datetime", nullable: true),
+                    visu_status = table.Column<int>(type: "int", nullable: true),
+                    ticket_id = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Message", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Message_Tickets_ticket_id",
+                        column: x => x.ticket_id,
+                        principalTable: "Tickets",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Message_Usuarios_user_id_from",
+                        column: x => x.user_id_from,
+                        principalTable: "Usuarios",
                         principalColumn: "Id");
                 });
 
@@ -387,6 +414,16 @@ namespace Tickest.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Message_ticket_id",
+                table: "Message",
+                column: "ticket_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Message_user_id_from",
+                table: "Message",
+                column: "user_id_from");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Notificacao_TicketId",
                 table: "Notificacao",
                 column: "TicketId");
@@ -442,6 +479,9 @@ namespace Tickest.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Message");
 
             migrationBuilder.DropTable(
                 name: "Notificacao");
