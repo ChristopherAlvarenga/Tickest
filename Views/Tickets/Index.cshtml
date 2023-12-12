@@ -52,36 +52,8 @@
         border-top: 2px dashed #fff;
         margin: 0.4rem 0;
     }
-
-
-    .btn-primary {
-        color: #fff;
-        background-color: #004cb9;
-        border-color: #004cb9;
-        padding: 12px;
-        padding-right: 30px;
-        padding-left: 30px;
-        border-radius: 1px;
-        font-size: 17px;
-    }
-
-
-        .btn-primary:hover {
-            color: #fff;
-            background-color: #004cb9;
-            border-color: #004cb9;
-            padding: 12px;
-            padding-right: 30px;
-            padding-left: 30px;
-            border-radius: 1px;
-            font-size: 17px;
-        }
-        chat {
-	margin-top: auto;
-	margin-bottom: auto;
-}
-
 </style>
+
 <link rel="stylesheet" href="~/css/chat.css" />
 <div class="row">
     <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
@@ -206,9 +178,23 @@
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <div class="text-center mt-5">
-                                                                <button class="btn btn-primary">Editar</button>
-                                                            </div>
+                                                            @if (ticket.Status != Tickest.Models.Entities.Ticket.Tipo.Concluído && ticket.Status != Tickest.Models.Entities.Ticket.Tipo.Cancelado)
+                                                            {
+                                                                <form method="post" action="/Tickets/MudarStatus/@ticket.Id?status=3">
+                                                                    <div class="text-center mt-5">
+                                                                        <button class="btn btn-primary">Concluir Ticket</button>
+                                                                    </div>
+                                                                </form>
+                                                                <form method="post" action="/Tickets/MudarStatus/@ticket.Id?status=4">
+                                                                    <div class="text-center mt-5">
+                                                                        <button class="btn btn-primary">Cancelar Ticket</button>
+                                                                    </div>
+                                                                </form>
+                                                            }
+                                                            else
+                                                            {
+                                                                <br />
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>

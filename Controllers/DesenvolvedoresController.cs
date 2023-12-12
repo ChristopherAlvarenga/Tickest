@@ -39,9 +39,16 @@ namespace Tickest.Controllers
                 .Include(p => p.Usuario)
                 .Include(p => p.Anexos)
                 .Where(p => p.AreaId == usuario.AreaId)
+                .Where(p => p.UsuarioId != usuario.Id)
                 .Where(p => p.Status != Ticket.Tipo.Concluído)
                 .Where(p => p.Status != Ticket.Tipo.Cancelado)
                 .AsQueryable();
+
+            foreach (var ticket in query)
+            {
+                if (ticket.Status != Ticket.Tipo.Criado && ticket.DestinatarioId != usuario.Id)
+                    query.ToList().RemoveAll(p => p.Id == ticket.Id);
+            }
 
             var viewModel = new TicketViewModel()
             {
@@ -51,15 +58,34 @@ namespace Tickest.Controllers
                     Título = p.Título,
                     Descrição = p.Descrição,
                     Data_Criação = p.Data_Criação,
-                    Comentario = p.Comentario,
                     Status = p.Status,
+                    Data_Status = p.Data_Status,
                     Prioridade = p.Prioridade,
                     Usuario = p.Usuario,
                     Departamento = p.Departamento,
+                    DepartamentoId = p.DepartamentoId,
+                    DestinatarioId = p.DestinatarioId,
                     Anexos = p.Anexos
                 }).ToList(),
                 Usuario = usuario
             };
+
+            ViewBag.TicketsAberto = _context.Tickets
+                .Where(p => p.DestinatarioId == usuario.Id)
+                .Where(p => p.Status != Ticket.Tipo.Cancelado && p.Status != Ticket.Tipo.Concluído)
+                .Count();
+
+            ViewBag.TicketsRecebidos = _context.Tickets
+                .Where(p => p.DestinatarioId == usuario.Id)
+                .Where(p => p.Status != Ticket.Tipo.Cancelado)
+                .Where(p => p.Data_Criação.Month == DateTime.Now.Month)
+                .Count();
+
+            ViewBag.TicketConcluidos = _context.Tickets
+                .Where(p => p.DestinatarioId == usuario.Id)
+                .Where(p => p.Status == Ticket.Tipo.Concluído)
+                .Where(p => p.Data_Status.Month == DateTime.Now.Month)
+                .Count();
 
             return View(viewModel);
         }

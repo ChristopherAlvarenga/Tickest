@@ -1,7 +1,8 @@
 .card-chat {
     height: 500px;
     border-radius: 15px !important;
-    background-color: rgba(0, 0, 0, 0.4) !important;
+    background-color: white !important;
+    border: 1px solid #7375f8;
 }
 
 .contacts_body {
@@ -42,22 +43,22 @@
     }
 
 .type_msg {
-    background-color: rgba(0, 0, 0, 0.3) !important;
+    background-color: #7375f8 !important;
     border: 0 !important;
     color: white !important;
-    height: 60px !important;
+    margin-top: 1px;
+    height: 58px !important;
     overflow-y: auto;
 }
 
-    .type_msg:focus {
-        box-shadow: none !important;
-        outline: 0px !important;
+    .type_msg::placeholder {
+        color: white;
     }
 
 .attach_btn {
     border-radius: 15px 0 0 15px !important;
-    background-color: rgba(0, 0, 0, 0.3) !important;
-    border: 0 !important;
+    background-color: #7375f8 !important;
+    margin-right: 1px;
     color: white !important;
     cursor: pointer;
     height: 60px;
@@ -65,8 +66,8 @@
 
 .send_btn {
     border-radius: 0 15px 15px 0 !important;
-    background-color: rgba(0, 0, 0, 0.3) !important;
-    border: 0 !important;
+    background-color: #7375f8 !important;
+    margin-left: 1px;
     color: white !important;
     cursor: pointer;
     height: 60px;
@@ -166,9 +167,10 @@
     margin-bottom: auto;
     margin-left: 10px;
     border-radius: 25px;
-    background-color: #82ccdd;
+    background-color: #7375f8;
     padding: 10px;
     position: relative;
+    color: white;
 }
 
 .msg_cotainer_send {
@@ -176,9 +178,11 @@
     margin-bottom: auto;
     margin-right: 10px;
     border-radius: 25px;
-    background-color: #78e08f;
+    border: 1px solid #7375f8;
+    background-color: white;
     padding: 10px;
     position: relative;
+    color: #7375f8;
 }
 
 .msg_time {
@@ -247,14 +251,14 @@
 /* width */
 
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 4px;
 }
 
 
 /* Track */
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #7375f8;
 }
 
 
@@ -262,6 +266,7 @@
 
 ::-webkit-scrollbar-thumb {
     background: #888;
+    border-radius: 50%;
 }
 
 

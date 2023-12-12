@@ -4,17 +4,14 @@
 @inject UserManager<IdentityUser> userManager
 
 @{
-    async Task<bool> PodeEditarOuDeletar()
-    {
-        var user = await userManager.FindByEmailAsync(User.Identity.Name);
-        return await userManager.IsInRoleAsync(user, "Gerenciador");
-    }
-}
-
-@{
     ViewData["Title"] = "Tickest - Usuarios";
 
     var user = await userManager.FindByEmailAsync(User.Identity.Name);
+
+    async Task<bool> PodeEditarOuDeletar()
+    {
+        return await userManager.IsInRoleAsync(user, "Gerenciador");
+    }
 
     if (await userManager.IsInRoleAsync(user, "Gerenciador"))
         Layout = "_LayoutGerenciador";
