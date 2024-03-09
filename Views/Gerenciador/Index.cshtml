@@ -3,10 +3,47 @@
 @{
     Layout = "_LayoutGerenciador";
     ViewData["Title"] = "Tickest - Home";
-
-    string none = "";
 }
 <link rel="stylesheet" href="~/css/chat.css" />
+
+<style>
+    .modal-body {
+        background-color: #fff;
+        border-color: #fff;
+    }
+
+    .d-flex1 {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        word-break: break-all; /*  */
+        word-wrap: break-word; /* if you want to cut the complete word */
+        white-space: normal;
+    }
+
+    .close {
+        color: #000;
+        cursor: pointer;
+    }
+
+        .close:hover {
+            color: #000;
+        }
+
+
+    .theme-color {
+        flex-wrap: wrap !important;
+        color: #004cb9;
+        word-break: break-all; /*  */
+        word-wrap: break-word; /* if you want to cut the complete word */
+        white-space: normal;
+    }
+
+    hr.new1 {
+        border-top: 2px dashed #fff;
+        margin: 0.4rem 0;
+    }
+</style>
+
 <div class="row">
     <div class="col-lg-12 mb-4 order-0">
         <div class="card" style="width:100%">
@@ -46,6 +83,7 @@
                             <tbody class="table-border-bottom-0">
                                 @foreach (var ticket in Model.Tickets)
                                 {
+                                    var none = "";
                                     <tr>
                                         <td><strong>#@ticket.Id</strong></td>
                                         <td><strong>@ticket.Título</strong></td>
@@ -121,7 +159,8 @@
                                                                 </div>
                                                             </div>
                                                             @if (ticket.Status == Tickest.Models.Entities.Ticket.Tipo.Criado) { none = "d-none"; }
-                                                            <div class="card card-chat @none">
+                                                            else { none = ""; }
+                                                            <div class="card card-chat">
                                                                 <div class="card-header msg_head">
                                                                     <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
                                                                     <div class="action_menu">

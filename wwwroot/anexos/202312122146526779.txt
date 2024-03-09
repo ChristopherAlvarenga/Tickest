@@ -1,0 +1,406 @@
+Título: Problema com impressora na sala de reuniões
+
+Descrição: A impressora localizada na sala de reuniões do 5º andar não está imprimindo corretamente. Os colaboradores relataram manchas nas páginas e dificuldades para usar o equipamento.
+
+Prioridade: Média
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Suporte Técnico 
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Acesso Negado a Sistema de RH
+
+Descrição: Funcionários relataram problemas ao tentar acessar o sistema de Recursos Humanos. Recebe mensagem de "Acesso Negado" ao tentar visualizar informações de folha de pagamento.
+
+Prioridade: Alta
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Suporte de Sistemas 
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Vazamento de Água no Banheiro do 3º Andar
+
+Descrição: Houve um vazamento de água no banheiro feminino do 3º andar. A água está se acumulando no chão, causando risco de escorregões e danos à estrutura.
+
+Prioridade: Urgente
+
+Departamento: Facilities
+
+Área: Manutenção Predial 
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Solicitação de Novo Software de Design Gráfico
+
+Descrição: O departamento de design precisa de uma licença para um novo software de design gráfico para melhorar a eficiência e qualidade do trabalho. O software desejado é o Adobe Creative Cloud.
+
+Prioridade: Média
+
+Departamento: Recursos Humanos
+
+Área: Aquisições 
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Problema com Conexão de Rede no 8º Andar
+
+Descrição: Funcionários do 8º andar estão enfrentando desconexões frequentes da rede Wi-Fi. Isso está prejudicando a produtividade e causando interrupções no trabalho.
+
+Prioridade: Alta
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Redes e Conectividade 
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Troca de Equipamento de Computador Defeituoso
+
+Descrição: O computador do funcionário na sala 201 está apresentando falhas constantes. Solicita-se a substituição imediata do equipamento para evitar impactos no trabalho diário.
+
+Prioridade: Alta
+
+Departamento: Recursos Humanos
+
+Área: Suporte Técnico 
+
++-####################################################################################################################-+
+
+Título: Dificuldades para Acessar Documentos Compartilhados
+
+Descrição: Estou enfrentando problemas ao tentar acessar os documentos compartilhados na plataforma. Recebo uma mensagem de erro indicando falta de permissão. Isso está impactando meu trabalho de colaboração.
+
+Prioridade: Média
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Suporte Técnico
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Lentidão no Sistema de E-mail
+
+Descrição: O sistema de e-mail está apresentando lentidão significativa. O envio e recebimento de mensagens estão demorando mais do que o normal, prejudicando a comunicação eficiente.
+
+Prioridade: Alta
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Suporte de Sistemas
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Solicitação de Aumento de Cota de Armazenamento na Nuvem
+
+Descrição: Minha cota de armazenamento na nuvem está chegando ao limite devido a grandes arquivos de projeto. Preciso de uma ampliação para continuar armazenando documentos importantes.
+
+Prioridade: Baixa
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Infraestrutura de TI
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Necessidade de Licença para Novo Plugin no Navegador
+
+Descrição: Para melhorar a eficiência no trabalho, gostaria de solicitar uma licença para um novo plugin no navegador. O plugin é essencial para as minhas tarefas diárias.
+
+Prioridade: Baixa
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Suporte de Sistemas
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Problema com Conexão VPN
+
+Descrição: Ao tentar me conectar à VPN, recebo mensagens de erro constantes. Isso está me impedindo de acessar documentos confidenciais necessários para o meu projeto.
+
+Prioridade: Alta
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Redes e Conectividade
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Problema com o Acesso à Intranet
+
+Descrição: Ao tentar acessar a intranet, recebo uma mensagem de erro informando que não é possível estabelecer conexão. Isso está me impedindo de acessar informações importantes.
+
+Prioridade: Alta
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Suporte Técnico
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Problema com a Impressora no 4º Andar
+
+Descrição: A impressora no 4º andar está exibindo mensagens de erro constantes, e os documentos estão sendo impressos com qualidade inferior. Isso está impactando as operações diárias.
+
+Prioridade: Média
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Suporte Técnico
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Pedido de Atualização de Software Antivírus
+
+Descrição: Minha versão do software antivírus está desatualizada, e não consigo atualizá-la manualmente. Solicito assistência para garantir a segurança do meu sistema.
+
+Prioridade: Média
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Segurança da Informação
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Solicitação de Treinamento em Novas Políticas Internas
+
+Descrição: Com a implementação de novas políticas internas, gostaria de participar de um treinamento para compreendê-las completamente. Isso garantirá a conformidade com as novas diretrizes.
+
+Prioridade: Baixa
+
+Departamento: Recursos Humanos
+
+Área: Desenvolvimento Organizacional
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Problema com Telefone Fixo
+
+Descrição: Meu telefone fixo no escritório não está recebendo ligações e exibe um sinal de linha cruzada. Isso está prejudicando minha comunicação com colegas e clientes.
+
+Prioridade: Alta
+
+Departamento: Tecnologia da Informação (TI)
+Área: Comunicações Unificadas
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Necessidade de Acesso a Novo Banco de Dados
+
+Descrição: Para meu projeto atual, preciso de acesso a um novo banco de dados específico. Acesso apropriado facilitará a manipulação eficiente de dados.
+
+Prioridade: Média
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Banco de Dados
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Problema com o Sistema de Reservas de Estacionamento
+
+Descrição: Ao tentar reservar uma vaga de estacionamento, encontro dificuldades no sistema online. Isso está afetando minha capacidade de planejar e garantir um local para estacionar.
+
+Prioridade: Média
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Suporte de Sistemas
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Solicitação de Novo Software de Análise de Dados
+
+Descrição: Preciso de um novo software de análise de dados para lidar com conjuntos grandes de informações. Este software específico é crucial para a eficiência das análises que conduzo regularmente.
+
+Prioridade: Baixa
+
+Departamento: Recursos Humanos
+
+Área: Aquisições
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Problema com Acesso ao Sistema de Registro de Horas
+
+Descrição: Não consigo acessar o sistema de registro de horas para submeter meu relatório semanal. Isso está atrasando o processo de pagamento e afetando a precisão dos registros.
+
+Prioridade: Alta
+
+Departamento: Recursos Humanos
+
+Área: Suporte Técnico
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Problema com Acesso ao Sistema de Reservas de Viagens
+
+Descrição: Encontro dificuldades ao tentar acessar o sistema de reservas de viagens para agendar minha próxima viagem de trabalho. Isso está prejudicando o planejamento da minha agenda.
+
+Prioridade: Média
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Suporte de Sistemas
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Solicitação de Upgrade de Hardware para Estação de Trabalho
+
+Descrição: Minha estação de trabalho está apresentando lentidão constante, especialmente ao executar aplicativos mais pesados. Solicito um upgrade de hardware para melhorar o desempenho.
+
+Prioridade: Média
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Suporte Técnico
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Problema com Conexão VPN para Trabalho Remoto
+
+Descrição: Ao tentar me conectar à VPN para trabalhar remotamente, encontro dificuldades de conexão. Isso está impactando minha capacidade de acessar recursos internos necessários para minhas tarefas.
+
+Prioridade: Alta
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Redes e Conectividade
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Problema com Acesso ao Sistema de Registro de Horas
+
+Descrição: Não consigo acessar o sistema de registro de horas para submeter meu relatório semanal. Isso está atrasando o processo de pagamento e afetando a precisão dos registros.
+
+Prioridade: Alta
+
+Departamento: Recursos Humanos
+
+Área: Suporte Técnico
+
++-####################################################################################################################-+
+
+Título: Solicitação de Licença do Software Estatístico "StatPro"
+
+Descrição: Para realizar análises estatísticas avançadas em projetos específicos, solicito a aquisição de uma licença para o software "StatPro". Essa ferramenta é fundamental para atingir os objetivos do projeto.
+
+Prioridade: Baixa
+
+Departamento: Pesquisa e Desenvolvimento
+
+Área: Aquisições
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Dificuldades com o Software de Edição de Vídeo "VideoPro"
+
+Descrição: Ao utilizar o software de edição de vídeo "VideoPro", tenho enfrentado travamentos constantes e perda de trabalho não salvo. Essa situação está atrasando a produção de material audiovisual.
+
+Prioridade: Média
+
+Departamento: Marketing
+
+Área: Produção de Conteúdo
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Reclamação sobre a Qualidade dos Equipamentos de Som - Departamento de Eventos
+
+Descrição: Os equipamentos de som no departamento de eventos estão apresentando distorções no áudio durante as apresentações. Isso está impactando negativamente a experiência dos participantes nos eventos corporativos.
+
+Prioridade: Média
+
+Departamento: Eventos
+
+Área: Manutenção de Equipamentos
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Solicitação de Aumento de Armazenamento na Caixa de E-mails
+
+Descrição: Minha caixa de e-mails atingiu a capacidade máxima, e não consigo receber novas mensagens. Solicito um aumento no espaço de armazenamento para evitar a perda de e-mails importantes.
+
+Prioridade: Baixa
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Infraestrutura de TI
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Título: Problema com Acesso ao Sistema de Telefonia IP
+
+Descrição: Ao tentar fazer chamadas pelo sistema de telefonia IP, recebo a mensagem "Falha na conexão". Isso está prejudicando as comunicações e comprometendo a eficiência das chamadas.
+
+Prioridade: Alta
+
+Departamento: Tecnologia da Informação (TI)
+
+Área: Comunicações Unificadas
+
++-####################################################################################################################-+
+
+Departamento: Finanças
+
+Área: Sistemas Financeiros
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Departamento: Tecnologia da Informação (TI)
+
+Áreas:
+
+Suporte de Hardware
+Suporte Técnico
+Segurança da Informação
+Redes e Conectividade
+Comunicações Unificadas
+Infraestrutura de TI
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Departamento: Pesquisa e Desenvolvimento
+
+Área: Aquisições
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Departamento: Vendas
+
+Área: Banco de Dados
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Departamento: Marketing
+
+Área: Produção de Conteúdo
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Departamento: Recursos Humanos
+
+Áreas:
+Suporte Técnico
+Desenvolvimento Organizacional
+Segurança da Informação
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Departamento: Suprimentos
+
+Área: Sistemas de Compras
+
++----------------------------------------------------------------------------------------------------------------------+
+
+Departamento: Eventos
+
+Área: Manutenção de Equipamentos
+
+
+
+
