@@ -36,11 +36,13 @@ namespace Tickest.Controllers
                 .Where(p => p.Usuario.Email == usuario.Email)
                 .Where(p => p.Status != Ticket.Tipo.Concluído && p.Status != Ticket.Tipo.Cancelado)
                 .OrderBy(p => p.Id)
-                .AsQueryable();
+                .AsQueryable()
+                .ToList();
 
             var viewModel = new TicketViewModel()
             {
-                Tickets = query.Select(p => new Ticket
+                Tickets = query
+                .Select(p => new Ticket
                 {
                     Id = p.Id,
                     Título = p.Título,
@@ -168,15 +170,10 @@ namespace Tickest.Controllers
                 }).ToList()
             };
 
-            ViewBag.Departamentos = _context.Departamentos.Where(p => p.Id != user.DepartamentoId).OrderBy(p => p.Nome).ToList();
-            ViewBag.Areas = new SelectList(query1.Where(p => p.Id != user.AreaId));
+            //ViewBag.Departamentos = _context.Departamentos.Where(p => p.Id != user.DepartamentoId).OrderBy(p => p.Nome).ToList();
+            //ViewBag.Areas = new SelectList(query1.Where(p => p.Id != user.AreaId));
 
             return View(viewModel);
-        }
-
-        private object ToList()
-        {
-            throw new NotImplementedException();
         }
 
         // POST: TicketsController/Create
@@ -202,11 +199,9 @@ namespace Tickest.Controllers
             ticket.Status = Ticket.Tipo.Criado;
             ticket.Data_Status = DateTime.Now;
             ticket.UsuarioId = usuario.Id;
-            ticket.DepartamentoId = usuario.DepartamentoId;
+            ticket.DepartamentoId = ticket.DepartamentoId;
             _context.Add(ticket);
             await _context.SaveChangesAsync();
-
-            var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
             return RedirectToAction(nameof(Index));
         }
