@@ -66,7 +66,7 @@ async Task CriarPerfilUsuarioAsync(WebApplication app)
         var service = scope.ServiceProvider.GetService<ISeedUserRoleInitial>();
         var context = scope.ServiceProvider.GetService<TickestContext>();
 
-        context.Database.Migrate();
+        await context.Database.MigrateAsync();
 
         await service.SeedRolesAsync();
         await service.SeedUsersAsync();

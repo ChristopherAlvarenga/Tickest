@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
@@ -13,56 +14,64 @@ namespace Tickest.Controllers
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly TickestContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public AccountController(UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager, TickestContext context)
+            SignInManager<IdentityUser> signInManager, TickestContext context,
+            RoleManager<IdentityRole> roleManager)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             _context = context;
+            _roleManager = roleManager;
         }
 
         [Authorize(Roles = "Gerenciador")]
         [HttpGet]
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
-            ViewBag.Departamentos = _context.Departamentos.ToList();
-            return View();
+            //ViewBag.Departamentos = _context.Departamentos.ToList();
+
+            var roles = await _roleManager.Roles.ToListAsync();
+
+            var viewModel = new RegisterViewModel
+            {
+                OpcesFuncoes = roles.Select(p => new FuncaoViewModel { Id = Guid.Parse(p.Id), Nome = p.Name }).ToList()
+            };
+
+            return View(viewModel);
         }
 
         [Authorize(Roles = "Gerenciador")]
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel registerModel)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
                 // Copia os dados do RegisterViewModel para o IdentityUser
                 var user = new IdentityUser
                 {
-                    UserName = registerModel.Email,
-                    Email = registerModel.Email,
-                    NormalizedUserName = registerModel.Nome.ToUpper(),
-                    NormalizedEmail = registerModel.Email.ToUpper()
+                    UserName = model.Email,
+                    Email = model.Email,
+                    NormalizedUserName = model.Nome.ToUpper(),
+                    NormalizedEmail = model.Email.ToUpper()
                 };
 
                 // Armazena os dados do usuário na tabela AspNetUsers
-                var result = await userManager.CreateAsync(user, registerModel.Senha);
+                var result = await userManager.CreateAsync(user, model.Senha);
 
                 // Se o usuário foi criado com sucesso, faz o login do usuário usando o serviço
                 // SignInManager e redireciona para o método Action Index
                 if (result.Succeeded)
                 {
-                    if(registerModel.Funcao == 1)
-                        await userManager.AddToRoleAsync(user, "Gerenciador");
-                    else if (registerModel.Funcao == 2)
-                        await userManager.AddToRoleAsync(user, "Responsavel");
-                    else if(registerModel.Funcao == 3)
-                        await userManager.AddToRoleAsync(user, "Desenvolvedor");
+                    var funcaoSelecionada = await _roleManager.FindByIdAsync(model.FuncaoId.ToString());
+
+                    await userManager.AddToRoleAsync(user, funcaoSelecionada.Name);
 
                     var usuario = new Usuario()
                     {
-                        Nome = registerModel.Nome,
-                        Email = registerModel.Email
+                        Nome = model.Nome,
+                        Email = model.Email
                     };
 
                     _context.Add(usuario);
@@ -72,7 +81,7 @@ namespace Tickest.Controllers
                 }
 
                 // Se houver erros, inclui no ModelState e exibe pela tag helper summary na validação
-                if (result.Errors != null) 
+                if (result.Errors != null)
                 {
                     ModelState.AddModelError(string.Empty, "A senha deve possuir mais de 6 caracteres.");
                     ModelState.AddModelError(string.Empty, "A senha deve ter pelo menos um caractere especial ('@','#', '&', etc).");
@@ -80,7 +89,15 @@ namespace Tickest.Controllers
                     ModelState.AddModelError(string.Empty, "A senha deve ter pelo menos uma letra maiúscula ('A'-'Z').");
                 }
             }
-            return View();
+
+            var roles = await _roleManager.Roles.ToListAsync();
+
+            var viewModel = new RegisterViewModel
+            {
+                OpcesFuncoes = roles.Select(p => new FuncaoViewModel { Id = Guid.Parse(p.Id), Nome = p.Name }).ToList()
+            };
+
+            return View(viewModel);
         }
 
         [AllowAnonymous]

@@ -5,6 +5,11 @@ namespace Tickest.Models.ViewModels
 {
     public class RegisterViewModel
     {
+        public RegisterViewModel()
+        {
+            OpcesFuncoes = new List<FuncaoViewModel>();
+        }
+
         [Required]
         [MaxLength(100)]
         public string? Nome { get; set; }
@@ -22,6 +27,8 @@ namespace Tickest.Models.ViewModels
         [Compare("Senha", ErrorMessage = "As Senhas não condizem")]
         public string? ConfirmarSenha { get; set; }
 
-        public int Funcao { get; set; }
+        public ICollection<FuncaoViewModel> OpcesFuncoes { get; set; }
+
+        public Guid FuncaoId { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿@using Tickest.Models.ViewModels;
+
 @model RegisterViewModel
 
 @{
@@ -8,7 +9,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <form method="post">
+        <form method="post" asp-action="Register" asp-controller="Account">
             <div asp-validation-summary="All" class="text-danger"></div>
             <!-- Content wrapper -->
             <div class="content-wrapper">
@@ -77,16 +78,35 @@
                                         </select>
                                     </div> *@
 
-                                    <label asp-for="Funcao" class="form-label" for="basic-default-password12">Função</label>
                                     <div class="input-group">
-                                        <select asp-for="Funcao" class="form-select">
+
+                                        <select asp-for="FuncaoId" class="form-select" id="fId">
+                                            <option value="">Selecione...</option>
+                                            @foreach (var item in Model.OpcesFuncoes)
+                                            {
+                                                <option value="@item.Id">@item.Nome</option>
+                                            }
+                                        </select>
+
+                                        @* <select asp-for="FuncaoId" class="form-select">
+                                            <option value="" selected>Escolha...</option>
+                                            @foreach (var funcao in Model?.OpcesFuncoes)
+                                            {
+                                                <option value="@funcao.Id">@funcao.Nome</option>
+                                            }
+                                        </select> *@
+                                    </div>
+
+                                   @*  <label asp-for="FuncaoId" class="form-label" for="basic-default-password12">Função</label>
+                                    <div class="input-group">
+                                        <select asp-for="FuncaoId" class="form-select">
                                             <option value="" selected>Escolha...</option>
                                             <option value="1">Gerenciador</option>
                                             <option value="2">Responsável</option>
                                             <option value="3">Desenvolvedor</option>
                                         </select>
                                     </div>
-
+ *@
                                     <br />
 
                                     <button type="submit" class="btn btn-primary mt-3">Adicionar Usuário</button>
