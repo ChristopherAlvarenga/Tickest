@@ -11,10 +11,10 @@ namespace Tickest.Controllers
     [Authorize]
     public class DepartamentosController : Controller
     {
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<Usuario> userManager;
         private readonly TickestContext _context;
 
-        public DepartamentosController(UserManager<IdentityUser> userManager, TickestContext context)
+        public DepartamentosController(UserManager<Usuario> userManager, TickestContext context)
         {
             this.userManager = userManager;
             _context = context;

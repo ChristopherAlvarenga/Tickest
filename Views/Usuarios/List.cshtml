@@ -1,7 +1,8 @@
-﻿@using Tickest.Models.ViewModels;
-@using Microsoft.AspNetCore.Identity;
+﻿@using Microsoft.AspNetCore.Identity
+@using Tickest.Models.ViewModels;
+@using Tickest.Models.Entities;
 @model IEnumerable<UsuarioListViewModel>;
-@inject UserManager<IdentityUser> userManager
+@inject UserManager<Usuario> userManager
 
 @{
     ViewData["Title"] = "Tickest - Usuarios";

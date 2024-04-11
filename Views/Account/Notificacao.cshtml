@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity;
-@inject UserManager<IdentityUser> userManager
+@using Tickest.Models.Entities;
+
+@inject UserManager<Usuario> userManager
 
 @{
     ViewData["Title"] = "Tickest - Tickets Criados";

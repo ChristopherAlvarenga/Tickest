@@ -13,10 +13,10 @@ namespace Tickest.Controllers
     [Authorize]
     public class TicketsController : Controller
     {
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<Usuario> userManager;
         private readonly TickestContext _context;
 
-        public TicketsController(UserManager<IdentityUser> userManager, TickestContext context)
+        public TicketsController(UserManager<Usuario> userManager, TickestContext context)
         {
             this.userManager = userManager;
             _context = context;
@@ -31,9 +31,9 @@ namespace Tickest.Controllers
 
             var query = _context.Tickets
                 .Include(p => p.Departamento)
-                .Include(p => p.Usuario)
+                .Include(p => p.Responsavel)
                 .Include(p => p.Anexos)
-                .Where(p => p.Usuario.Email == usuario.Email)
+                .Where(p => p.Responsavel.Email == usuario.Email)
                 .Where(p => p.Status != Ticket.Tipo.Concluído && p.Status != Ticket.Tipo.Cancelado)
                 .OrderBy(p => p.Id)
                 .AsQueryable()
@@ -51,9 +51,9 @@ namespace Tickest.Controllers
                     Status = p.Status,
                     Data_Status = p.Data_Status,
                     Prioridade = p.Prioridade,
-                    Usuario = p.Usuario,
+                    Responsavel = p.Responsavel,
                     Departamento = p.Departamento,
-                    DestinatarioId = p.DestinatarioId,
+                    SolicitanteId = p.SolicitanteId,
                     Anexos = p.Anexos
                 }).ToList(),
                 Usuario = usuario
@@ -71,9 +71,9 @@ namespace Tickest.Controllers
 
             var query = _context.Tickets
                 .Include(p => p.Departamento)
-                .Include(p => p.Usuario)
+                .Include(p => p.Responsavel)
                 .Include(p => p.Anexos)
-                .Where(p => p.Usuario.Email == usuario.Email || p.DestinatarioId == usuario.Id)
+                .Where(p => p.Responsavel.Email == usuario.Email || p.SolicitanteId == usuario.Id)
                 .Where(p => p.Status == Ticket.Tipo.Concluído || p.Status == Ticket.Tipo.Cancelado)
                 .OrderBy(p => p.Id)
                 .AsQueryable();
@@ -89,9 +89,9 @@ namespace Tickest.Controllers
                     Status = p.Status,
                     Data_Status = p.Data_Status,
                     Prioridade = p.Prioridade,
-                    Usuario = p.Usuario,
+                    Responsavel = p.Responsavel,
                     Departamento = p.Departamento,
-                    DestinatarioId = p.DestinatarioId,
+                    SolicitanteId = p.SolicitanteId,
                     Anexos = p.Anexos
                 }).ToList(),
                 Usuario = usuario
@@ -108,9 +108,9 @@ namespace Tickest.Controllers
 
             var query = _context.Tickets
                 .Include(p => p.Departamento)
-                .Include(p => p.Usuario)
+                .Include(p => p.Responsavel)
                 .Include(p => p.Anexos)
-                .Where(p => p.Usuario.Email == usuario.Email && (EF.Functions.Like(p.Título, "%" + search + "%") || (p.Id.ToString() == search) || (EF.Functions.Like(p.Descrição, "%" + search + "%") || (EF.Functions.Like(p.Departamento.Nome, "%" + search + "%")))))
+                .Where(p => p.Responsavel.Email == usuario.Email && (EF.Functions.Like(p.Título, "%" + search + "%") || (p.Id.ToString() == search) || (EF.Functions.Like(p.Descrição, "%" + search + "%") || (EF.Functions.Like(p.Departamento.Nome, "%" + search + "%")))))
                 .OrderBy(p => p.Id)
                 .AsQueryable();
 
@@ -125,9 +125,9 @@ namespace Tickest.Controllers
                     Status = p.Status,
                     Data_Status = p.Data_Status,
                     Prioridade = p.Prioridade,
-                    Usuario = p.Usuario,
+                    Responsavel = p.Responsavel,
                     Departamento = p.Departamento,
-                    DestinatarioId = p.DestinatarioId,
+                    SolicitanteId = p.SolicitanteId,
                     Anexos = p.Anexos
                 }).ToList(),
                 Usuario = usuario
@@ -182,9 +182,9 @@ namespace Tickest.Controllers
         public async Task<IActionResult> Create(Ticket ticket, int departamentoId, List<IFormFile> files)
         {
             ViewBag.Areas = _context.Areas.Where(s => s.DepartamentoId == departamentoId);
-            ticket.Anexos = new List<Anexo>();
+            
             var usuario = _context.Usuarios
-                .Where(p => p.Email == User.Identity.Name).FirstOrDefault();
+                .FirstOrDefault(p => p.Email == User.Identity.Name);
 
             foreach (IFormFile file in files)
             {
@@ -198,7 +198,7 @@ namespace Tickest.Controllers
             ticket.Data_Criação = DateTime.Now;
             ticket.Status = Ticket.Tipo.Criado;
             ticket.Data_Status = DateTime.Now;
-            ticket.UsuarioId = usuario.Id;
+            ticket.ResponsavelId = usuario.Id;
             ticket.DepartamentoId = ticket.DepartamentoId;
             _context.Add(ticket);
             await _context.SaveChangesAsync();
@@ -258,7 +258,7 @@ namespace Tickest.Controllers
 
             if (status == 1)
             {
-                ticket.DestinatarioId = usuario.Id;
+                ticket.SolicitanteId = usuario.Id;
                 ticket.Status = Ticket.Tipo.Andamento;
                 ticket.Data_Status = DateTime.Now;
             }

@@ -1,8 +1,9 @@
-﻿@using Microsoft.AspNetCore.Identity;
+﻿@using Microsoft.AspNetCore.Identity
 @using Tickest.Models.ViewModels;
+@using Tickest.Models.Entities;
 @model TicketViewModel
 
-@inject UserManager<IdentityUser> userManager
+@inject UserManager<Usuario> userManager
 
 @{
     var user = await userManager.FindByEmailAsync(User.Identity.Name);

@@ -12,10 +12,10 @@ namespace Tickest.Controllers
     [Authorize(Roles = "Gerenciador")]
     public class AreasController : Controller
     {
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<Usuario> userManager;
         private readonly TickestContext _context;
 
-        public AreasController(UserManager<IdentityUser> userManager, TickestContext context)
+        public AreasController(UserManager<Usuario> userManager, TickestContext context)
         {
             this.userManager = userManager;
             _context = context;

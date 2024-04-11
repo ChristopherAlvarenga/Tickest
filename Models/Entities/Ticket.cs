@@ -1,11 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Tickest.Models.Entities
 {
     public class Ticket
     {
+        public Ticket()
+        {
+            Anexos = new List<Anexo>();
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -50,10 +54,13 @@ namespace Tickest.Models.Entities
         [ForeignKey(nameof(AreaId))]
         public virtual Area? Area { get; set; }
 
-        public int? DestinatarioId { get; set; }
-        public int? UsuarioId { get; set; }
-        [ForeignKey(nameof(UsuarioId))]
-        public virtual Usuario? Usuario { get; set; }
+        public int SolicitanteId { get; set; }
+        [ForeignKey(nameof(SolicitanteId))]
+        public Usuario Solicitante { get; set; }
+
+        public int? ResponsavelId { get; set; }
+        [ForeignKey(nameof(ResponsavelId))]
+        public virtual Usuario? Responsavel { get; set; }
 
         public List<Anexo> Anexos { get; set; }
     }

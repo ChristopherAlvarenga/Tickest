@@ -11,14 +11,14 @@ namespace Tickest.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<Usuario> userManager;
+        private readonly SignInManager<Usuario> signInManager;
         private readonly TickestContext _context;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<Role> _roleManager;
 
-        public AccountController(UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager, TickestContext context,
-            RoleManager<IdentityRole> roleManager)
+        public AccountController(UserManager<Usuario> userManager,
+            SignInManager<Usuario> signInManager, TickestContext context,
+            RoleManager<Role> roleManager)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -36,7 +36,7 @@ namespace Tickest.Controllers
 
             var viewModel = new RegisterViewModel
             {
-                OpcesFuncoes = roles.Select(p => new FuncaoViewModel { Id = Guid.Parse(p.Id), Nome = p.Name }).ToList()
+                OpcesFuncoes = roles.Select(p => new FuncaoViewModel { Id = p.Id, Nome = p.Name }).ToList()
             };
 
             return View(viewModel);
@@ -49,7 +49,7 @@ namespace Tickest.Controllers
             if (ModelState.IsValid)
             {
                 // Copia os dados do RegisterViewModel para o IdentityUser
-                var user = new IdentityUser
+                var user = new Usuario
                 {
                     UserName = model.Email,
                     Email = model.Email,
@@ -94,7 +94,7 @@ namespace Tickest.Controllers
 
             var viewModel = new RegisterViewModel
             {
-                OpcesFuncoes = roles.Select(p => new FuncaoViewModel { Id = Guid.Parse(p.Id), Nome = p.Name }).ToList()
+                OpcesFuncoes = roles.Select(p => new FuncaoViewModel { Id = p.Id, Nome = p.Name }).ToList()
             };
 
             return View(viewModel);

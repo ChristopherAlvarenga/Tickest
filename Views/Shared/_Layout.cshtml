@@ -1,19 +1,37 @@
-﻿@inject Tickest.Data.TickestContext _context
+﻿@using Microsoft.AspNetCore.Identity; 
+@using Tickest.Models.ViewModels;
+@using Tickest.Models.Entities;
+
+@inject Tickest.Data.TickestContext _context
+@inject UserManager<Usuario> _userManager
 
 @{
+    var usuarioAtual = await _userManager.GetUserAsync(User);
+
     var Usuario = _context.Usuarios
-        .Where(p => p.Email == User.Identity.Name).FirstOrDefault();
+        .FirstOrDefault(p => p.Email == User.Identity.Name);
 
     var departamento = _context.Departamentos
-        .Where(p => p.Id == Usuario.DepartamentoId).FirstOrDefault();
+        .FirstOrDefault(p => p.Id == Usuario.DepartamentoId);
 
     var area = _context.Areas
-        .Where(p => p.Id == Usuario.AreaId).FirstOrDefault();
+        .FirstOrDefault(p => p.Id == Usuario.AreaId);
 
-    if(area != null)
+    if (area != null)
         Usuario.Area.Nome = area.Nome;
-    if(departamento != null)
+
+    if (departamento != null)
         Usuario.Departamento.Nome = departamento.Nome;
+
+
+    async Task<bool> IsUserInRole(params string[] roles)
+    {
+        foreach (var role in roles)
+            if (await _userManager.IsInRoleAsync(usuarioAtual, role))
+                return true;
+
+        return false;
+    }
 }
 
 <!DOCTYPE html>
@@ -118,12 +136,15 @@
                         <span class="menu-header-text">Ações</span>
                     </li>
 
-                    <li class="menu-item">
-                        <a asp-area="" asp-action="Create" asp-controller="Tickets" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-add-to-queue"></i>
-                            <div data-i18n="Basic">Criar Ticket</div>
-                        </a>
-                    </li>
+                    @if (await IsUserInRole("CLIENTE"))
+                    {
+                        <li class="menu-item">
+                            <a asp-area="" asp-action="Create" asp-controller="Tickets" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-add-to-queue"></i>
+                                <div data-i18n="Basic">Criar Ticket</div>
+                            </a>
+                        </li>
+                    }
 
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -163,13 +184,13 @@
                         <div class="navbar-nav align-items-center">
                             <div class="nav-item d-flex align-items-center">
                                 <i class="bx bx-search fs-4 lh-0"></i>
-                                   <form  method="post" action="/Tickets/Search">
+                                <form method="post" action="/Tickets/Search">
                                     <input name="search" type="text"
-                                       class="form-control border-0 shadow-none"
-                                       placeholder="Pesquisar..."
-                                       aria-label="Perquisar..." />
+                                           class="form-control border-0 shadow-none"
+                                           placeholder="Pesquisar..."
+                                           aria-label="Perquisar..." />
 
-                                   </form>
+                                </form>
                             </div>
                         </div>
 
@@ -179,7 +200,7 @@
 
                             <li class="avatar avatar btn rounded-pill btn-icon btn-outline-primary bg-light">
                                 <a asp-area="" asp-controller="Notificacoes" asp-action="Index" class="text-dark">
-                                <span class="tf-icons bx bx-bell"></span>
+                                    <span class="tf-icons bx bx-bell"></span>
                                 </a>
                             </li>
 
@@ -206,7 +227,7 @@
                                                         <small class="text-muted">@Usuario.Departamento.Nome</small>
                                                     }
                                                     <br />
-                                                    @if(area != null)
+                                                    @if (area != null)
                                                     {
                                                         <small class="text-muted">@Usuario.Area.Nome</small>
                                                     }

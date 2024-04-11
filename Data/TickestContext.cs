@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.WebEncoders.Testing;
 using Tickest.Models.Entities;
 
 namespace Tickest.Data
 {
-    public class TickestContext : IdentityDbContext
+    public class TickestContext : IdentityDbContext<Usuario, Role, int>
     {
         public TickestContext(DbContextOptions<TickestContext> options) : base(options)
         {
@@ -21,6 +22,28 @@ namespace Tickest.Data
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Usuario>().ToTable("Users");
+            modelBuilder.Entity<Role>().ToTable("Roles");
+            modelBuilder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims");
+            modelBuilder.Entity<IdentityUserRole<int>>().ToTable("UserRoles");
+            modelBuilder.Entity<IdentityUserLogin<int>>().ToTable("UserLogins");
+            modelBuilder.Entity<IdentityRoleClaim<int>>().ToTable("RoleClaims");
+            modelBuilder.Entity<IdentityUserToken<int>>().ToTable("UserToken");
+
+
+            modelBuilder.Entity<Ticket>()
+                .HasOne(p => p.Responsavel)
+                .WithMany(p => p.TicketsResponsaveis)
+                .HasForeignKey(p => p.ResponsavelId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            //modelBuilder.Entity<Ticket>()
+            //    .HasOne(p => p.Solicitante)
+            //    .WithMany(p => p.TicketsResponsaveis)
+            //    .HasForeignKey(p => p.SolicitanteId)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Departamento>().HasData(
                 new Departamento
@@ -138,41 +161,6 @@ namespace Tickest.Data
                     Id = 7,
                     Nome = "Infraestrutura",
                     DepartamentoId = 1
-                });
-
-            modelBuilder.Entity<Usuario>().HasData(
-                new Usuario
-                {
-                    Id = 1,
-                    Nome = "Admin",
-                    Email = "admin@localhost"
-                },
-                new Usuario
-                {
-                    Id = 2,
-                    Nome = "Gerenciador",
-                    Email = "gerenciador@localhost",
-                    Cargo = "Gerenciador",
-                    DepartamentoId = 4,
-                    AreaId = 5
-                },
-                new Usuario
-                {
-                    Id = 3,
-                    Nome = "Responsável",
-                    Email = "responsavel@localhost",
-                    Cargo = "Gestor",
-                    DepartamentoId = 1,
-                    AreaId = 4
-                },
-                new Usuario
-                {
-                    Id = 4,
-                    Nome = "Desenvolvedor",
-                    Email = "desenvolvedor@localhost",
-                    Cargo = "Analista",
-                    DepartamentoId = 1,
-                    AreaId = 1
                 });
         }
 

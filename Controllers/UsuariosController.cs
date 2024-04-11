@@ -13,10 +13,10 @@ namespace Tickest.Controllers
     [Authorize]
     public class UsuariosController : Controller
     {
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<Usuario> userManager;
         private readonly TickestContext _context;
 
-        public UsuariosController(UserManager<IdentityUser> userManager, TickestContext context)
+        public UsuariosController(UserManager<Usuario> userManager, TickestContext context)
         {
             this.userManager = userManager;
             _context = context;
@@ -30,7 +30,8 @@ namespace Tickest.Controllers
             var usuario = _context.Usuarios
                 .Include(p => p.Departamento)
                 .Include(p => p.Area)
-                .Where(p => p.Email == email).FirstOrDefault();
+                .Where(p => p.Email == email)
+                .FirstOrDefault();
 
             return View(usuario);
         }
@@ -49,7 +50,7 @@ namespace Tickest.Controllers
                     Email = usuario.Email,
                     Area = usuario.Area.Nome,
                     Departamento = usuario.Departamento.Nome,
-                    Cargo = usuario.Cargo
+                    Cargo = string.Join(", ", userManager.GetRolesAsync(usuario).GetAwaiter().GetResult())
                 })
                 .ToListAsync();
 
@@ -67,7 +68,7 @@ namespace Tickest.Controllers
                 {
                     Id = usuario.Id,
                     Nome = usuario.Nome,
-                    Cargo = usuario.Cargo
+                    Cargo = string.Join(", ", userManager.GetRolesAsync(usuario).GetAwaiter().GetResult())
                 })
                 .FirstOrDefaultAsync(usuario => usuario.Id == id);
 
@@ -124,7 +125,7 @@ namespace Tickest.Controllers
             }
 
             usuarioEditar.Nome = viewModel.Nome;
-            usuarioEditar.Cargo = viewModel.Cargo;
+            //usuarioEditar.Cargo = string.Join(", ", userManager.GetRolesAsync(usuarioLogado).GetAwaiter().GetResult());
             usuarioEditar.DepartamentoId = viewModel.DepartamentoId;
             usuarioEditar.AreaId = viewModel.AreaId;
 

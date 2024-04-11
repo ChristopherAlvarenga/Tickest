@@ -1,6 +1,8 @@
-﻿@using Microsoft.AspNetCore.Identity;
+﻿@using Microsoft.AspNetCore.Identity
+@using Tickest.Models.ViewModels;
+@using Tickest.Models.Entities;
 @model Tickest.Models.Entities.Usuario
-@inject UserManager<IdentityUser> userManager
+@inject UserManager<Usuario> userManager
 
 @{
     ViewData["Title"] = "Tickest - Perfil Usuário";

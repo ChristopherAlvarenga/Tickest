@@ -1,7 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Tickest.Models.ViewModels;
+@using Tickest.Models.Entities;
+
+@inject UserManager<Usuario> userManager
+
 @model IEnumerable<DepartamentoListViewModel>
-@inject UserManager<IdentityUser> userManager
+@inject UserManager<Usuario> userManager
 @inject Tickest.Data.TickestContext _context
 
 @{

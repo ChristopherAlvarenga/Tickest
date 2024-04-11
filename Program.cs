@@ -8,14 +8,17 @@ using Tickest.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder
+    .Services
+    .AddControllersWithViews()
+    .AddRazorRuntimeCompilation();
 
 var connectionString = builder.Configuration
     .GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<TickestContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<Usuario, Role>()
     .AddEntityFrameworkStores<TickestContext>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
