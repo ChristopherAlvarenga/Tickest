@@ -11,11 +11,11 @@ namespace Tickest.Models.ViewModels
 
         public int Id { get; set; }
 
-        [Required]
+        [Required (ErrorMessage = "Campo Obrigatório")]
         public string Nome { get; set; }
 
-        [Required]
-        public int ResponsavelSelecionado { get; set; }
+        [Required(ErrorMessage = "Gerenciador obrigatório")]
+        public int? ResponsavelSelecionado { get; set; }
 
         public ICollection<ResponsavelViewModel> ResponsaveisDisponiveis { get; set; }
     }

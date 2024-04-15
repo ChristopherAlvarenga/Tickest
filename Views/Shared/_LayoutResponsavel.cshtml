@@ -8,10 +8,10 @@
         .Where(p => p.Id == Usuario.DepartamentoId).FirstOrDefault();
 
     var area = _context.Areas
-        .Where(p => p.Id == Usuario.AreaId).FirstOrDefault();
+        .Where(p => p.Id == Usuario.EspecialidadeId).FirstOrDefault();
 
     if(area != null)
-        Usuario.Area.Nome = area.Nome;
+        Usuario.Especialidade.Nome = area.Nome;
     if(departamento != null)
         Usuario.Departamento.Nome = departamento.Nome;
 }
@@ -218,7 +218,7 @@
                                                     <br />
                                                     @if(area != null)
                                                     {
-                                                        <small class="text-muted">@Usuario.Area.Nome</small>
+                                                        <small class="text-muted">@Usuario.Especialidade.Nome</small>
                                                     }
                                                 </div>
                                             </div>

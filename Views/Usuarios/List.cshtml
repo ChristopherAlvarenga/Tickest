@@ -50,7 +50,7 @@
                     <td>@usuario.Email</td>
                     <td>@usuario.Cargo</td>
                     <td>@usuario.Departamento</td>
-                    <td>@usuario.Area</td>
+                    <td>@usuario.Especialidade</td>
                     @if (await PodeEditarOuDeletar())
                     {
                         <td><a href="@Url.Action("Edit", "Usuarios", new { id = usuario.Id })">Editar</a></td>

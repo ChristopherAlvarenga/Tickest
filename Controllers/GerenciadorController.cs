@@ -30,7 +30,7 @@ namespace Tickest.Controllers
                 .Include(p => p.Departamento)
                 .Include(p => p.Responsavel)
                 .Include(p => p.Anexos)
-                .Where(p => p.AreaId == usuario.AreaId)
+                .Where(p => p.EspecialidadeId == usuario.EspecialidadeId)
                 .Where(p => p.Status != Ticket.Tipo.Concluído)
                 .Where(p => p.Status != Ticket.Tipo.Cancelado)
                 .AsQueryable();

@@ -8,7 +8,7 @@
 
         public string Email { get; set; }
 
-        public string Area { get; set; }
+        public string Especialidade { get; set; }
 
         public string Departamento { get; set; }
 

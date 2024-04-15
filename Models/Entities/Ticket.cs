@@ -50,9 +50,9 @@ namespace Tickest.Models.Entities
         [ForeignKey(nameof(DepartamentoId))]
         public virtual Departamento? Departamento { get; set; }
 
-        public int? AreaId { get; set; }
-        [ForeignKey(nameof(AreaId))]
-        public virtual Area? Area { get; set; }
+        public int? EspecialidadeId { get; set; }
+        [ForeignKey(nameof(EspecialidadeId))]
+        public virtual Especialidade? Especialidade { get; set; }
 
         public int SolicitanteId { get; set; }
         [ForeignKey(nameof(SolicitanteId))]

@@ -10,12 +10,12 @@ using Tickest.Models.ViewModels;
 namespace Tickest.Controllers
 {
     [Authorize(Roles = "Gerenciador")]
-    public class AreasController : Controller
+    public class EspecialidadeController : Controller
     {
         private readonly UserManager<Usuario> userManager;
         private readonly TickestContext _context;
 
-        public AreasController(UserManager<Usuario> userManager, TickestContext context)
+        public EspecialidadeController(UserManager<Usuario> userManager, TickestContext context)
         {
             this.userManager = userManager;
             _context = context;
@@ -34,19 +34,19 @@ namespace Tickest.Controllers
                     Nome = p.Nome,
                     ResponsavelId = p.ResponsavelId,
                     Usuarios = p.Usuarios,
-                    Areas = p.Areas
+                    Especialidades = p.Especialidades
                 }).ToList()
             };
 
             return View(viewModel);
         }
 
-        // POST: AreasController/Create
+        // POST: EspecialidadeController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Nome,DepartamentoId")] Area area)
+        public async Task<IActionResult> Create([Bind("Nome,DepartamentoId")] Especialidade Especialidade)
         {
-            _context.Add(area);
+            _context.Add(Especialidade);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", "Gerenciador");

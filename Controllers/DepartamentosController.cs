@@ -27,34 +27,16 @@ namespace Tickest.Controllers
         }
 
         [Authorize(Roles = "Gerenciador")]
-        public IActionResult Create()
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
-            var usersResponsavel = userManager
-                .GetUsersInRoleAsync("Responsavel").Result;
+            var usersGerenciador = await userManager.GetUsersInRoleAsync("Gerenciador");
 
-            List<Usuario> users = new List<Usuario>();
-
-            foreach (var user in usersResponsavel)
+            var viewModel = new DepartamentoEditViewModel()
             {
-                var contextUsers = _context.Usuarios
-                    .Where(p => p.Email == user.Email)
-                    .FirstOrDefault();
-
-                if (contextUsers != null)
-                    users.Add(contextUsers);
-            }
-
-            var query = users.AsQueryable();
-
-            var viewModel = new UsuarioViewModel()
-            {
-                Usuarios = query.Select(p => new Usuario
-                {
-                    Id = p.Id,
-                    Nome = p.Nome,
-                    Email = p.Email,
-                    DepartamentoId = p.DepartamentoId
-                }).ToList()
+                Nome = string.Empty,
+                ResponsavelSelecionado = 0,
+                ResponsaveisDisponiveis = usersGerenciador.Where(p => p.DepartamentoId == null).Select(p => new ResponsavelViewModel { Id = p.Id, Email = p.Email }).ToList()
             };
 
             return View(viewModel);
@@ -62,12 +44,19 @@ namespace Tickest.Controllers
 
         [Authorize(Roles = "Gerenciador")]
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Nome,ResponsavelId")] Departamento departamento)
+        public async Task<IActionResult> Create(DepartamentoEditViewModel viewModel)
         {
+            if (!ModelState.IsValid)
+                return View(viewModel);
+
+            var departamento = new Departamento();
+            departamento.Nome = viewModel.Nome;
+            departamento.ResponsavelId = viewModel.ResponsavelSelecionado.Value;
+
             _context.Add(departamento);
             await _context.SaveChangesAsync();
 
-            return View();
+            return RedirectToAction(nameof(List));
         }
 
         [Authorize(Roles = "Gerenciador")]
@@ -105,7 +94,7 @@ namespace Tickest.Controllers
 
             var departamento = await _context.Set<Departamento>().FirstAsync(p => p.Id == viewModel.Id);
             departamento.Nome = viewModel.Nome;
-            departamento.ResponsavelId = viewModel.ResponsavelSelecionado;
+            departamento.ResponsavelId = viewModel.ResponsavelSelecionado.Value;
 
             await _context.SaveChangesAsync();
 
@@ -121,11 +110,7 @@ namespace Tickest.Controllers
                 {
                     Id = departamento.Id,
                     Nome = departamento.Nome,
-                    Responsavel = _context.Set<Usuario>().Select(responsavel => new ResponsavelViewModel
-                    {
-                        Id = responsavel.Id,
-                        Nome = responsavel.Nome
-                    }).FirstOrDefault(x => x.Id == departamento.ResponsavelId)
+                    Responsavel = _context.Set<Usuario> ().First(p=> p.Id == departamento.ResponsavelId).Nome
                 }).ToListAsync();
 
             return View(departamentos);

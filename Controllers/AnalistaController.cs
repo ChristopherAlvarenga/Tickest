@@ -16,12 +16,12 @@ namespace Tickest.Controllers
 {
 
     [Authorize]
-    public class DesenvolvedoresController : Controller
+    public class AnalistaController : Controller
     {
         private readonly UserManager<Usuario> userManager;
         private readonly TickestContext _context;
 
-        public DesenvolvedoresController(UserManager<Usuario> userManager, TickestContext context)
+        public AnalistaController(UserManager<Usuario> userManager, TickestContext context)
         {
             this.userManager = userManager;
             _context = context;
@@ -38,7 +38,7 @@ namespace Tickest.Controllers
                 .Include(p => p.Departamento)
                 .Include(p => p.Responsavel)
                 .Include(p => p.Anexos)
-                .Where(p => p.AreaId == usuario.AreaId)
+                .Where(p => p.EspecialidadeId == usuario.EspecialidadeId)
                 .Where(p => p.Status != Ticket.Tipo.Concluído)
                 .Where(p => p.Status != Ticket.Tipo.Cancelado)
                 .AsQueryable();

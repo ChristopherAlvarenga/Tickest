@@ -150,7 +150,7 @@ namespace Tickest.Controllers
                 .OrderBy(p => p.Nome)
                 .AsQueryable();
 
-            var query1 = _context.Areas
+            var query1 = _context.Especialidades
                 .OrderBy(p => p.Nome)
                 .AsQueryable();
 
@@ -162,7 +162,7 @@ namespace Tickest.Controllers
                     Nome = p.Nome,
                     ResponsavelId = p.ResponsavelId
                 }).ToList(),
-                Areas = query1.Select(p => new Area
+                Especialidades = query1.Select(p => new Especialidade
                 {
                     Id = p.Id,
                     Nome = p.Nome,
@@ -181,7 +181,7 @@ namespace Tickest.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Ticket ticket, int departamentoId, List<IFormFile> files)
         {
-            ViewBag.Areas = _context.Areas.Where(s => s.DepartamentoId == departamentoId);
+            ViewBag.Especialidades = _context.Especialidades.Where(s => s.DepartamentoId == departamentoId);
             
             var usuario = _context.Usuarios
                 .FirstOrDefault(p => p.Email == User.Identity.Name);
@@ -294,7 +294,7 @@ namespace Tickest.Controllers
                 return RedirectToAction("Index", "Responsaveis");
 
             else
-                return RedirectToAction("Index", "Desenvolvedores");
+                return RedirectToAction("Index", "Analista");
         }
 
         public static String GetTimestamp(DateTime value)

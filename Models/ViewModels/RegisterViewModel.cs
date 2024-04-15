@@ -29,6 +29,6 @@ namespace Tickest.Models.ViewModels
 
         public ICollection<FuncaoViewModel> OpcesFuncoes { get; set; }
 
-        public Guid FuncaoId { get; set; }
+        public int FuncaoId { get; set; }
     }
 }

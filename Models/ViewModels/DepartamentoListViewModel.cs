@@ -6,6 +6,6 @@
 
         public string Nome { get; set; }
 
-        public ResponsavelViewModel Responsavel { get; set; }
+        public string  Responsavel { get; set; }
     }
 }

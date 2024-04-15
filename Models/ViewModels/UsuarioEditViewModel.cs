@@ -11,8 +11,8 @@ namespace Tickest.Models.ViewModels
         public string Cargo { get; set;}
 
         public int DepartamentoId { get; set; }
-        public int AreaId { get; set; }
+        public int EspecialidadeId { get; set; }
         public ICollection<Departamento> Departamentos { get; set; }
-        public ICollection<Area> Areas { get; set; }
+        public ICollection<Especialidade> Especialidades { get; set; }
     }
 }

@@ -13,20 +13,20 @@
         <div class="col-md-6">
 
             <div class="card mb-4">
-                <h5 class="card-header">Adicionar Área</h5>
+                <h5 class="card-header">Adicionar Especialidade</h5>
                 <div class="card-body demo-vertical-spacing demo-only-element form-group">
-                    <label asp-for="Area.Nome" class="form-label" for="basic-default-password12">Nome</label>
+                    <label asp-for="Especialidade.Nome" class="form-label" for="basic-default-password12">Nome</label>
                     <div class="input-group">
-                        <input asp-for="Area.Nome" type="text"
+                        <input asp-for="Especialidade.Nome" type="text"
                                class="form-control"
-                               placeholder="Nome da Área"
+                               placeholder="Nome"
                                aria-label="Username"
                                aria-describedby="basic-addon11" />
                     </div>
-                    <label asp-for="Area.DepartamentoId" class="form-label" for="basic-default-password12">Responsável pelo Departamento</label>
+                    <label asp-for="Especialidade.DepartamentoId" class="form-label" for="basic-default-password12">Escolha o Departamento</label>
                     <div class="input-group">
                         <div class="input-group">
-                            <select asp-for="Area.DepartamentoId" class="form-select form-control">
+                            <select asp-for="Especialidade.DepartamentoId" class="form-select form-control">
                                 <option value="">Escolha...</option>
                                 @foreach (var departamento in Model.Departamentos)
                                 {

@@ -43,7 +43,7 @@ namespace Tickest.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Areas",
+                name: "Especialidades",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -53,9 +53,9 @@ namespace Tickest.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Areas", x => x.Id);
+                    table.PrimaryKey("PK_Especialidades", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Areas_Departamentos_DepartamentoId",
+                        name: "FK_Especialidades_Departamentos_DepartamentoId",
                         column: x => x.DepartamentoId,
                         principalTable: "Departamentos",
                         principalColumn: "Id");
@@ -89,9 +89,8 @@ namespace Tickest.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Cargo = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DepartamentoId = table.Column<int>(type: "int", nullable: true),
-                    AreaId = table.Column<int>(type: "int", nullable: true),
+                    EspecialidadeId = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -111,14 +110,14 @@ namespace Tickest.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_Areas_AreaId",
-                        column: x => x.AreaId,
-                        principalTable: "Areas",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Users_Departamentos_DepartamentoId",
                         column: x => x.DepartamentoId,
                         principalTable: "Departamentos",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Users_Especialidades_EspecialidadeId",
+                        column: x => x.EspecialidadeId,
+                        principalTable: "Especialidades",
                         principalColumn: "Id");
                 });
 
@@ -135,7 +134,7 @@ namespace Tickest.Migrations
                     Prioridade = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     DepartamentoId = table.Column<int>(type: "int", nullable: true),
-                    AreaId = table.Column<int>(type: "int", nullable: true),
+                    EspecialidadeId = table.Column<int>(type: "int", nullable: true),
                     SolicitanteId = table.Column<int>(type: "int", nullable: false),
                     ResponsavelId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -143,14 +142,14 @@ namespace Tickest.Migrations
                 {
                     table.PrimaryKey("PK_Tickets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tickets_Areas_AreaId",
-                        column: x => x.AreaId,
-                        principalTable: "Areas",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Tickets_Departamentos_DepartamentoId",
                         column: x => x.DepartamentoId,
                         principalTable: "Departamentos",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Tickets_Especialidades_EspecialidadeId",
+                        column: x => x.EspecialidadeId,
+                        principalTable: "Especialidades",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Tickets_Users_ResponsavelId",
@@ -324,24 +323,10 @@ namespace Tickest.Migrations
             migrationBuilder.InsertData(
                 table: "Departamentos",
                 columns: new[] { "Id", "Nome", "ResponsavelId" },
-                values: new object[,]
-                {
-                    { 1, "Tecnologia da Informação", 3 },
-                    { 2, "Recursos Humanos", 3 },
-                    { 3, "Almoxarifado", 3 },
-                    { 4, "Gerenciadores", 2 },
-                    { 5, "Contabilidade", 3 },
-                    { 6, "Controladoria", 3 },
-                    { 7, "Suprimentos", 3 },
-                    { 8, "Marketing", 3 },
-                    { 9, "Compras", 3 },
-                    { 10, "Jurídico", 3 },
-                    { 11, "Logística", 3 },
-                    { 12, "Atendimento", 3 }
-                });
+                values: new object[] { 1, "Departamento TI", 3 });
 
             migrationBuilder.InsertData(
-                table: "Areas",
+                table: "Especialidades",
                 columns: new[] { "Id", "DepartamentoId", "Nome" },
                 values: new object[,]
                 {
@@ -349,7 +334,7 @@ namespace Tickest.Migrations
                     { 2, 1, "Suporte Técnico" },
                     { 3, 1, "Segurança" },
                     { 4, 1, "Gestão" },
-                    { 5, 4, "Gerenciamento" },
+                    { 5, 1, "Gerenciamento" },
                     { 6, 1, "Business Intelligence" },
                     { 7, 1, "Infraestrutura" }
                 });
@@ -360,8 +345,8 @@ namespace Tickest.Migrations
                 column: "TicketId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Areas_DepartamentoId",
-                table: "Areas",
+                name: "IX_Especialidades_DepartamentoId",
+                table: "Especialidades",
                 column: "DepartamentoId");
 
             migrationBuilder.CreateIndex(
@@ -397,14 +382,14 @@ namespace Tickest.Migrations
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_AreaId",
-                table: "Tickets",
-                column: "AreaId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Tickets_DepartamentoId",
                 table: "Tickets",
                 column: "DepartamentoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_EspecialidadeId",
+                table: "Tickets",
+                column: "EspecialidadeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_ResponsavelId",
@@ -437,14 +422,14 @@ namespace Tickest.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_AreaId",
-                table: "Users",
-                column: "AreaId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Users_DepartamentoId",
                 table: "Users",
                 column: "DepartamentoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_EspecialidadeId",
+                table: "Users",
+                column: "EspecialidadeId");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -491,7 +476,7 @@ namespace Tickest.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Areas");
+                name: "Especialidades");
 
             migrationBuilder.DropTable(
                 name: "Departamentos");

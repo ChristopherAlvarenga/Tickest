@@ -2,7 +2,7 @@
 
 namespace Tickest.Models.Entities
 {
-    public class Area
+    public class Especialidade
     {
         public int Id { get; set; }
 

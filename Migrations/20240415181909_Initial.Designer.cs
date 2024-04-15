@@ -12,7 +12,7 @@ using Tickest.Data;
 namespace Tickest.Migrations
 {
     [DbContext(typeof(TickestContext))]
-    [Migration("20240410191208_Initial")]
+    [Migration("20240415181909_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -150,7 +150,36 @@ namespace Tickest.Migrations
                     b.ToTable("Anexos");
                 });
 
-            modelBuilder.Entity("Tickest.Models.Entities.Area", b =>
+            modelBuilder.Entity("Tickest.Models.Entities.Departamento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("ResponsavelId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Departamentos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nome = "Departamento TI",
+                            ResponsavelId = 3
+                        });
+                });
+
+            modelBuilder.Entity("Tickest.Models.Entities.Especialidade", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -168,7 +197,7 @@ namespace Tickest.Migrations
 
                     b.HasIndex("DepartamentoId");
 
-                    b.ToTable("Areas");
+                    b.ToTable("Especialidades");
 
                     b.HasData(
                         new
@@ -198,7 +227,7 @@ namespace Tickest.Migrations
                         new
                         {
                             Id = 5,
-                            DepartamentoId = 4,
+                            DepartamentoId = 1,
                             Nome = "Gerenciamento"
                         },
                         new
@@ -212,101 +241,6 @@ namespace Tickest.Migrations
                             Id = 7,
                             DepartamentoId = 1,
                             Nome = "Infraestrutura"
-                        });
-                });
-
-            modelBuilder.Entity("Tickest.Models.Entities.Departamento", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("ResponsavelId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Departamentos");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nome = "Tecnologia da Informação",
-                            ResponsavelId = 3
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nome = "Recursos Humanos",
-                            ResponsavelId = 3
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nome = "Almoxarifado",
-                            ResponsavelId = 3
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Nome = "Gerenciadores",
-                            ResponsavelId = 2
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Nome = "Contabilidade",
-                            ResponsavelId = 3
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Nome = "Controladoria",
-                            ResponsavelId = 3
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Nome = "Suprimentos",
-                            ResponsavelId = 3
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Nome = "Marketing",
-                            ResponsavelId = 3
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Nome = "Compras",
-                            ResponsavelId = 3
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Nome = "Jurídico",
-                            ResponsavelId = 3
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Nome = "Logística",
-                            ResponsavelId = 3
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Nome = "Atendimento",
-                            ResponsavelId = 3
                         });
                 });
 
@@ -403,9 +337,6 @@ namespace Tickest.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AreaId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Data_Criação")
                         .HasColumnType("datetime2");
 
@@ -419,6 +350,9 @@ namespace Tickest.Migrations
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("EspecialidadeId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Prioridade")
                         .HasColumnType("int");
@@ -439,9 +373,9 @@ namespace Tickest.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AreaId");
-
                     b.HasIndex("DepartamentoId");
+
+                    b.HasIndex("EspecialidadeId");
 
                     b.HasIndex("ResponsavelId");
 
@@ -461,12 +395,6 @@ namespace Tickest.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AreaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Cargo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -480,6 +408,9 @@ namespace Tickest.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("EspecialidadeId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -521,9 +452,9 @@ namespace Tickest.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AreaId");
-
                     b.HasIndex("DepartamentoId");
+
+                    b.HasIndex("EspecialidadeId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -596,10 +527,10 @@ namespace Tickest.Migrations
                     b.Navigation("Ticket");
                 });
 
-            modelBuilder.Entity("Tickest.Models.Entities.Area", b =>
+            modelBuilder.Entity("Tickest.Models.Entities.Especialidade", b =>
                 {
                     b.HasOne("Tickest.Models.Entities.Departamento", "Departamento")
-                        .WithMany("Areas")
+                        .WithMany("Especialidades")
                         .HasForeignKey("DepartamentoId");
 
                     b.Navigation("Departamento");
@@ -637,13 +568,13 @@ namespace Tickest.Migrations
 
             modelBuilder.Entity("Tickest.Models.Entities.Ticket", b =>
                 {
-                    b.HasOne("Tickest.Models.Entities.Area", "Area")
-                        .WithMany()
-                        .HasForeignKey("AreaId");
-
                     b.HasOne("Tickest.Models.Entities.Departamento", "Departamento")
                         .WithMany()
                         .HasForeignKey("DepartamentoId");
+
+                    b.HasOne("Tickest.Models.Entities.Especialidade", "Especialidade")
+                        .WithMany()
+                        .HasForeignKey("EspecialidadeId");
 
                     b.HasOne("Tickest.Models.Entities.Usuario", "Responsavel")
                         .WithMany("TicketsResponsaveis")
@@ -656,9 +587,9 @@ namespace Tickest.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Area");
-
                     b.Navigation("Departamento");
+
+                    b.Navigation("Especialidade");
 
                     b.Navigation("Responsavel");
 
@@ -667,28 +598,28 @@ namespace Tickest.Migrations
 
             modelBuilder.Entity("Tickest.Models.Entities.Usuario", b =>
                 {
-                    b.HasOne("Tickest.Models.Entities.Area", "Area")
-                        .WithMany("Usuarios")
-                        .HasForeignKey("AreaId");
-
                     b.HasOne("Tickest.Models.Entities.Departamento", "Departamento")
                         .WithMany("Usuarios")
                         .HasForeignKey("DepartamentoId");
 
-                    b.Navigation("Area");
+                    b.HasOne("Tickest.Models.Entities.Especialidade", "Especialidade")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("EspecialidadeId");
 
                     b.Navigation("Departamento");
-                });
 
-            modelBuilder.Entity("Tickest.Models.Entities.Area", b =>
-                {
-                    b.Navigation("Usuarios");
+                    b.Navigation("Especialidade");
                 });
 
             modelBuilder.Entity("Tickest.Models.Entities.Departamento", b =>
                 {
-                    b.Navigation("Areas");
+                    b.Navigation("Especialidades");
 
+                    b.Navigation("Usuarios");
+                });
+
+            modelBuilder.Entity("Tickest.Models.Entities.Especialidade", b =>
+                {
                     b.Navigation("Usuarios");
                 });
 

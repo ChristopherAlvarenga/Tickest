@@ -51,6 +51,7 @@ namespace Tickest.Controllers
                 // Copia os dados do RegisterViewModel para o IdentityUser
                 var user = new Usuario
                 {
+                    Nome = model.Nome,
                     UserName = model.Email,
                     Email = model.Email,
                     NormalizedUserName = model.Nome.ToUpper(),
@@ -68,14 +69,14 @@ namespace Tickest.Controllers
 
                     await userManager.AddToRoleAsync(user, funcaoSelecionada.Name);
 
-                    var usuario = new Usuario()
-                    {
-                        Nome = model.Nome,
-                        Email = model.Email
-                    };
+                    //var usuario = new Usuario()
+                    //{
+                    //    Nome = model.Nome,
+                    //    Email = model.Email
+                    //};
 
-                    _context.Add(usuario);
-                    await _context.SaveChangesAsync();
+                    //_context.Add(usuario);
+                    //await _context.SaveChangesAsync();
 
                     return RedirectToAction("Index", "Gerenciador");
                 }
@@ -131,7 +132,7 @@ namespace Tickest.Controllers
                         return RedirectToAction("Index", "Responsaveis");
 
                     else
-                        return RedirectToAction("Index", "Desenvolvedores");
+                        return RedirectToAction("Index", "Analista");
 
                 }
 

@@ -29,7 +29,7 @@ namespace Tickest.Controllers
 
             var usuario = _context.Usuarios
                 .Include(p => p.Departamento)
-                .Include(p => p.Area)
+                .Include(p => p.Especialidade)
                 .Where(p => p.Email == email)
                 .FirstOrDefault();
 
@@ -41,14 +41,14 @@ namespace Tickest.Controllers
         {
             var usuarios = await _context.Usuarios
                 .Include(p => p.Departamento)
-                .Include(p => p.Area)
+                .Include(p => p.Especialidade)
                 .Where(p => p.Id != 1)
                 .Select(usuario => new UsuarioListViewModel
                 {
                     Id = usuario.Id,
                     Nome = usuario.Nome,
                     Email = usuario.Email,
-                    Area = usuario.Area.Nome,
+                    Especialidade = usuario.Especialidade.Nome,
                     Departamento = usuario.Departamento.Nome,
                     Cargo = string.Join(", ", userManager.GetRolesAsync(usuario).GetAwaiter().GetResult())
                 })
@@ -63,7 +63,7 @@ namespace Tickest.Controllers
         {
             var usuario = await _context.Usuarios
                 .Include(p => p.Departamento)
-                .Include(p => p.Area)
+                .Include(p => p.Especialidade)
                 .Select(usuario => new UsuarioEditViewModel
                 {
                     Id = usuario.Id,
@@ -76,7 +76,7 @@ namespace Tickest.Controllers
                 .OrderBy(p => p.Nome)
                 .AsQueryable();
 
-            var query1 = _context.Areas
+            var query1 = _context.Especialidades
                 .OrderBy(p => p.Nome)
                 .AsQueryable();
 
@@ -87,7 +87,7 @@ namespace Tickest.Controllers
                 ResponsavelId = p.ResponsavelId
             }).ToList();
 
-            usuario.Areas = query1.Select(p => new Area
+            usuario.Especialidades = query1.Select(p => new Especialidade
             {
                 Id = p.Id,
                 Nome = p.Nome,
@@ -95,7 +95,7 @@ namespace Tickest.Controllers
             }).ToList();
 
             ViewBag.Departamentos = _context.Departamentos.OrderBy(p => p.Nome).ToList();
-            ViewBag.Areas = new SelectList(query1);
+            ViewBag.Especialidades = new SelectList(query1);
 
             return View(usuario);
         }
@@ -112,7 +112,7 @@ namespace Tickest.Controllers
 
             var usuarioEditar = await _context.Usuarios
                 .Include(p => p.Departamento)
-                .Include(p => p.Area)
+                .Include(p => p.Especialidade)
                 .FirstOrDefaultAsync(usuario => usuario.Id == viewModel.Id);
 
             bool isResponsavel = await userManager.IsInRoleAsync(identityUser, "Responsavel");
@@ -127,7 +127,7 @@ namespace Tickest.Controllers
             usuarioEditar.Nome = viewModel.Nome;
             //usuarioEditar.Cargo = string.Join(", ", userManager.GetRolesAsync(usuarioLogado).GetAwaiter().GetResult());
             usuarioEditar.DepartamentoId = viewModel.DepartamentoId;
-            usuarioEditar.AreaId = viewModel.AreaId;
+            usuarioEditar.EspecialidadeId = viewModel.EspecialidadeId;
 
             await _context.SaveChangesAsync();
 

@@ -14,11 +14,11 @@
     var departamento = _context.Departamentos
         .FirstOrDefault(p => p.Id == Usuario.DepartamentoId);
 
-    var area = _context.Areas
-        .FirstOrDefault(p => p.Id == Usuario.AreaId);
+    var especialidade = _context.Especialidades
+        .FirstOrDefault(p => p.Id == Usuario.EspecialidadeId);
 
-    if (area != null)
-        Usuario.Area.Nome = area.Nome;
+    if (especialidade != null)
+        Usuario.Especialidade.Nome = especialidade.Nome;
 
     if (departamento != null)
         Usuario.Departamento.Nome = departamento.Nome;
@@ -108,7 +108,7 @@
                 <ul class="menu-inner py-1">
                     <!-- Dashboard -->
                     <li class="menu-item active">
-                        <a asp-area="" asp-controller="Desenvolvedores" asp-action="Index" class="menu-link">
+                        <a asp-area="" asp-controller="Analista" asp-action="Index" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
                             <div data-i18n="Analytics">Home</div>
                         </a>
@@ -227,9 +227,9 @@
                                                         <small class="text-muted">@Usuario.Departamento.Nome</small>
                                                     }
                                                     <br />
-                                                    @if (area != null)
+                                                    @if (especialidade != null)
                                                     {
-                                                        <small class="text-muted">@Usuario.Area.Nome</small>
+                                                        <small class="text-muted">@Usuario.Especialidade.Nome</small>
                                                     }
                                                 </div>
                                             </div>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.Identity.Client;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -18,6 +19,6 @@ namespace Tickest.Models.Entities
 
         public ICollection<Usuario> Usuarios { get; set; }
 
-        public ICollection<Area> Areas { get; set; }
+        public ICollection<Especialidade> Especialidades { get; set; }
     }
 }
