@@ -15,7 +15,7 @@ namespace Tickest.Models.Entities
         [StringLength(50)]
         public string? Nome { get; set; }
 
-        public int ResponsavelId { get; set; }
+        public int GerenciadorId { get; set; }
 
         public ICollection<Usuario> Usuarios { get; set; }
 

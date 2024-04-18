@@ -42,23 +42,28 @@ namespace Tickest.Controllers
             var usuarios = await _context.Usuarios
                 .Include(p => p.Departamento)
                 .Include(p => p.Especialidade)
-                .Where(p => p.Id != 1)
-                .Select(usuario => new UsuarioListViewModel
+                .Where(p => p.Id != 1).ToListAsync();
+
+            var result = new List<UsuarioListViewModel>();
+
+            foreach (var usuario in usuarios)
+            {
+                result.Add(new UsuarioListViewModel
                 {
                     Id = usuario.Id,
                     Nome = usuario.Nome,
                     Email = usuario.Email,
                     Especialidade = usuario.Especialidade.Nome,
                     Departamento = usuario.Departamento.Nome,
-                    Cargo = string.Join(", ", userManager.GetRolesAsync(usuario).GetAwaiter().GetResult())
-                })
-                .ToListAsync();
+                    Cargo = string.Join(", ", await userManager.GetRolesAsync(usuario))
+                });
+            }
 
-            return View(usuarios);
+            return View(result);
         }
 
         [HttpGet]
-        [Authorize(Roles = "Gerenciador, Responsavel")]
+        [Authorize(Roles = "Gerenciador")]
         public async Task<IActionResult> Edit(int? id)
         {
             var usuario = await _context.Usuarios
@@ -84,7 +89,7 @@ namespace Tickest.Controllers
             {
                 Id = p.Id,
                 Nome = p.Nome,
-                ResponsavelId = p.ResponsavelId
+                GerenciadorId = p.GerenciadorId
             }).ToList();
 
             usuario.Especialidades = query1.Select(p => new Especialidade
@@ -101,7 +106,7 @@ namespace Tickest.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Gerenciador, Responsavel")]
+        [Authorize(Roles = "Gerenciador")]
         public async Task<IActionResult> Edit(UsuarioEditViewModel viewModel)
         {
             //if (!ModelState.IsValid)
@@ -130,6 +135,22 @@ namespace Tickest.Controllers
             usuarioEditar.EspecialidadeId = viewModel.EspecialidadeId;
 
             await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(List));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Gerenciador")]
+        public async Task<IActionResult> Delete(int usuarioId)
+        {
+            var usuario = await _context.Usuarios.FindAsync(usuarioId);
+
+            if(usuario != null)
+            {
+                _context.Usuarios.Remove(usuario);
+
+                await _context.SaveChangesAsync();
+            }
 
             return RedirectToAction(nameof(List));
         }

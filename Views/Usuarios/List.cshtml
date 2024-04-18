@@ -34,7 +34,7 @@
                 <th>Email</th>
                 <th>Cargo</th>
                 <th>Departamento</th>
-                <th>Área</th>
+                <th>Especialidade</th>
                 @if (await PodeEditarOuDeletar())
                 {
                     <th>Editar</th>
@@ -54,7 +54,7 @@
                     @if (await PodeEditarOuDeletar())
                     {
                         <td><a href="@Url.Action("Edit", "Usuarios", new { id = usuario.Id })">Editar</a></td>
-                        <td><a href="@Url.Action("Delete", "Usuarios", new { id = usuario.Id })">Deletar</a></td>
+                        <td><a href="@Url.Action("Delete", "Usuarios", new { usuarioId = usuario.Id })">Deletar</a></td>
                     }
                 </tr>
             }

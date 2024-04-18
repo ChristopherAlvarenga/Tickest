@@ -6,6 +6,8 @@
 
         public string Nome { get; set; }
 
-        public string  Responsavel { get; set; }
+        public string Gerenciador { get; set; }
+
+        public ICollection<EspecialidadeViewModel> Especialidades { get; set; }
     }
 }

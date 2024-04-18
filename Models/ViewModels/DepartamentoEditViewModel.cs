@@ -6,7 +6,7 @@ namespace Tickest.Models.ViewModels
     {
         public DepartamentoEditViewModel()
         {
-            ResponsaveisDisponiveis = new List<ResponsavelViewModel>();
+            GerenciadorDisponiveis = new List<GerenciadorViewModel>();
         }
 
         public int Id { get; set; }
@@ -15,8 +15,8 @@ namespace Tickest.Models.ViewModels
         public string Nome { get; set; }
 
         [Required(ErrorMessage = "Gerenciador obrigatório")]
-        public int? ResponsavelSelecionado { get; set; }
+        public int? GerenciadorSelecionado { get; set; }
 
-        public ICollection<ResponsavelViewModel> ResponsaveisDisponiveis { get; set; }
+        public ICollection<GerenciadorViewModel> GerenciadorDisponiveis { get; set; }
     }
 }

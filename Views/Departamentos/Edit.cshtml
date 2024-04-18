@@ -23,10 +23,10 @@
                                aria-label="Username"
                                aria-describedby="basic-addon11" />
                     </div>
-                    <label asp-for="ResponsavelSelecionado" class="form-label" for="basic-default-password12">Responsável pelo Departamento</label>
+                    <label asp-for="GerenciadorSelecionado" class="form-label" for="basic-default-password12">Responsável pelo Departamento</label>
                     <div class="input-group">
                         <div class="input-group">
-                            @Html.DropDownListFor(model => model.ResponsavelSelecionado, new SelectList(Model.ResponsaveisDisponiveis, "Id", "Nome")
+                            @Html.DropDownListFor(model => model.GerenciadorSelecionado, new SelectList(Model.GerenciadorDisponiveis, "Id", "Nome")
                         , new { @class = "form-control" })
                         </div>
                     </div>

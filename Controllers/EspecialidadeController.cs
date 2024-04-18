@@ -32,7 +32,7 @@ namespace Tickest.Controllers
                 {
                     Id = p.Id,
                     Nome = p.Nome,
-                    ResponsavelId = p.ResponsavelId,
+                    GerenciadorId = p.GerenciadorId,
                     Usuarios = p.Usuarios,
                     Especialidades = p.Especialidades
                 }).ToList()

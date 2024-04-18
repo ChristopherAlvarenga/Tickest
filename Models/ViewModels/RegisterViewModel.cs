@@ -7,7 +7,7 @@ namespace Tickest.Models.ViewModels
     {
         public RegisterViewModel()
         {
-            OpcesFuncoes = new List<FuncaoViewModel>();
+            OpcoesFuncoes = new List<FuncaoViewModel>();
         }
 
         [Required]
@@ -25,10 +25,15 @@ namespace Tickest.Models.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Confimar Senha")]
         [Compare("Senha", ErrorMessage = "As Senhas não condizem")]
-        public string? ConfirmarSenha { get; set; }
+        public string ConfirmarSenha { get; set; }
 
-        public ICollection<FuncaoViewModel> OpcesFuncoes { get; set; }
-
+        [Required(ErrorMessage = "Selecione uma atribuição")]
         public int FuncaoId { get; set; }
+        public int? DepartamentoId { get; set; }
+        public int? EspecialidadeId { get; set; }
+
+        public ICollection<FuncaoViewModel> OpcoesFuncoes { get; set; }
+        public ICollection<DepartamentoListViewModel> OpcoesDepartamentos { get; set; }
+        
     }
 }

@@ -1,19 +1,19 @@
 ﻿@inject Tickest.Data.TickestContext _context
 
 @{
-    var Usuario = _context.Usuarios
+    var usuario = _context.Usuarios
         .Where(p => p.Email == User.Identity.Name).FirstOrDefault();
 
     var departamento = _context.Departamentos
-        .Where(p => p.Id == Usuario.DepartamentoId).FirstOrDefault();
+        .Where(p => p.Id == usuario.DepartamentoId).FirstOrDefault();
 
-    var area = _context.Areas
-        .Where(p => p.Id == Usuario.EspecialidadeId).FirstOrDefault();
+    var especialidade = _context.Especialidades
+        .Where(p => p.Id == usuario.EspecialidadeId).FirstOrDefault();
 
-    if(area != null)
-        Usuario.Especialidade.Nome = area.Nome;
+    if (especialidade != null)
+        usuario.Especialidade.Nome = especialidade.Nome;
     if(departamento != null)
-        Usuario.Departamento.Nome = departamento.Nome;
+        usuario.Departamento.Nome = departamento.Nome;
 }
 
 <!DOCTYPE html>
@@ -210,15 +210,15 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block">@Usuario.Nome</span>
+                                                    <span class="fw-semibold d-block">@usuario.Nome</span>
                                                     @if(departamento != null)
                                                     {
-                                                        <small class="text-muted">@Usuario.Departamento.Nome</small>
+                                                        <small class="text-muted">@usuario.Departamento.Nome</small>
                                                     }
                                                     <br />
-                                                    @if(area != null)
+                                                    @if(especialidade != null)
                                                     {
-                                                        <small class="text-muted">@Usuario.Especialidade.Nome</small>
+                                                        <small class="text-muted">@usuario.Especialidade.Nome</small>
                                                     }
                                                 </div>
                                             </div>

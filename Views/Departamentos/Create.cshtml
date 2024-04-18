@@ -19,19 +19,19 @@
                     <div class="input-group">
                         <input asp-for="Nome" type="text"
                                class="form-control"
-                               placeholder="Nome do Departamento"
+                               placeholder="Digite o nome"
                                aria-label="Username"
                                aria-describedby="basic-addon11" />
 
                         <span asp-validation-for="Nome" class="text-danger"></span>
                     </div>
-                    <label asp-for="ResponsavelSelecionado" class="form-label" for="basic-default-password12">Responsável pelo Departamento</label>
+                    <label asp-for="GerenciadorSelecionado" class="form-label" for="basic-default-password12">Gerenciador do Departamento</label>
                     <div class="input-group">
                         <div class="input-group">
-                            @Html.DropDownListFor(model => model.ResponsavelSelecionado, new SelectList(Model.ResponsaveisDisponiveis, "Id", "Email")
-                            , new { @class = "form-control" })
+                            @Html.DropDownListFor(model => model.GerenciadorSelecionado, new SelectList(Model.GerenciadorDisponiveis, "Id", "Email")
+                            ,"Selecione o Gerenciador", new { @class = "form-control" })
                         </div>
-                        <span asp-validation-for="ResponsavelSelecionado" class="text-danger"></span>
+                        <span asp-validation-for="GerenciadorSelecionado" class="text-danger"></span>
                     </div>
 
                     <button type="submit" class="btn btn-primary mt-3">Adicionar</button>

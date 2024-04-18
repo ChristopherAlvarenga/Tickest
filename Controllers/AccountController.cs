@@ -36,7 +36,17 @@ namespace Tickest.Controllers
 
             var viewModel = new RegisterViewModel
             {
-                OpcesFuncoes = roles.Select(p => new FuncaoViewModel { Id = p.Id, Nome = p.Name }).ToList()
+                OpcoesFuncoes = roles.Select(p => new FuncaoViewModel { Id = p.Id, Nome = p.Name }).ToList(),
+                OpcoesDepartamentos = _context.Departamentos.Select(departamento => new DepartamentoListViewModel
+                {
+                    Id = departamento.Id,
+                    Nome = departamento.Nome,
+                    Especialidades = departamento.Especialidades.Select(especialidade => new EspecialidadeViewModel
+                    {
+                        Id = especialidade.Id,
+                        Nome = especialidade.Nome
+                    }).ToList()
+                }).ToList()
             };
 
             return View(viewModel);
@@ -95,7 +105,7 @@ namespace Tickest.Controllers
 
             var viewModel = new RegisterViewModel
             {
-                OpcesFuncoes = roles.Select(p => new FuncaoViewModel { Id = p.Id, Nome = p.Name }).ToList()
+                OpcoesFuncoes = roles.Select(p => new FuncaoViewModel { Id = p.Id, Nome = p.Name }).ToList()
             };
 
             return View(viewModel);

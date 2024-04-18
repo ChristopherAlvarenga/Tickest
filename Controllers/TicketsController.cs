@@ -160,7 +160,7 @@ namespace Tickest.Controllers
                 {
                     Id = p.Id,
                     Nome = p.Nome,
-                    ResponsavelId = p.ResponsavelId
+                    GerenciadorId = p.GerenciadorId
                 }).ToList(),
                 Especialidades = query1.Select(p => new Especialidade
                 {
@@ -170,9 +170,6 @@ namespace Tickest.Controllers
                 }).ToList()
             };
 
-            //ViewBag.Departamentos = _context.Departamentos.Where(p => p.Id != user.DepartamentoId).OrderBy(p => p.Nome).ToList();
-            //ViewBag.Areas = new SelectList(query1.Where(p => p.Id != user.AreaId));
-
             return View(viewModel);
         }
 
@@ -181,7 +178,7 @@ namespace Tickest.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Ticket ticket, int departamentoId, List<IFormFile> files)
         {
-            ViewBag.Especialidades = _context.Especialidades.Where(s => s.DepartamentoId == departamentoId);
+            ViewBag.Areas = _context.Especialidades.Where(s => s.DepartamentoId == departamentoId);
             
             var usuario = _context.Usuarios
                 .FirstOrDefault(p => p.Email == User.Identity.Name);
@@ -294,7 +291,7 @@ namespace Tickest.Controllers
                 return RedirectToAction("Index", "Responsaveis");
 
             else
-                return RedirectToAction("Index", "Analista");
+                return RedirectToAction("Index", "Desenvolvedores");
         }
 
         public static String GetTimestamp(DateTime value)

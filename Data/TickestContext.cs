@@ -50,7 +50,7 @@ namespace Tickest.Data
                 {
                     Id = 1,
                     Nome = "Departamento TI",
-                    ResponsavelId = 3
+                    GerenciadorId = 3
 
                 });
 
