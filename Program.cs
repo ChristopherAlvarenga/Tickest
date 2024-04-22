@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tickest.Data;
 using Tickest.Models.Entities;
@@ -19,6 +18,8 @@ var connectionString = builder.Configuration
 builder.Services.AddDbContext<TickestContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddIdentity<Usuario, Role>()
+
+
     .AddEntityFrameworkStores<TickestContext>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -62,7 +63,7 @@ app.Run();
 
 async Task CriarPerfilUsuarioAsync(WebApplication app)
 {
-    var scopedFactory = app.Services.GetService<IServiceScopeFactory>(); 
+    var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
 
     using (var scope = scopedFactory.CreateScope())
     {

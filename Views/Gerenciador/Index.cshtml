@@ -86,7 +86,7 @@
                                     var none = "";
                                     <tr>
                                         <td><strong>#@ticket.Id</strong></td>
-                                        <td><strong>@ticket.Título</strong></td>
+                                        <td><strong>@ticket.Titulo</strong></td>
                                         <td>@ticket.Departamento.Nome</td>
                                         <td><span class="badge bg-label-dark me-1">@ticket.Status</span></td>
                                         <td>
@@ -104,17 +104,17 @@
                                                             <div class="px-4 py-5">
 
                                                                 <h5 class="text-uppercase">#@ticket.Id</h5>
-                                                                <h4 class="mt-5 theme-color mb-5">@ticket.Título</h4>
+                                                                <h4 class="mt-5 theme-color mb-5">@ticket.Titulo</h4>
 
                                                                 <div class="d-flex1 justify-content-between">
-                                                                    <span class="theme-color">@ticket.Descrição</span>
+                                                                    <span class="theme-color">@ticket.Descricao</span>
                                                                 </div>
                                                                 <div class="mb-3">
                                                                     <hr class="new1">
                                                                 </div>
                                                                 <div class="d-flex1 justify-content-between">
                                                                     <span class="font-weight-bold">Criado Em:</span>
-                                                                    <span class="text-muted">@ticket.Data_Criação</span>
+                                                                    <span class="text-muted">@ticket.DataCriacao</span>
                                                                 </div>
                                                                 <div class="d-flex1 justify-content-between">
                                                                     <span class="font-weight-bold">
@@ -174,7 +174,7 @@
                                                                 </div>
                                                                 <div class="card-body msg_card_body" id="chat-@ticket.Id">
                                                                 </div>
-                                                                @if (ticket.Status != Tickest.Models.Entities.Ticket.Tipo.Concluído && ticket.Status != Tickest.Models.Entities.Ticket.Tipo.Cancelado)
+                                                                @if (ticket.Status != Tickest.Models.Entities.Ticket.Tipo.Concluido && ticket.Status != Tickest.Models.Entities.Ticket.Tipo.Cancelado)
                                                                 {
                                                                     <div class="card-footer">
                                                                         <div class="input-group">

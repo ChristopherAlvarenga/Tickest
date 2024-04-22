@@ -37,16 +37,6 @@ namespace Tickest.Controllers
             var viewModel = new RegisterViewModel
             {
                 OpcoesFuncoes = roles.Select(p => new FuncaoViewModel { Id = p.Id, Nome = p.Name }).ToList(),
-                OpcoesDepartamentos = _context.Departamentos.Select(departamento => new DepartamentoListViewModel
-                {
-                    Id = departamento.Id,
-                    Nome = departamento.Nome,
-                    Especialidades = departamento.Especialidades.Select(especialidade => new EspecialidadeViewModel
-                    {
-                        Id = especialidade.Id,
-                        Nome = especialidade.Nome
-                    }).ToList()
-                }).ToList()
             };
 
             return View(viewModel);
@@ -58,14 +48,17 @@ namespace Tickest.Controllers
         {
             if (ModelState.IsValid)
             {
+                var now = DateTime.Now;
+
                 // Copia os dados do RegisterViewModel para o IdentityUser
                 var user = new Usuario
                 {
                     Nome = model.Nome,
-                    UserName = model.Email,
+                    UserName = model.Nome.Split(' ').FirstOrDefault() + now.Ticks,
                     Email = model.Email,
                     NormalizedUserName = model.Nome.ToUpper(),
-                    NormalizedEmail = model.Email.ToUpper()
+                    NormalizedEmail = model.Email.ToUpper(),
+                    EspecialidadeId = model.EspecialidadeId
                 };
 
                 // Armazena os dados do usuário na tabela AspNetUsers
@@ -78,16 +71,6 @@ namespace Tickest.Controllers
                     var funcaoSelecionada = await _roleManager.FindByIdAsync(model.FuncaoId.ToString());
 
                     await userManager.AddToRoleAsync(user, funcaoSelecionada.Name);
-
-                    //var usuario = new Usuario()
-                    //{
-                    //    Nome = model.Nome,
-                    //    Email = model.Email
-                    //};
-
-                    //_context.Add(usuario);
-                    //await _context.SaveChangesAsync();
-
                     return RedirectToAction("Index", "Gerenciador");
                 }
 
@@ -159,6 +142,19 @@ namespace Tickest.Controllers
         {
             await signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
+        }
+
+        [HttpGet]
+        public async Task<object> PodeSelecionarDepartamento(int roleId)
+        {
+            if (roleId == 0)
+                return new { result = false };
+
+            var role = await _roleManager.FindByIdAsync(roleId.ToString());
+
+            var result = role.Name == "Analista" || role.Name == "Gerenciador";
+
+            return new { result };
         }
     }
 }

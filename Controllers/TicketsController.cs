@@ -34,7 +34,7 @@ namespace Tickest.Controllers
                 .Include(p => p.Responsavel)
                 .Include(p => p.Anexos)
                 .Where(p => p.Responsavel.Email == usuario.Email)
-                .Where(p => p.Status != Ticket.Tipo.Concluído && p.Status != Ticket.Tipo.Cancelado)
+                .Where(p => p.Status != Ticket.Tipo.Concluido && p.Status != Ticket.Tipo.Cancelado)
                 .OrderBy(p => p.Id)
                 .AsQueryable()
                 .ToList();
@@ -45,11 +45,11 @@ namespace Tickest.Controllers
                 .Select(p => new Ticket
                 {
                     Id = p.Id,
-                    Título = p.Título,
-                    Descrição = p.Descrição,
-                    Data_Criação = p.Data_Criação,
+                    Titulo = p.Titulo,
+                    Descricao = p.Descricao,
+                    DataCriacao = p.DataCriacao,
                     Status = p.Status,
-                    Data_Status = p.Data_Status,
+                    DataStatus = p.DataStatus,
                     Prioridade = p.Prioridade,
                     Responsavel = p.Responsavel,
                     Departamento = p.Departamento,
@@ -74,7 +74,7 @@ namespace Tickest.Controllers
                 .Include(p => p.Responsavel)
                 .Include(p => p.Anexos)
                 .Where(p => p.Responsavel.Email == usuario.Email || p.SolicitanteId == usuario.Id)
-                .Where(p => p.Status == Ticket.Tipo.Concluído || p.Status == Ticket.Tipo.Cancelado)
+                .Where(p => p.Status == Ticket.Tipo.Concluido || p.Status == Ticket.Tipo.Cancelado)
                 .OrderBy(p => p.Id)
                 .AsQueryable();
 
@@ -83,11 +83,11 @@ namespace Tickest.Controllers
                 Tickets = query.Select(p => new Ticket
                 {
                     Id = p.Id,
-                    Título = p.Título,
-                    Descrição = p.Descrição,
-                    Data_Criação = p.Data_Criação,
+                    Titulo = p.Titulo,
+                    Descricao = p.Descricao,
+                    DataCriacao = p.DataCriacao,
                     Status = p.Status,
-                    Data_Status = p.Data_Status,
+                    DataStatus = p.DataStatus,
                     Prioridade = p.Prioridade,
                     Responsavel = p.Responsavel,
                     Departamento = p.Departamento,
@@ -110,7 +110,7 @@ namespace Tickest.Controllers
                 .Include(p => p.Departamento)
                 .Include(p => p.Responsavel)
                 .Include(p => p.Anexos)
-                .Where(p => p.Responsavel.Email == usuario.Email && (EF.Functions.Like(p.Título, "%" + search + "%") || (p.Id.ToString() == search) || (EF.Functions.Like(p.Descrição, "%" + search + "%") || (EF.Functions.Like(p.Departamento.Nome, "%" + search + "%")))))
+                .Where(p => p.Responsavel.Email == usuario.Email && (EF.Functions.Like(p.Titulo, "%" + search + "%") || (p.Id.ToString() == search) || (EF.Functions.Like(p.Descricao, "%" + search + "%") || (EF.Functions.Like(p.Departamento.Nome, "%" + search + "%")))))
                 .OrderBy(p => p.Id)
                 .AsQueryable();
 
@@ -119,11 +119,11 @@ namespace Tickest.Controllers
                 Tickets = query.Select(p => new Ticket
                 {
                     Id = p.Id,
-                    Título = p.Título,
-                    Descrição = p.Descrição,
-                    Data_Criação = p.Data_Criação,
+                    Titulo = p.Titulo,
+                    Descricao = p.Descricao,
+                    DataCriacao = p.DataCriacao,
                     Status = p.Status,
-                    Data_Status = p.Data_Status,
+                    DataStatus = p.DataStatus,
                     Prioridade = p.Prioridade,
                     Responsavel = p.Responsavel,
                     Departamento = p.Departamento,
@@ -178,7 +178,7 @@ namespace Tickest.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Ticket ticket, int departamentoId, List<IFormFile> files)
         {
-            ViewBag.Areas = _context.Especialidades.Where(s => s.DepartamentoId == departamentoId);
+            ViewBag.Especialidades = _context.Especialidades.Where(s => s.DepartamentoId == departamentoId);
             
             var usuario = _context.Usuarios
                 .FirstOrDefault(p => p.Email == User.Identity.Name);
@@ -192,15 +192,17 @@ namespace Tickest.Controllers
                 anexo.Endereco = name;
                 ticket.Anexos.Add(anexo);
             }
-            ticket.Data_Criação = DateTime.Now;
+            ticket.DataCriacao = DateTime.Now;
             ticket.Status = Ticket.Tipo.Criado;
-            ticket.Data_Status = DateTime.Now;
+            ticket.DataStatus = DateTime.Now;
             ticket.ResponsavelId = usuario.Id;
             ticket.DepartamentoId = ticket.DepartamentoId;
             _context.Add(ticket);
-            await _context.SaveChangesAsync();
-
+            
+             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+
+           
         }
 
         // GET: TicketsController/Edit/5
@@ -257,24 +259,24 @@ namespace Tickest.Controllers
             {
                 ticket.SolicitanteId = usuario.Id;
                 ticket.Status = Ticket.Tipo.Andamento;
-                ticket.Data_Status = DateTime.Now;
+                ticket.DataStatus = DateTime.Now;
             }
             else if (status == 2)
             {
                 ticket.Status = Ticket.Tipo.Teste;
-                ticket.Data_Status = DateTime.Now;
+                ticket.DataStatus = DateTime.Now;
             }
 
             else if (status == 3)
             {
-                ticket.Status = Ticket.Tipo.Concluído;
-                ticket.Data_Status = DateTime.Now;
+                ticket.Status = Ticket.Tipo.Concluido;
+                ticket.DataStatus = DateTime.Now;
             }
 
             else if (status == 4)
             {
                 ticket.Status = Ticket.Tipo.Cancelado;
-                ticket.Data_Status = DateTime.Now;
+                ticket.DataStatus = DateTime.Now;
             }
 
             await _context.SaveChangesAsync();

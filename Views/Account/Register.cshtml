@@ -10,24 +10,18 @@
 @{
     Layout = "_LayoutGerenciador";
     ViewBag.Title = "Cadastro";
-
-    var funcaoSelecionada = await roleManager.FindByIdAsync(Model.FuncaoId.ToString());
-
-    IEnumerable<EspecialidadeViewModel> ObterEspecialidades(int? departamentoId)
-    {
-        if (!departamentoId.HasValue)
-            return new List<EspecialidadeViewModel>();
-
-        return Model.OpcoesDepartamentos.FirstOrDefault(p => p.Id == departamentoId)?.Especialidades ??
-            new List<EspecialidadeViewModel>();
-    }
 }
 
 <style>
-    .esconder-dropdown {
+    .departamento-section {
+        display: none;
+    }
+
+    .especialidade-section {
         display: none;
     }
 </style>
+
 
 
 <div class="row">
@@ -80,67 +74,54 @@
                                                aria-label="Username"
                                                aria-describedby="basic-addon11" />
                                     </div>
-
-                                    @* <label asp-for="FuncaoId" class="form-label" for="basic-default-password12">Atribuição</label> *@
-
+                                    @*
                                     @Html.LabelFor(m => m.FuncaoId, "Atribuição...", new { @class = "control-label esconder-rotulo" })
                                     @Html.DropDownListFor(m => m.FuncaoId, new SelectList(Model.OpcoesFuncoes, "Id", "Nome"), "Selecione...", new { @class = "form-select", id = "funcaoDropdown", onchange = "funcaoAlterada(this);" })
 
                                     <div id="departamentoDropdownId">
-                                        @Html.LabelFor(m => m.DepartamentoId, "Departamento...", new { @class = "control-label esconder-rotulo" })
-                                        @Html.DropDownListFor(m => m.DepartamentoId, new SelectList(Model.OpcoesDepartamentos, "Id", "Nome"), "Selecione...", new { @class = "form-select", id = "departamentoDropdown1", onchange = "departamentoAlterado(this);" })
-                                    </div>
-
-
-                                    <div id="especialidadeDropdownId">
-                                        <label asp-for="EspecialidadeId" class="form-label" for="basic-default-password12">Especialidade</label>
-                                        <div class="input-group">
-
-                                            <select asp-for="EspecialidadeId" class="form-select" id="especialidadeDropdown">
-                                                <option value="">Selecione...</option>
-                                                @foreach (var item in ObterEspecialidades(Model.DepartamentoId))
-                                                {
-                                                    <option value="@item.Id">@item.Nome</option>
-                                                }
-                                            </select>
-
-                                        </div>
-                                    </div>
-
-
-
-
-                                    @* @Html.DropDownListFor(m => m.SegundoDropdown, new SelectList(Model.OpcoesSegundo, "Value", "Text"), "Selecione...", new { @class = "form-control", id = "segundoDropdown", style = "display:none;" }) *@
-
-
-                                    @* <label asp-for="FuncaoId" class="form-label" for="basic-default-password12">Atribuição</label>
-                                    <div class="input-group">
-
-                                    <select asp-for="FuncaoId" class="form-select" onchange="selecaoChange(this);" id="funcaoDropdown">
-                                    <option value="">Selecione...</option>
-                                    @foreach (var item in Model.OpcoesFuncoes)
-                                    {
-                                    <option value="@item.Id">@item.Nome</option>
-                                    }
-                                    </select>
-
-                                    </div>
-                                    <br />
-
-
-
-                                    <label asp-for="DepartamentoId" class="form-label" for="basic-default-password12">Departamento</label>
-                                    <div class="input-group">
-
-                                    <select asp-for="DepartamentoId" class="form-select" id="departamentoDropdown">
-                                    <option value="">Selecione...</option>
-                                    @foreach (var item in Model.OpcoesDepartamentos)
-                                    {
-                                    <option value="@item.Id">@item.Nome</option>
-                                    }
-                                    </select>
-
+                                    @Html.LabelFor(m => m.DepartamentoId, "Departamento...", new { @class = "control-label esconder-rotulo" })
+                                    @Html.DropDownListFor(m => m.DepartamentoId, new SelectList(Model.OpcoesDepartamentos, "Id", "Nome"), "Selecione...", new { @class = "form-select", id = "departamentoDropdown1", onchange = "departamentoAlterado(this);" })
                                     </div> *@
+
+                                    @* <div id="especialidadeDropdownId">
+                                    <label asp-for="EspecialidadeId" class="form-label" for="basic-default-password12">Especialidade</label>
+                                    <div class="input-group">
+
+                                    <select asp-for="EspecialidadeId" class="form-select" id="especialidadeDropdown">
+                                    <option value="">Selecione...</option>
+                                    @foreach (var item in ObterEspecialidades(Model.DepartamentoId))
+                                    {
+                                    <option value="@item.Id">@item.Nome</option>
+                                    }
+                                    </select>
+
+                                    </div>
+                                    </div> *@
+
+                                    <div class="funcao-section">
+                                        <label asp-for="FuncaoId" class="form-label">Atribuir função</label>
+                                        <select asp-for="FuncaoId" class="form-select" >
+                                            <option value="">Selecione ...</option>
+                                            @foreach (var funcao in Model.OpcoesFuncoes)
+                                            {
+                                                <option value="@funcao.Id">@funcao.Nome</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="departamento-section">
+                                        <label asp-for="DepartamentoId" class="form-label">Selecione o departamento</label>
+                                        <select asp-for="DepartamentoId" class="form-control">
+                                            <option value="">Selecione ...</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="especialidade-section">
+                                        <label asp-for="EspecialidadeId" class="form-label">Selecione a especialidade</label>
+                                        <select asp-for="EspecialidadeId" class="form-control">
+                                            <option value="">Selecione ...</option>
+                                        </select>
+                                    </div>
 
                                     <button type="submit" class="btn btn-primary mt-3">Adicionar Usuário</button>
 
@@ -155,6 +136,81 @@
 </div>
 
 
+@section scripts {
+    <script>
+
+        function atualizarDropdownDepartamento(data) {
+            console.log('atualizando departamento');
+        }
+
+        function obterEspecialidades() {
+            return new Promise(function (resolve, reject) {
+                $.get(`/Departamentos/ObterEspecialidades`)
+                    .done(function (result) {
+                        resolve(result);
+                    })
+                    .fail(function (jqXHR, textStatus, error) {
+                        reject(error || textStatus);
+                    });
+            });
+        }
+
+        function obterDepartamentos() {
+            return new Promise(function (resolve, reject) {
+                $.get(`/Departamentos/ObterDepartamentos`)
+                    .done(function (result) {
+                        resolve(result);
+                    })
+                    .fail(function (jqXHR, textStatus, error) {
+                        reject(error || textStatus);
+                    });
+            });
+        }
+
+        $(function () {
+            $("select#FuncaoId").change(function () {
+                var funcaoId = $(this).val();
+                $.get(`/Account/PodeSelecionarDepartamento?roleId=${funcaoId}`, (data) => {
+                    $(".departamento-section").css("display", (data.result ? "block" : "none"))
+
+                    $("select#DepartamentoId").empty();
+                    if (data.result) {
+                        $.get(`/Departamentos/ObterDepartamentos`, (departamentos) => {
+                            $("select#DepartamentoId").append(`<option value="">Selecione ...</option>`);
+                            $.each(departamentos, function (i, item) {
+                                $("select#DepartamentoId").append(`<option value="${item.id}">${item.nome}</option>`);
+                            }); 
+                        })
+                    } 
+                });
+            });
+
+            $("select#DepartamentoId").change(function () {
+                var departamentoId = $(this).val();
+                console.log('departamento selecionado ', departamentoId)
+
+                $("select#EspecialidadeId").empty();
+                $.get(`/Especialidade/ObterEspecialidadesPorDepartamento?departamentoId=${departamentoId}`, (especialidades) => {
+                    console.log('retorno especialidades', especialidades)
+                    $(".especialidade-section").css("display", (especialidades && especialidades.length > 0 ? "block" : "none"))
+                    if(especialidades){
+                        $("select#EspecialidadeId").append(`<option value="">Selecione ...</option>`);
+                        $.each(especialidades, function (i, item) {
+                            $("select#EspecialidadeId").append(`<option value="${item.id}">${item.nome}</option>`);
+                        });
+                    }
+                })
+            })
+        });
+    </script>
+}
+
+
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+
+
+
+@*
 <script type="text/javascript">
 
     document.getElementById('departamentoDropdownId').style.display = 'none';
@@ -179,6 +235,6 @@
         document.getElementById('especialidadeDropdownId').style.display = 'block';
     }
 
-</script>
+</script> *@
 
 

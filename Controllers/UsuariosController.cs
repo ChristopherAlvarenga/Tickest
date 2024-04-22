@@ -53,8 +53,8 @@ namespace Tickest.Controllers
                     Id = usuario.Id,
                     Nome = usuario.Nome,
                     Email = usuario.Email,
-                    Especialidade = usuario.Especialidade.Nome,
-                    Departamento = usuario.Departamento.Nome,
+                    Especialidade = usuario.Especialidade?.Nome,
+                    Departamento = usuario.Departamento?.Nome,
                     Cargo = string.Join(", ", await userManager.GetRolesAsync(usuario))
                 });
             }
@@ -66,16 +66,22 @@ namespace Tickest.Controllers
         [Authorize(Roles = "Gerenciador")]
         public async Task<IActionResult> Edit(int? id)
         {
-            var usuario = await _context.Usuarios
+            var usuarioEntidade = await _context.Usuarios
                 .Include(p => p.Departamento)
                 .Include(p => p.Especialidade)
-                .Select(usuario => new UsuarioEditViewModel
-                {
-                    Id = usuario.Id,
-                    Nome = usuario.Nome,
-                    Cargo = string.Join(", ", userManager.GetRolesAsync(usuario).GetAwaiter().GetResult())
-                })
+
                 .FirstOrDefaultAsync(usuario => usuario.Id == id);
+
+            var viewModel = new UsuarioEditViewModel();
+
+            if (usuarioEntidade != null)
+            {
+
+                viewModel.Id = usuarioEntidade.Id;
+                viewModel.Nome = usuarioEntidade.Nome;
+                viewModel.Cargo = string.Join(", ", await userManager.GetRolesAsync(usuarioEntidade));
+
+            }
 
             var query = _context.Departamentos
                 .OrderBy(p => p.Nome)
@@ -85,14 +91,14 @@ namespace Tickest.Controllers
                 .OrderBy(p => p.Nome)
                 .AsQueryable();
 
-            usuario.Departamentos = query.Select(p => new Departamento
+            viewModel.Departamentos = query.Select(p => new Departamento
             {
                 Id = p.Id,
                 Nome = p.Nome,
                 GerenciadorId = p.GerenciadorId
             }).ToList();
 
-            usuario.Especialidades = query1.Select(p => new Especialidade
+            viewModel.Especialidades = query1.Select(p => new Especialidade
             {
                 Id = p.Id,
                 Nome = p.Nome,
@@ -102,7 +108,7 @@ namespace Tickest.Controllers
             ViewBag.Departamentos = _context.Departamentos.OrderBy(p => p.Nome).ToList();
             ViewBag.Especialidades = new SelectList(query1);
 
-            return View(usuario);
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -145,7 +151,7 @@ namespace Tickest.Controllers
         {
             var usuario = await _context.Usuarios.FindAsync(usuarioId);
 
-            if(usuario != null)
+            if (usuario != null)
             {
                 _context.Usuarios.Remove(usuario);
 

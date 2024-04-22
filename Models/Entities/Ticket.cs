@@ -15,20 +15,17 @@ namespace Tickest.Models.Entities
 
         [Required]
         [StringLength(100)]
-        public string Título { get; set; }
+        public string Titulo { get; set; }
 
         [Required]
         [StringLength(1000)]
-        public string Descrição { get; set; }
+        public string Descricao { get; set; }
 
         [Required]
-        public DateTime Data_Criação { get; set; }
+        public DateTime DataCriacao { get; set; }
 
         [Required]
-        public DateTime Data_Status { get; set; }
-
-        //[Required]
-        //public DateTime Data_Status { get; set; }
+        public DateTime DataStatus { get; set; }
 
         [Required]
         [EnumDataType(typeof(Escolha))]
@@ -43,7 +40,7 @@ namespace Tickest.Models.Entities
         public Tipo Status { get; set; }
         public enum Tipo
         {
-            Criado = 1, Andamento = 2, Teste = 3, Concluído = 4, Cancelado = 5
+            Criado = 1, Andamento = 2, Teste = 3, Concluido = 4, Cancelado = 5
         }
 
         public int? DepartamentoId { get; set; }

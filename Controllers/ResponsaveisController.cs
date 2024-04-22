@@ -33,7 +33,7 @@ namespace Tickest.Controllers
                 .Include(p => p.Responsavel)
                 .Include(p => p.Anexos)
                 .Where(p => p.EspecialidadeId == usuario.EspecialidadeId)
-                .Where(p => p.Status != Ticket.Tipo.Concluído)
+                .Where(p => p.Status != Ticket.Tipo.Concluido)
                 .Where(p => p.Status != Ticket.Tipo.Cancelado)
                 .AsQueryable();
 
@@ -48,11 +48,11 @@ namespace Tickest.Controllers
                 Tickets = query.Select(p => new Ticket
                 {
                     Id = p.Id,
-                    Título = p.Título,
-                    Descrição = p.Descrição,
-                    Data_Criação = p.Data_Criação,
+                    Titulo = p.Titulo,
+                    Descricao = p.Descricao,
+                    DataCriacao = p.DataCriacao,
                     Status = p.Status,
-                    Data_Status = p.Data_Status,
+                    DataStatus = p.DataStatus,
                     Prioridade = p.Prioridade,
                     Responsavel = p.Responsavel,
                     Departamento = p.Departamento,
@@ -64,19 +64,19 @@ namespace Tickest.Controllers
 
             ViewBag.TicketsAberto = _context.Tickets
                 .Where(p => p.SolicitanteId == usuario.Id)
-                .Where(p => p.Status != Ticket.Tipo.Cancelado && p.Status != Ticket.Tipo.Concluído)
+                .Where(p => p.Status != Ticket.Tipo.Cancelado && p.Status != Ticket.Tipo.Concluido)
                 .Count();
 
             ViewBag.TicketsRecebidos = _context.Tickets
                 .Where(p => p.SolicitanteId == usuario.Id)
                 .Where(p => p.Status != Ticket.Tipo.Cancelado)
-                .Where(p => p.Data_Criação.Month == DateTime.Now.Month)
+                .Where(p => p.DataCriacao.Month == DateTime.Now.Month)
                 .Count();
 
             ViewBag.TicketConcluidos = _context.Tickets
                 .Where(p => p.SolicitanteId == usuario.Id)
-                .Where(p => p.Status == Ticket.Tipo.Concluído)
-                .Where(p => p.Data_Status.Month == DateTime.Now.Month)
+                .Where(p => p.Status == Ticket.Tipo.Concluido)
+                .Where(p => p.DataStatus.Month == DateTime.Now.Month)
                 .Count();
 
             return View(viewModel);
@@ -102,11 +102,11 @@ namespace Tickest.Controllers
                 Tickets = query.Select(p => new Ticket
                 {
                     Id = p.Id,
-                    Título = p.Título,
-                    Descrição = p.Descrição,
-                    Data_Criação = p.Data_Criação,
+                    Titulo = p.Titulo,
+                    Descricao = p.Descricao,
+                    DataCriacao = p.DataCriacao,
                     Status = p.Status,
-                    Data_Status = p.Data_Status,
+                    DataStatus = p.DataStatus,
                     Prioridade = p.Prioridade,
                     Responsavel = p.Responsavel,
                     Departamento = p.Departamento,

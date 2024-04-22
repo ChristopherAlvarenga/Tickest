@@ -106,14 +106,28 @@ namespace Tickest.Controllers
         public async Task<IActionResult> List()
         {
             var departamentos = await _context.Set<Departamento>()
+               .Select(departamento => new DepartamentoListViewModel
+               {
+                   Id = departamento.Id,
+                   Nome = departamento.Nome,
+                   Gerenciador = _context.Set<Usuario>().First(p => p.Id == departamento.GerenciadorId).Nome
+               }).ToListAsync();
+
+            return View(departamentos);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObterDepartamentos()
+        {
+            var departamentos = await _context.Set<Departamento>()
                 .Select(departamento => new DepartamentoListViewModel
                 {
                     Id = departamento.Id,
                     Nome = departamento.Nome,
-                    Gerenciador = _context.Set<Usuario> ().First(p=> p.Id == departamento.GerenciadorId).Nome
+                    Gerenciador = _context.Set<Usuario>().First(p => p.Id == departamento.GerenciadorId).Nome
                 }).ToListAsync();
 
-            return View(departamentos);
+            return Json(departamentos);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace Tickest.Models.ViewModels
         public int? EspecialidadeId { get; set; }
 
         public ICollection<FuncaoViewModel> OpcoesFuncoes { get; set; }
-        public ICollection<DepartamentoListViewModel> OpcoesDepartamentos { get; set; }
+        //public ICollection<DepartamentoListViewModel> OpcoesDepartamentos { get; set; }
         
     }
 }

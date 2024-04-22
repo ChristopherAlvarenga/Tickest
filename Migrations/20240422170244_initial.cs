@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tickest.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +20,7 @@ namespace Tickest.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    ResponsavelId = table.Column<int>(type: "int", nullable: false)
+                    GerenciadorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -127,10 +127,10 @@ namespace Tickest.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Título = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Descrição = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    Data_Criação = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Data_Status = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Titulo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Descricao = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DataStatus = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Prioridade = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     DepartamentoId = table.Column<int>(type: "int", nullable: true),
@@ -322,8 +322,8 @@ namespace Tickest.Migrations
 
             migrationBuilder.InsertData(
                 table: "Departamentos",
-                columns: new[] { "Id", "Nome", "ResponsavelId" },
-                values: new object[] { 1, "Departamento TI", 3 });
+                columns: new[] { "Id", "GerenciadorId", "Nome" },
+                values: new object[] { 1, 3, "Departamento TI" });
 
             migrationBuilder.InsertData(
                 table: "Especialidades",

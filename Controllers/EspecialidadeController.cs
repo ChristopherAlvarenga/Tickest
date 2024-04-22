@@ -51,5 +51,22 @@ namespace Tickest.Controllers
 
             return RedirectToAction("Index", "Gerenciador");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ObterEspecialidadesPorDepartamento(int departamentoId)
+        {
+            if (departamentoId == 0)
+                return Json(new List<EspecialidadeViewModel>());
+
+            var especialidades = await _context.Especialidades
+                .Where(p => p.DepartamentoId == departamentoId)
+                .Select(p => new EspecialidadeViewModel
+                {
+                    Id = p.Id,
+                    Nome = p.Nome
+                }).ToListAsync();
+
+            return Json(especialidades);
+        }
     }
 }
