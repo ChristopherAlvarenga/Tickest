@@ -57,6 +57,7 @@
                                     <th scope="col">Id</th>
                                     <th scope="col">Título</th>
                                     <th scope="col">Departamento</th>
+                                    <th scope="col">Solicitante</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Ação</th>
                                 </tr>
@@ -68,6 +69,7 @@
                                         <td><strong>#@ticket.Id</strong></td>
                                         <td><strong>@ticket.Titulo</strong></td>
                                         <td>@ticket.Departamento.Nome</td>
+                                        <td>@ticket.Solicitante.Nome</td>
                                         <td><span class="badge bg-label-dark me-1">@ticket.Status</span></td>
                                         <td>
                                             <!-- Botão -->
