@@ -63,10 +63,7 @@ namespace Tickest.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            var responsaveisIdentity = await userManager.GetUsersInRoleAsync("Responsavel");
-            var responsaveisIdentityEmails = responsaveisIdentity.Select(p => p.Email);
-
-            var responsaveis = await _context.Set<Usuario>().Where(p => responsaveisIdentityEmails.Contains(p.Email)).ToListAsync();
+            var gerenciadores = await userManager.GetUsersInRoleAsync("Gerenciador");
 
             var departamento = await _context.Set<Departamento>()
                  .Select(departamento => new DepartamentoEditViewModel
@@ -74,10 +71,10 @@ namespace Tickest.Controllers
                      Id = departamento.Id,
                      Nome = departamento.Nome,
                      GerenciadorSelecionado = departamento.GerenciadorId,
-                     GerenciadorDisponiveis = responsaveis.Select(responsavel => new GerenciadorViewModel
+                     GerenciadorDisponiveis = gerenciadores.Select(responsavel => new GerenciadorViewModel
                      {
                          Id = responsavel.Id,
-                         Nome = responsavel.Nome
+                         Nome = responsavel.Email
                      }).ToList()
                  })
                  .FirstOrDefaultAsync(p => p.Id == id);
