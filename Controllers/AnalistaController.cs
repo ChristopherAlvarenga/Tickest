@@ -37,6 +37,7 @@ namespace Tickest.Controllers
             var query = _context.Tickets
                 .Include(p => p.Departamento)
                 .Include(p => p.Responsavel)
+                .Include(p => p.Solicitante)
                 .Include(p => p.Anexos)
                 .Where(p => p.EspecialidadeId == usuario.EspecialidadeId)
                 .Where(p => p.Status != Ticket.Tipo.Concluido)
@@ -63,6 +64,7 @@ namespace Tickest.Controllers
                     Responsavel = p.Responsavel,
                     Departamento = p.Departamento,
                     SolicitanteId = p.SolicitanteId,
+                    Solicitante = p.Solicitante,
                     Anexos = p.Anexos
                 }).ToList(),
                 Usuario = usuario
