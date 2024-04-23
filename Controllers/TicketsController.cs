@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
@@ -23,17 +21,16 @@ namespace Tickest.Controllers
         }
 
         // GET: TicketsController
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var usuario = _context.Usuarios
-                .Where(p => p.Email == User.Identity.Name)
-                .FirstOrDefault();
+            var usuarioAtual = await userManager.GetUserAsync(User);
 
             var query = _context.Tickets
                 .Include(p => p.Departamento)
                 .Include(p => p.Responsavel)
                 .Include(p => p.Anexos)
-                .Where(p => p.Responsavel.Email == usuario.Email)
+                .Include(p => p.Solicitante)
+                .Where(p => p.SolicitanteId == usuarioAtual.Id)
                 .Where(p => p.Status != Ticket.Tipo.Concluido && p.Status != Ticket.Tipo.Cancelado)
                 .OrderBy(p => p.Id)
                 .AsQueryable()
@@ -54,26 +51,26 @@ namespace Tickest.Controllers
                     Responsavel = p.Responsavel,
                     Departamento = p.Departamento,
                     SolicitanteId = p.SolicitanteId,
+                    Solicitante = p.Solicitante,
                     Anexos = p.Anexos
                 }).ToList(),
-                Usuario = usuario
+                Usuario = usuarioAtual
             };
 
             return View(viewModel);
         }
 
         [HttpGet]
-        public IActionResult Historic()
+        public async Task<IActionResult> Historic()
         {
-            var usuario = _context.Usuarios
-                .Where(p => p.Email == User.Identity.Name)
-                .FirstOrDefault();
+            var usuarioAtual = await userManager.GetUserAsync(User);
 
             var query = _context.Tickets
                 .Include(p => p.Departamento)
                 .Include(p => p.Responsavel)
+                .Include(p => p.Solicitante)
                 .Include(p => p.Anexos)
-                .Where(p => p.Responsavel.Email == usuario.Email || p.SolicitanteId == usuario.Id)
+                .Where(p => p.Responsavel.Email == usuarioAtual.Email || p.SolicitanteId == usuarioAtual.Id)
                 .Where(p => p.Status == Ticket.Tipo.Concluido || p.Status == Ticket.Tipo.Cancelado)
                 .OrderBy(p => p.Id)
                 .AsQueryable();
@@ -92,9 +89,10 @@ namespace Tickest.Controllers
                     Responsavel = p.Responsavel,
                     Departamento = p.Departamento,
                     SolicitanteId = p.SolicitanteId,
+                    Solicitante = p.Solicitante,
                     Anexos = p.Anexos
                 }).ToList(),
-                Usuario = usuario
+                Usuario = usuarioAtual
             };
 
             return View(viewModel);
@@ -195,14 +193,12 @@ namespace Tickest.Controllers
             ticket.DataCriacao = DateTime.Now;
             ticket.Status = Ticket.Tipo.Criado;
             ticket.DataStatus = DateTime.Now;
-            ticket.ResponsavelId = usuario.Id;
+            ticket.SolicitanteId = usuario.Id;
             ticket.DepartamentoId = ticket.DepartamentoId;
             _context.Add(ticket);
             
              await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-
-           
         }
 
         // GET: TicketsController/Edit/5

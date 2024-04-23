@@ -26,11 +26,21 @@
         return await userManager.IsInRoleAsync(user, "Responsavel");
     }
 
+    async Task<bool> Cliente()
+    {
+        return await userManager.IsInRoleAsync(user, "Cliente");
+    }
+
+
+
     if (await Gerenciador())
         Layout = "_LayoutGerenciador";
 
     else if (await Responsavel())
         Layout = "_LayoutResponsavel";
+
+    else if (await Cliente())
+        Layout = "_LayoutCliente";
 
     else
         Layout = "_Layout";

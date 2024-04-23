@@ -12,8 +12,8 @@
     if (await userManager.IsInRoleAsync(user, "Gerenciador"))
         Layout = "_LayoutGerenciador";
 
-    else if (await userManager.IsInRoleAsync(user, "Responsavel"))
-        Layout = "_LayoutResponsavel";
+    else if (await userManager.IsInRoleAsync(user, "Cliente"))
+        Layout = "_LayoutCliente";
 
     else
         Layout = "_Layout";

@@ -54,11 +54,13 @@ namespace Tickest.Controllers
                 var user = new Usuario
                 {
                     Nome = model.Nome,
-                    UserName = model.Nome.Split(' ').FirstOrDefault() + now.Ticks,
+                    UserName = model.Email,
                     Email = model.Email,
                     NormalizedUserName = model.Nome.ToUpper(),
                     NormalizedEmail = model.Email.ToUpper(),
-                    EspecialidadeId = model.EspecialidadeId
+                    EspecialidadeId = model.EspecialidadeId, 
+                    EmailConfirmed = true,
+                    LockoutEnabled = false,
                 };
 
                 // Armazena os dados do usuário na tabela AspNetUsers
@@ -105,35 +107,27 @@ namespace Tickest.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginModel)
         {
-            if (ModelState.IsValid)
+            var user = await userManager.FindByEmailAsync(loginModel.Email);
+            if (user == null)
             {
-                var result = await signInManager.PasswordSignInAsync(
-                    loginModel.Email, loginModel.Senha, loginModel.ManterLogin, false);
-
-                if (result.Succeeded)
-                {
-
-                    var user = await userManager.FindByEmailAsync(loginModel.Email);
-
-                    if (await userManager.IsInRoleAsync(user, "Admin"))
-                        return RedirectToAction("Index", "Admin", new { area = "Admin" });
-
-                    else if (await userManager.IsInRoleAsync(user, "Gerenciador"))
-                        return RedirectToAction("Index", "Gerenciador");
-
-                    else if (await userManager.IsInRoleAsync(user, "Responsavel"))
-                        return RedirectToAction("Index", "Responsaveis");
-
-                    else
-                        return RedirectToAction("Index", "Analista");
-
-                }
-
-                ModelState.AddModelError(string.Empty, "Login Inválido");
+                ModelState.AddModelError(string.Empty, "Usuário não encontrado Inválido");
                 return View(loginModel);
             }
-            ModelState.AddModelError(string.Empty, "Login Inválido");
-            return View(loginModel);
+
+            var result = await signInManager.PasswordSignInAsync(user, loginModel.Senha, false, false);
+            if (!result.Succeeded)
+                ModelState.AddModelError(string.Empty, "Email ou senha Inválido");
+
+            if (!ModelState.IsValid)
+                return View(loginModel);
+
+            if (await userManager.IsInRoleAsync(user, "Gerenciador"))
+                return RedirectToAction("Index", "Gerenciador");
+
+            else if (await userManager.IsInRoleAsync(user, "Cliente"))
+                return RedirectToAction("Index", "Tickets");
+            else
+                return RedirectToAction("Index", "Analista");
         }
 
         [AllowAnonymous]
