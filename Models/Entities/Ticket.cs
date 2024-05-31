@@ -51,6 +51,7 @@ namespace Tickest.Models.Entities
         public virtual Area? Area { get; set; }
 
         public int? DestinatarioId { get; set; }
+
         public int? UsuarioId { get; set; }
         [ForeignKey(nameof(UsuarioId))]
         public virtual Usuario? Usuario { get; set; }

@@ -8,7 +8,6 @@ using Tickest.Models.ViewModels;
 
 namespace Tickest.Controllers
 {
-    [Authorize]
     public class AccountController : Controller
     {
         private readonly UserManager<IdentityUser> userManager;
@@ -84,14 +83,12 @@ namespace Tickest.Controllers
             return View();
         }
 
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
-        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginModel)
         {
@@ -126,7 +123,6 @@ namespace Tickest.Controllers
             return View(loginModel);
         }
 
-        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
@@ -134,7 +130,7 @@ namespace Tickest.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        [HttpPost("api/app/login")]
+        [HttpPost("API/App/Login")]
         public async Task<IActionResult> Login_Mobile([FromBody] LoginViewModel loginModel)
         {
             if (ModelState.IsValid)
@@ -144,13 +140,51 @@ namespace Tickest.Controllers
 
                 if (result.Succeeded)
                 {
-                    
+
                     var user = await userManager.FindByEmailAsync(loginModel.Email);
 
-                    var userInfo = _context.Usuarios
+                    var userInfo = await _context.Usuarios
                         .Include(p => p.Departamento)
                         .Include(p => p.Area)
-                        .Where(p => p.Email == user.Email).FirstOrDefault();
+                        .Where(p => p.Email == user.Email).FirstOrDefaultAsync();
+
+                    var userTicketsCriados = await _context.Tickets
+                        .Where(p => p.UsuarioId == userInfo.Id)
+                        .Select(p => new
+                            {
+                                Id = p.Id,
+                                Título = p.Título,
+                                Descrição = p.Descrição,
+                                Data_Criação = p.Data_Criação,
+                                Status = p.Status,
+                                Data_Status = p.Data_Status,
+                                Prioridade = p.Prioridade,
+                                Usuario = p.UsuarioId,
+                                Departamento = p.Departamento.Nome,
+                                DestinatarioId = p.DestinatarioId,
+                                Anexos = p.Anexos
+
+                            })
+                        .ToListAsync();
+
+                    var userTicketsRecebidos = await _context.Tickets
+                        .Where(p => p.DestinatarioId == userInfo.Id || (p.DestinatarioId == null && p.UsuarioId != userInfo.Id))
+                        .Select(p => new
+                        {
+                            Id = p.Id,
+                            Título = p.Título,
+                            Descrição = p.Descrição,
+                            Data_Criação = p.Data_Criação,
+                            Status = p.Status,
+                            Data_Status = p.Data_Status,
+                            Prioridade = p.Prioridade,
+                            Usuario = p.UsuarioId,
+                            Departamento = p.Departamento.Nome,
+                            DestinatarioId = p.DestinatarioId,
+                            Anexos = p.Anexos
+
+                        })
+                        .ToListAsync();
 
                     var userInfoApp = new
                     {
@@ -159,7 +193,9 @@ namespace Tickest.Controllers
                         Email = userInfo.Email,
                         Area = userInfo.Area.Nome,
                         Departamento = userInfo.Departamento.Nome,
-                        Cargo = userInfo.Cargo
+                        Cargo = userInfo.Cargo,
+                        TicketsCriados = userTicketsCriados,
+                        TicketsRecebidos = userTicketsRecebidos
                     };
 
                     return Ok(userInfoApp);
