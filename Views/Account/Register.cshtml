@@ -1,0 +1,102 @@
+﻿@using Tickest.Models.ViewModels;
+@model RegisterViewModel
+
+@{
+    Layout = "_LayoutGerenciador";
+    ViewBag.Title = "Cadastro";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <form method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="row">
+                        <!-- Basic -->
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <h5 class="card-header">Adicionar Usuário</h5>
+                                <div class="card-body demo-vertical-spacing demo-only-element form-group">
+
+                                    <label asp-for="Nome" class="form-label" for="basic-default-password12">Nome</label>
+                                    <div class="input-group">
+                                        <input asp-for="Nome" type="text"
+                                               class="form-control"
+                                               placeholder="Nome do Usuário"
+                                               aria-label="Username"
+                                               aria-describedby="basic-addon11" />
+                                    </div>
+
+                                    <label asp-for="Email" class="form-label" for="basic-default-password12">Email</label>
+                                    <div class="input-group">
+                                        <input asp-for="Email" type="text"
+                                               class="form-control"
+                                               placeholder="Email do Usuário"
+                                               aria-label="Username"
+                                               aria-describedby="basic-addon11" />
+                                    </div>
+
+                                    <label asp-for="Senha" class="form-label" for="basic-default-password12">Senha</label>
+                                    <div class="input-group">
+                                        <input asp-for="Senha" type="password"
+                                               class="form-control"
+                                               placeholder="Senha do Usuário"
+                                               aria-label="Username"
+                                               aria-describedby="basic-addon11" />
+                                    </div>
+
+                                    <label asp-for="ConfirmarSenha" class="form-label" for="basic-default-password12">Confirme a Senha</label>
+                                    <div class="input-group">
+                                        <input asp-for="ConfirmarSenha" type="password"
+                                               class="form-control"
+                                               placeholder="Confirme a Senha"
+                                               aria-label="Username"
+                                               aria-describedby="basic-addon11" />
+                                    </div>
+
+                                    @* <label asp-for="Cargo" class="form-label" for="basic-default-password12">Cargo</label>
+                                    <div class="input-group">
+                                        <input asp-for="Cargo" type="text"
+                                               class="form-control"
+                                               placeholder="Cargo do Usuário"
+                                               aria-label="Username"
+                                               aria-describedby="basic-addon11" />
+                                    </div>
+
+                                    <label asp-for="DepartamentoId" class="form-label" for="basic-default-password12">Departamento</label>
+                                    <div class="input-group">
+                                        <select asp-for="DepartamentoId" class="form-select">
+                                            <option value="" selected>Escolha...</option>
+                                            @foreach(var departamento in ViewBag.Departamentos)
+                                            {
+                                                <option value="@departamento.Id">@departamento.Nome</option>
+                                            }
+                                        </select>
+                                    </div> *@
+
+                                    <label asp-for="Funcao" class="form-label" for="basic-default-password12">Função</label>
+                                    <div class="input-group">
+                                        <select asp-for="Funcao" class="form-select">
+                                            <option value="" selected>Escolha...</option>
+                                            <option value="1">Gerenciador</option>
+                                            <option value="2">Responsável</option>
+                                            <option value="3">Desenvolvedor</option>
+                                        </select>
+                                    </div>
+
+                                    <br />
+
+                                    <button type="submit" class="btn btn-primary mt-3">Adicionar Usuário</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

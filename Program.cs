@@ -1,7 +1,32 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Tickest.Data;
+using Tickest.Models.Entities;
+using Tickest.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+var connectionString = builder.Configuration
+    .GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+builder.Services.AddDbContext<TickestContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<TickestContext>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "AspNetCore.Cookies";
+        options.ExpireTimeSpan = TimeSpan.FromHours(20);
+        options.SlidingExpiration = true;
+    });
+
+builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
 
 var app = builder.Build();
 
@@ -18,10 +43,32 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+await CriarPerfilUsuarioAsync(app);
+
+app.UseAuthentication();
+
 app.UseAuthorization();
+
+app.UseCookiePolicy();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();
+
+async Task CriarPerfilUsuarioAsync(WebApplication app)
+{
+    var scopedFactory = app.Services.GetService<IServiceScopeFactory>(); 
+
+    using (var scope = scopedFactory.CreateScope())
+    {
+        var service = scope.ServiceProvider.GetService<ISeedUserRoleInitial>();
+        var context = scope.ServiceProvider.GetService<TickestContext>();
+
+        context.Database.Migrate();
+
+        await service.SeedRolesAsync();
+        await service.SeedUsersAsync();
+    }
+}

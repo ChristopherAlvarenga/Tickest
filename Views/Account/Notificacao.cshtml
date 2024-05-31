@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@inject UserManager<IdentityUser> userManager
+
+@{
+    ViewData["Title"] = "Tickest - Tickets Criados";
+
+    var user = await userManager.FindByEmailAsync(User.Identity.Name);
+
+    if (await userManager.IsInRoleAsync(user, "Gerenciador"))
+        Layout = "_LayoutGerenciador";
+
+    else if (await userManager.IsInRoleAsync(user, "Responsavel"))
+        Layout = "_LayoutResponsavel";
+
+    else if (await userManager.IsInRoleAsync(user, "Desenvolvedor"))
+        Layout = "_Layout";
+}

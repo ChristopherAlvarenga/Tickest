@@ -1,0 +1,37 @@
+﻿@{
+    Layout = "";
+}
+
+@if(ViewBag.Mensagens != null){
+    @foreach (var mensagem in ViewBag.Mensagens)
+    {
+
+        if (mensagem.user_id_from == ViewBag.from)
+        {
+            <div class="d-flex justify-content-end mb-4">
+                <div class="msg_cotainer_send">
+                    @Html.Raw(@mensagem.msg_content)
+                    <span class="msg_time_send">@mensagem.dataHora</span>
+                </div>
+                <div class="img_cont_msg">
+                    <img src="~/img/avatars/Perfil.jpg" class="rounded-circle user_img_msg">
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex justify-content-start mb-4">
+                <div class="img_cont_msg">
+                    <img src="~/img/avatars/Perfil.jpg" class="rounded-circle user_img_msg">
+                </div>
+                <div class="msg_cotainer">
+                    @Html.Raw(@mensagem.msg_content)
+                    <span class="msg_time">@mensagem.dataHora , @mensagem.User_from.Email </span>
+                </div>
+            </div>
+        }
+
+    }
+}
+
+

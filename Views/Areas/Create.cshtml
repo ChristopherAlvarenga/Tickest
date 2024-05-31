@@ -1,0 +1,45 @@
+﻿@using Tickest.Models.ViewModels;
+@model UsuarioViewModel;
+
+@{
+    Layout = "_LayoutGerenciador";
+    ViewData["Title"] = "Tickest - Adicionar Área";
+}
+
+
+<div class="row">
+    <form method="post">
+        <!-- Basic -->
+        <div class="col-md-6">
+
+            <div class="card mb-4">
+                <h5 class="card-header">Adicionar Área</h5>
+                <div class="card-body demo-vertical-spacing demo-only-element form-group">
+                    <label asp-for="Area.Nome" class="form-label" for="basic-default-password12">Nome</label>
+                    <div class="input-group">
+                        <input asp-for="Area.Nome" type="text"
+                               class="form-control"
+                               placeholder="Nome da Área"
+                               aria-label="Username"
+                               aria-describedby="basic-addon11" />
+                    </div>
+                    <label asp-for="Area.DepartamentoId" class="form-label" for="basic-default-password12">Responsável pelo Departamento</label>
+                    <div class="input-group">
+                        <div class="input-group">
+                            <select asp-for="Area.DepartamentoId" class="form-select form-control">
+                                <option value="">Escolha...</option>
+                                @foreach (var departamento in Model.Departamentos)
+                                {
+                                    <option value="@departamento.Id">@departamento.Nome</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3">Adicionar</button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>

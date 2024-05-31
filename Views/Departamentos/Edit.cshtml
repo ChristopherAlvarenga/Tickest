@@ -1,0 +1,40 @@
+﻿@using Tickest.Models.ViewModels;
+@model DepartamentoEditViewModel;
+
+@{
+    Layout = "_LayoutGerenciador";
+    ViewData["Title"] = "Tickest - Adicionar Departamento";
+}
+
+<div class="row">
+
+    @using (Html.BeginForm("Edit", "Departamentos", FormMethod.Post))
+    {
+        <div class="col-md-6">
+
+            <div class="card mb-4">
+                <h5 class="card-header">Editar Departamento</h5>
+                <div class="card-body demo-vertical-spacing demo-only-element form-group">
+                    <label asp-for="Nome" class="form-label" for="basic-default-password12">Nome</label>
+                    <div class="input-group">
+                        <input asp-for="Nome" type="text"
+                               class="form-control"
+                               placeholder="Nome do Departamento"
+                               aria-label="Username"
+                               aria-describedby="basic-addon11" />
+                    </div>
+                    <label asp-for="ResponsavelSelecionado" class="form-label" for="basic-default-password12">Responsável pelo Departamento</label>
+                    <div class="input-group">
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.ResponsavelSelecionado, new SelectList(Model.ResponsaveisDisponiveis, "Id", "Nome")
+                        , new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3">Editar</button>
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
