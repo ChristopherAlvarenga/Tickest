@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
@@ -52,11 +53,11 @@ namespace Tickest.Controllers
                 // SignInManager e redireciona para o método Action Index
                 if (result.Succeeded)
                 {
-                    if(registerModel.Funcao == 1)
+                    if (registerModel.Funcao == 1)
                         await userManager.AddToRoleAsync(user, "Gerenciador");
                     else if (registerModel.Funcao == 2)
                         await userManager.AddToRoleAsync(user, "Responsavel");
-                    else if(registerModel.Funcao == 3)
+                    else if (registerModel.Funcao == 3)
                         await userManager.AddToRoleAsync(user, "Desenvolvedor");
 
                     var usuario = new Usuario()
@@ -72,7 +73,7 @@ namespace Tickest.Controllers
                 }
 
                 // Se houver erros, inclui no ModelState e exibe pela tag helper summary na validação
-                if (result.Errors != null) 
+                if (result.Errors != null)
                 {
                     ModelState.AddModelError(string.Empty, "A senha deve possuir mais de 6 caracteres.");
                     ModelState.AddModelError(string.Empty, "A senha deve ter pelo menos um caractere especial ('@','#', '&', etc).");
@@ -131,6 +132,43 @@ namespace Tickest.Controllers
         {
             await signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
+        }
+
+        [HttpPost("api/app/login")]
+        public async Task<IActionResult> Login_Mobile([FromBody] LoginViewModel loginModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await signInManager.PasswordSignInAsync(
+                    loginModel.Email, loginModel.Senha, loginModel.ManterLogin, false);
+
+                if (result.Succeeded)
+                {
+                    
+                    var user = await userManager.FindByEmailAsync(loginModel.Email);
+
+                    var userInfo = _context.Usuarios
+                        .Include(p => p.Departamento)
+                        .Include(p => p.Area)
+                        .Where(p => p.Email == user.Email).FirstOrDefault();
+
+                    var userInfoApp = new
+                    {
+                        Id = userInfo.Id,
+                        Nome = userInfo.Nome,
+                        Email = userInfo.Email,
+                        Area = userInfo.Area.Nome,
+                        Departamento = userInfo.Departamento.Nome,
+                        Cargo = userInfo.Cargo
+                    };
+
+                    return Ok(userInfoApp);
+
+                }
+
+                return BadRequest("Login Inválido");
+            }
+            return BadRequest("Login Inválido");
         }
     }
 }
