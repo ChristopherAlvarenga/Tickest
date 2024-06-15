@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using Tickest.Models.ViewModels;
-@using Tickest.Models.Entities;
+@using Tickest.Models.ViewModels
+@using Tickest.Models.Entities
 @model TicketViewModel
 @inject UserManager<Usuario> userManager
 
@@ -8,14 +8,19 @@
     var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
     if (await userManager.IsInRoleAsync(user, "Gerenciador"))
+    {
         Layout = "_LayoutGerenciador";
-
+    }
     else if (await userManager.IsInRoleAsync(user, "Cliente"))
+    {
         Layout = "_LayoutCliente";
-
+    }
     else
+    {
         Layout = "_Layout";
+    }
 }
+
 <style>
     .fa {
         color: red;
@@ -28,6 +33,7 @@
         color: #696cff !important;
     }
 </style>
+
 <!-- Content wrapper -->
 <div class="content-wrapper">
     <!-- Content -->
@@ -39,20 +45,19 @@
                     <div class="card mb-4">
                         <h5 class="card-header">Criação de Ticket</h5>
                         <div class="card-body demo-vertical-spacing demo-only-element">
-
-                            <label asp-for="Ticket.Titulo" class="form-label" for="basic-default-password12">Título</label>
+                            <label asp-for="Titulo" class="form-label" for="basic-default-password12">Título</label>
                             <div class="input-group">
-                                <input asp-for="Ticket.Titulo" type="text"
+                                <input asp-for="Titulo" type="text"
                                        class="form-control"
                                        placeholder="Título"
                                        aria-label="Username"
                                        aria-describedby="basic-addon11" />
                             </div>
 
-                            <label asp-for="Ticket.Prioridade" class="form-label" for="basic-default-password12">Prioridade</label>
+                            <label asp-for="Prioridade" class="form-label" for="basic-default-password12">Prioridade</label>
                             <div class="input-group">
                                 <div class="input-group">
-                                    <select asp-for="Ticket.Prioridade" class="form-select" id="inputGroupSelect02">
+                                    <select asp-for="Prioridade" class="form-select" id="inputGroupSelect02">
                                         <option value="1" selected>Escolha...</option>
                                         <option value="1">Baixa</option>
                                         <option value="2">Média</option>
@@ -62,15 +67,15 @@
                                 </div>
                             </div>
 
-                            <label asp-for="Ticket.Descricao" class="form-label" for="basic-default-password12">Descrição</label>
+                            <label asp-for="Descricao" class="form-label" for="basic-default-password12">Descrição</label>
                             <div class="input-group">
-                                <textarea asp-for="Ticket.Descricao" class="form-control" aria-label="With textarea" placeholder="Descreva sua solicitação/problema"></textarea>
+                                <textarea asp-for="Descricao" class="form-control" aria-label="With textarea" placeholder="Descreva sua solicitação/problema"></textarea>
                             </div>
 
-                            <label for="Ticket.DepartamentoId" class="form-label control-label">Departamento</label>
+                            <label for="DepartamentoId" class="form-label control-label">Departamento</label>
                             <div class="input-group form-group">
                                 <div class="input-group form-group">
-                                    <select asp-for="Ticket.DepartamentoId" id="Departamentos" class="form-select form-control">
+                                    <select asp-for="DepartamentoId" id="Departamentos" class="form-select form-control">
                                         <option value="">Escolha...</option>
                                         @foreach (var departamento in Model.Departamentos)
                                         {
@@ -80,11 +85,10 @@
                                 </div>
                             </div>
 
-                            
-                            <label for="Ticket.EspecialidadeId" id="AreaLabel" class="form-label control-label" style="display:none">Especialidade</label>
+                            <label for="EspecialidadeId" id="AreaLabel" class="form-label control-label" style="display:none">Especialidade</label>
                             <div class="input-group form-group">
                                 <div class="input-group form-group">
-                                    <select asp-for="Ticket.EspecialidadeId" id="Especialidades" class="form-select form-control">
+                                    <select asp-for="EspecialidadeId" id="Especialidades" class="form-select form-control">
                                         <option value="">Escolha...</option>
                                         @foreach (var especialidade in Model.Especialidades)
                                         {
@@ -94,15 +98,9 @@
                                 </div>
                             </div>
 
-
                             <div>
                                 <label for="formFileMultiple" class="form-label">Anexos</label>
-
-
-                                <div class="" id="files">
-                                </div>
-
-
+                                <div class="" id="files"></div>
                                 <input id="anexo" class="form-control d-none" type="file" name="files" multiple />
                                 <button id="btn-anexo" type="button" class="btn btn-primary"><i class="fas fa-attach"></i>Anexar Arquivos</button>
                             </div>
@@ -117,75 +115,58 @@
         </div>
     </div>
 </div>
+
 @section Scripts {
     <script>
-        var dt = new DataTransfer()
+        var dt = new DataTransfer();
         $(document).ready(function () {
-
             $('#anexo').change(function () {
-
                 $("#files").html("");
                 for (var i = 0; i < this.files.length; i++) {
                     var file = this.files[i];
-                    dt.items.add(file)
+                    dt.items.add(file);
                 }
-                this.files = dt.files
-
+                this.files = dt.files;
                 for (var i = 0; i < this.files.length; i++) {
                     var file = this.files[i];
-
                     name = file.name.toLowerCase();
                     size = file.size;
                     type = file.type;
-
-                    var html = '<a id="btn-' + i + '" type="button" anexo_id="' + i + '" class="name" >  ' + name + '  <i onclick=delRef("' + i + '")  class="fa fa-times" aria-hidden="true"></i></a>'
+                    var html = '<a id="btn-' + i + '" type="button" anexo_id="' + i + '" class="name" >  ' + name + '  <i onclick=delRef("' + i + '")  class="fa fa-times" aria-hidden="true"></i></a>';
                     $("#files").append(html);
                 }
             });
-
-
-            $("#btn-anexo").click(function(){
+            $("#btn-anexo").click(function () {
                 $("#anexo").click();
-            })
-
-        })
+            });
+        });
         function delRef(index) {
-
-            var input = document.getElementById('anexo')
-            var { files } = input
+            var input = document.getElementById('anexo');
+            var { files } = input;
             for (var i = 0; i < files.length; i++) {
-                var file = files[i]
+                var file = files[i];
                 if (index == i) {
-                    dt.items.remove(i)
+                    dt.items.remove(i);
                 }
             }
-
             $("#btn-" + index).remove();
             $("#anexo").trigger("change");
         }
         document.getElementById("Departamentos").addEventListener("change", function () {
             var DepId = this.value;
-
-            // Recupera os elementos do segundo dropdown
-            var Areas = document.getElementById("AreasDrop");
-
-            // Limpa as opções existentes no segundo dropdown
+            var Areas = document.getElementById("Especialidades");
             Areas.innerHTML = '';
-
-            // Exibe ou oculta o segundo dropdown com base na escolha no primeiro dropdown
             var AreaLabel = document.getElementById("AreaLabel");
             Areas.style.display = DepId ? "block" : "none";
             AreaLabel.style.display = DepId ? "block" : "none";
-
-            // Adiciona as opções relevantes ao segundo dropdown
         @foreach (var especialidade in Model.Especialidades)
         {
             <text>
-                            if (DepId == "@especialidade.DepartamentoId") {
+                                if (DepId == "@especialidade.DepartamentoId") {
                     Areas.innerHTML += '<option value="@especialidade.Id">@especialidade.Nome</option>';
                 }
             </text>
         }
-        });
+                });
     </script>
 }

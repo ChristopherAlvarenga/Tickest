@@ -1,7 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Tickest.Enums
 @using Tickest.Models.ViewModels;
-@using Tickest.Models.Entities;
+@using Tickest.Models.Entities
+
 @model Tickest.Models.ViewModels.TicketViewModel
+
 @inject UserManager<Usuario> userManager
 
 @{
@@ -10,15 +13,20 @@
     var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
     if (await userManager.IsInRoleAsync(user, "Gerenciador"))
+    {
         Layout = "_LayoutGerenciador";
-
+    }
     else if (await userManager.IsInRoleAsync(user, "Cliente"))
+    {
         Layout = "_LayoutCliente";
-
+    }
     else if (await userManager.IsInRoleAsync(user, "Analista"))
+    {
         Layout = "_Layout";
+    }
 }
 <style>
+    <style >
     .modal-body {
         background-color: #fff;
         border-color: #fff;
@@ -55,8 +63,10 @@
         margin: 0.4rem 0;
     }
 </style>
+</style>
 
 <link rel="stylesheet" href="~/css/chat.css" />
+
 <div class="row">
     <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
         <div class="card">
@@ -91,117 +101,10 @@
                                             <div class="modal fade" ticket_id="@ticket.Id" id="modalScrollable-@ticket.Id" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-body ">
-                                                            <div class="text-right"> <i class="fa fa-close close" data-bs-dismiss="modal" aria-label="Close" data-dismiss="modal"></i> </div>
-
-                                                            <div class="px-4 py-5">
-
-                                                                <h5 class="text-uppercase">#@ticket.Id</h5>
-                                                                <h4 class="mt-5 theme-color mb-5">@ticket.Titulo</h4>
-
-                                                                <div class="d-flex1 justify-content-between">
-                                                                    <span class="theme-color">@ticket.Descricao</span>
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <hr class="new1">
-                                                                </div>
-                                                                <div class="d-flex1 justify-content-between">
-                                                                    <span class="font-weight-bold">Criado Em:</span>
-                                                                    <span class="text-muted">@ticket.DataCriacao</span>
-                                                                </div>
-                                                                <div class="d-flex1 justify-content-between">
-                                                                    <span class="font-weight-bold">
-                                                                        Prioridade
-                                                                    </span>
-                                                                    <span class="text-muted">@ticket.Prioridade</span>
-                                                                </div>
-
-                                                                <div class="d-flex1 justify-content-between">
-                                                                    <span class="font-weight-bold">
-                                                                        Status
-                                                                    </span>
-                                                                    <span class="text-muted">@ticket.Status</span>
-                                                                </div>
-                                                                <div class="d-flex1 justify-content-between">
-                                                                    <span class="font-weight-bold">
-                                                                        Enviado por:
-                                                                    </span>
-                                                                    <span class="text-muted">@ticket.Solicitante.Nome (@ticket.Solicitante.Email)</span>
-                                                                </div>
-                                                                <div class="d-flex1 justify-content-between">
-                                                                    <span class="font-weight-bold">
-                                                                        Departamento:
-                                                                    </span>
-                                                                    <span class="text-muted">@ticket.Departamento?.Nome</span>
-                                                                </div>
-                                                                <div class="mt-3">
-                                                                    <span class="font-weight-bold">
-                                                                        Anexos:
-                                                                    </span>
-                                                                    <br>
-                                                                    @if (ticket.Anexos != null)
-                                                                    {
-                                                                        @foreach (var anexo in ticket.Anexos)
-                                                                        {
-                                                                            var name = anexo.Endereco.Substring(anexo.Endereco.IndexOf('/') + 1);
-
-                                                                            <a href="~/@anexo.Endereco" download>@name</a>
-                                                                            <br />
-                                                                        }
-                                                                    }
-                                                                </div>
-                                                            </div>
-                                                            <div class="card card-chat">
-                                                                <div class="card-header msg_head">
-                                                                    <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
-                                                                    <div class="action_menu">
-                                                                        <ul>
-                                                                            <li><i class="fas fa-user-circle"></i> View profile</li>
-                                                                            <li><i class="fas fa-users"></i> Add to close friends</li>
-                                                                            <li><i class="fas fa-plus"></i> Add to group</li>
-                                                                            <li><i class="fas fa-ban"></i> Block</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="card-body msg_card_body" id="chat-@ticket.Id">
-                                                                </div>
-                                                                <div class="card-footer">
-                                                                    <div class="input-group">
-                                                                        <div class="input-group-append">
-                                                                            <span ticket_id="@ticket.Id" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
-                                                                            <input type="file" class="input-attach" ticket_id="@ticket.Id" id="attach-@ticket.Id" style="display:none;">
-                                                                        </div>
-                                                                        <textarea name="" id="text-@ticket.Id" class="form-control type_msg" placeholder="Escreva sua mensagem..."></textarea>
-                                                                        <div class="input-group-append">
-                                                                            <span class="input-group-text send_btn" id="enviar-@ticket.Id" ticket_id="@ticket.Id"><i class="fas fa-location-arrow"></i></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            @if (ticket.Status != Tickest.Models.Entities.Ticket.Tipo.Concluido && ticket.Status != Tickest.Models.Entities.Ticket.Tipo.Cancelado)
-                                                            {
-                                                                <form method="post" action="/Tickets/MudarStatus/@ticket.Id?status=3">
-                                                                    <div class="text-center mt-5">
-                                                                        <button class="btn btn-primary">Concluir Ticket</button>
-                                                                    </div>
-                                                                </form>
-                                                                <form method="post" action="/Tickets/MudarStatus/@ticket.Id?status=4">
-                                                                    <div class="text-center mt-5">
-                                                                        <button class="btn btn-primary">Cancelar Ticket</button>
-                                                                    </div>
-                                                                </form>
-                                                            }
-                                                            else
-                                                            {
-                                                                <br />
-                                                            }
-                                                        </div>
+                                                        <!-- Conteúdo da modal -->
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Informação -->
                                         </td>
                                     </tr>
                                 }
@@ -217,7 +120,6 @@
 <script>
     window.onload = function () {
 
-
         $(".modal-ticket").click(function () {
             var ticket_id = $(this).attr("ticket_id");
             var url = "/Chat/Mensagens/" + ticket_id;
@@ -225,7 +127,8 @@
                 $("#chat-" + ticket_id).html(data);
                 $("#chat-" + ticket_id).scrollTop($("#chat-" + ticket_id)[0].scrollHeight);
             });
-        })
+        });
+
         $(".modal").on('keypress', function (e) {
             var ticket_id = $(this).attr("ticket_id");
             if (e.which == 13) {
@@ -233,26 +136,22 @@
             }
         });
 
-        $(".attach_btn").click(function(){
+        $(".attach_btn").click(function () {
             var ticket_id = $(this).attr("ticket_id");
-
             $("#attach-" + ticket_id).click();
-        })
+        });
 
-        $(".input-attach").change(function(){
- 
+        $(".input-attach").change(function () {
             var id = $(this).attr("ticket_id");
             var filename = $(this).val();
 
             if (filename == "" || filename == null) {
                 alert('Error');
             } else {
-                var file = document.getElementById('attach-'+id).files[0];
+                var file = document.getElementById('attach-' + id).files[0];
                 var filename = document.getElementById('attach-' + id).files[0].name;
 
                 var formData = new FormData();
-
-
                 formData.append("file", file);
                 $.ajax({
                     dataType: "json",
@@ -287,24 +186,16 @@
                                             $("#chat-" + id).html(data);
                                             $("#chat-" + id).scrollTop($("#chat-" + id)[0].scrollHeight);
                                         });
-
                                     }
-
                                 }
                             });
-                    
-
                         }
-
                     }
                 });
-
             }
-
-        })
+        });
 
         $(".send_btn").click(function () {
-
             var formData = new FormData();
             var ticket_id = $(this).attr("ticket_id");
             var msg = $("#text-" + ticket_id).val();
@@ -327,12 +218,11 @@
                             $("#chat-" + ticket_id).html(data);
                             $("#chat-" + ticket_id).scrollTop($("#chat-" + ticket_id)[0].scrollHeight);
                         });
-
                     }
-
                 }
             });
-        })
+        });
+
         $('#Tickets').DataTable({
             "ordering": true,
             "paging": true,
@@ -362,38 +252,28 @@
             }
         });
 
-
     @foreach (var ticket in Model.Tickets)
     {
         <text>
                 setInterval(function () {
-
-
-
-
-                    var url = "/Chat/Mensagens/@ticket.Id";
+                    var ticketId = "@ticket.Id";
+                    var url = "/Chat/Mensagens/" + ticketId;
                     $.get(url, function (data) {
-                        var scroll = $("#chat-@ticket.Id").scrollTop();
-
-
-                        if ($("#chat-@ticket.Id")[0].scrollHeight - $("#chat-@ticket.Id").scrollTop() == $("#chat-@ticket.Id").outerHeight()) {
-                            $("#chat-@ticket.Id").html(data);
-                            $("#chat-@ticket.Id").scrollTop($("#chat-@ticket.Id")[0].scrollHeight);
+                        var scroll = $("#chat-" + ticketId).scrollTop();
+                        if ($("#chat-" + ticketId)[0].scrollHeight - $("#chat-" + ticketId).scrollTop() == $("#chat-" + ticketId).outerHeight()) {
+                            $("#chat-" + ticketId).html(data);
+                            $("#chat-" + ticketId).scrollTop($("#chat-" + ticketId)[0].scrollHeight);
                             console.log("entrou");
-                        }else{
-                            $("#chat-@ticket.Id").html(data);
-                            $("#chat-@ticket.Id").scrollTop(scroll);
+                        } else {
+                            $("#chat-" + ticketId).html(data);
+                            $("#chat-" + ticketId).scrollTop(scroll);
                         }
+                    }).fail(function () {
+                        console.error("Falha ao atualizar mensagens do ticket " + ticketId);
                     });
-                    console.log("foi");
-
-
-
+                    console.log("Atualização das mensagens do ticket " + ticketId + " executada.");
                 }, 3000);
         </text>
-
-
-
     }
-    }
+        }
 </script>

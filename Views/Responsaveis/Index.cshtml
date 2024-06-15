@@ -1,9 +1,10 @@
-﻿@model Tickest.Models.ViewModels.TicketViewModel
+﻿@using Tickest.Enums
+
+@model Tickest.Models.ViewModels.TicketViewModel
 
 @{
     Layout = "_LayoutResponsavel";
     ViewData["Title"] = "Tickest - Home";
-
     string none = "";
 }
 <style>
@@ -11,7 +12,6 @@
         background-color: #fff;
         border-color: #fff;
     }
-
     .d-flex1 {
         display: flex;
         flex-wrap: wrap !important;
@@ -19,17 +19,13 @@
         word-wrap: break-word; /* if you want to cut the complete word */
         white-space: normal;
     }
-
     .close {
         color: #000;
         cursor: pointer;
     }
-
         .close:hover {
             color: #000;
         }
-
-
     .theme-color {
         flex-wrap: wrap !important;
         color: #004cb9;
@@ -37,7 +33,6 @@
         word-wrap: break-word; /* if you want to cut the complete word */
         white-space: normal;
     }
-
     hr.new1 {
         border-top: 2px dashed #fff;
         margin: 0.4rem 0;
@@ -158,8 +153,9 @@
                                                                     }
                                                                 </div>
                                                             </div>
-                                                            @if (ticket.Status == Tickest.Models.Entities.Ticket.Tipo.Criado) { none = "d-none"; }
-                                                            <div class="card card-chat @none">
+                                                            @if (ticket.Status == TicketStatusEnum.Aberto) { none = "d-none"; }
+                                                            else { none = ""; }
+                                                            <div class="card card-chat">
                                                                 <div class="card-header msg_head">
                                                                     <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
                                                                     <div class="action_menu">
@@ -173,7 +169,7 @@
                                                                 </div>
                                                                 <div class="card-body msg_card_body" id="chat-@ticket.Id">
                                                                 </div>
-                                                                @if (ticket.Status != Tickest.Models.Entities.Ticket.Tipo.Concluido && ticket.Status != Tickest.Models.Entities.Ticket.Tipo.Cancelado)
+                                                                @if (ticket.Status != TicketStatusEnum.Concluido && ticket.Status != TicketStatusEnum.Cancelado)
                                                                 {
                                                                     <div class="card-footer">
                                                                         <div class="input-group">
@@ -191,7 +187,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            @if (ticket.Status == Tickest.Models.Entities.Ticket.Tipo.Criado)
+                                                            @if (ticket.Status == TicketStatusEnum.Aberto)
                                                             {
                                                                 <form method="post" action="/Tickets/MudarStatus/@ticket.Id?status=1">
                                                                     <div class="text-center mt-5">
@@ -199,7 +195,7 @@
                                                                     </div>
                                                                 </form>
                                                             }
-                                                            else if (ticket.Status == Tickest.Models.Entities.Ticket.Tipo.Andamento)
+                                                            else if (ticket.Status == TicketStatusEnum.EmAndamento)
                                                             {
                                                                 <form method="post" action="/Tickets/MudarStatus/@ticket.Id?status=2">
                                                                     <div class="text-center mt-5">
@@ -251,7 +247,6 @@
             $("#attach-" + ticket_id).click();
         })
 
-
         $(".input-attach").change(function () {
 
             var id = $(this).attr("ticket_id");
@@ -260,11 +255,10 @@
             if (filename == "" || filename == null) {
                 alert('Error');
             } else {
+
                 var file = document.getElementById('attach-' + id).files[0];
                 var filename = document.getElementById('attach-' + id).files[0].name;
-
                 var formData = new FormData();
-
 
                 formData.append("file", file);
                 $.ajax({
@@ -300,22 +294,14 @@
                                             $("#chat-" + id).html(data);
                                             $("#chat-" + id).scrollTop($("#chat-" + id)[0].scrollHeight);
                                         });
-
                                     }
-
                                 }
                             });
-
-
                         }
-
                     }
                 });
-
             }
-
         })
-
 
         $(".send_btn").click(function () {
 
@@ -341,9 +327,7 @@
                             $("#chat-" + ticket_id).html(data);
                             $("#chat-" + ticket_id).scrollTop($("#chat-" + ticket_id)[0].scrollHeight);
                         });
-
                     }
-
                 }
             });
         })
@@ -376,20 +360,13 @@
             }
         });
 
-
     @foreach (var ticket in Model.Tickets)
     {
         <text>
                 setInterval(function () {
-
-
-
-
                     var url = "/Chat/Mensagens/@ticket.Id";
                     $.get(url, function (data) {
                         var scroll = $("#chat-@ticket.Id").scrollTop();
-
-
                         if ($("#chat-@ticket.Id")[0].scrollHeight - $("#chat-@ticket.Id").scrollTop() == $("#chat-@ticket.Id").outerHeight()) {
                             $("#chat-@ticket.Id").html(data);
                             $("#chat-@ticket.Id").scrollTop($("#chat-@ticket.Id")[0].scrollHeight);
@@ -399,15 +376,8 @@
                         }
                     });
                     console.log("foi");
-
-
-
                 }, 3000);
         </text>
-
-
-
     }
-
-        }
+            }
 </script>

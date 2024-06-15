@@ -2,58 +2,53 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
+using Tickest.Enums;
 
 namespace Tickest.Controllers
 {
     [Authorize]
     public class TicketsController : Controller
     {
-        private readonly UserManager<Usuario> userManager;
+        #region Constructor and Dependencies
+
+        private readonly UserManager<Usuario> _userManager;
         private readonly TickestContext _context;
 
         public TicketsController(UserManager<Usuario> userManager, TickestContext context)
         {
-            this.userManager = userManager;
-            _context = context;
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        // GET: TicketsController
+        #endregion
+
+        #region Actions
+
         public async Task<IActionResult> Index()
         {
-            var usuarioAtual = await userManager.GetUserAsync(User);
+            var usuarioAtual = await _userManager.GetUserAsync(User);
 
-            var query = _context.Tickets
-                .Include(p => p.Departamento)
-                .Include(p => p.Responsavel)
-                .Include(p => p.Anexos)
-                .Include(p => p.Solicitante)
-                .Where(p => p.SolicitanteId == usuarioAtual.Id)
-                .Where(p => p.Status != Ticket.Tipo.Concluido && p.Status != Ticket.Tipo.Cancelado)
-                .OrderBy(p => p.Id)
-                .AsQueryable()
-                .ToList();
+            var tickets = await _context.Tickets
+                .Include(t => t.Departamento)
+                .Include(t => t.Responsavel)
+                .Include(t => t.Anexos)
+                .Include(t => t.Solicitante)
+                .Where(t => t.SolicitanteId == usuarioAtual.Id)
+                .Where(t => t.Status != TicketStatusEnum.Concluido && t.Status != TicketStatusEnum.Cancelado)
+                .OrderBy(t => t.Id)
+                .ToListAsync();
 
-            var viewModel = new TicketViewModel()
+            var viewModel = new TicketViewModel
             {
-                Tickets = query
-                .Select(p => new Ticket
-                {
-                    Id = p.Id,
-                    Titulo = p.Titulo,
-                    Descricao = p.Descricao,
-                    DataCriacao = p.DataCriacao,
-                    Status = p.Status,
-                    DataStatus = p.DataStatus,
-                    Prioridade = p.Prioridade,
-                    Responsavel = p.Responsavel,
-                    Departamento = p.Departamento,
-                    SolicitanteId = p.SolicitanteId,
-                    Solicitante = p.Solicitante,
-                    Anexos = p.Anexos
-                }).ToList(),
+                Tickets = tickets,
                 Usuario = usuarioAtual
             };
 
@@ -63,35 +58,21 @@ namespace Tickest.Controllers
         [HttpGet]
         public async Task<IActionResult> Historic()
         {
-            var usuarioAtual = await userManager.GetUserAsync(User);
+            var usuarioAtual = await _userManager.GetUserAsync(User);
 
-            var query = _context.Tickets
-                .Include(p => p.Departamento)
-                .Include(p => p.Responsavel)
-                .Include(p => p.Solicitante)
-                .Include(p => p.Anexos)
-                .Where(p => p.Responsavel.Email == usuarioAtual.Email || p.SolicitanteId == usuarioAtual.Id)
-                .Where(p => p.Status == Ticket.Tipo.Concluido || p.Status == Ticket.Tipo.Cancelado)
-                .OrderBy(p => p.Id)
-                .AsQueryable();
+            var tickets = await _context.Tickets
+                .Include(t => t.Departamento)
+                .Include(t => t.Responsavel)
+                .Include(t => t.Solicitante)
+                .Include(t => t.Anexos)
+                .Where(t => t.Responsavel.Email == usuarioAtual.Email || t.SolicitanteId == usuarioAtual.Id)
+                .Where(t => t.Status == TicketStatusEnum.Concluido || t.Status == TicketStatusEnum.Cancelado)
+                .OrderBy(t => t.Id)
+                .ToListAsync();
 
-            var viewModel = new TicketViewModel()
+            var viewModel = new TicketViewModel
             {
-                Tickets = query.Select(p => new Ticket
-                {
-                    Id = p.Id,
-                    Titulo = p.Titulo,
-                    Descricao = p.Descricao,
-                    DataCriacao = p.DataCriacao,
-                    Status = p.Status,
-                    DataStatus = p.DataStatus,
-                    Prioridade = p.Prioridade,
-                    Responsavel = p.Responsavel,
-                    Departamento = p.Departamento,
-                    SolicitanteId = p.SolicitanteId,
-                    Solicitante = p.Solicitante,
-                    Anexos = p.Anexos
-                }).ToList(),
+                Tickets = tickets,
                 Usuario = usuarioAtual
             };
 
@@ -101,33 +82,19 @@ namespace Tickest.Controllers
         public IActionResult Search(string search)
         {
             var usuario = _context.Usuarios
-               .Where(p => p.Email == User.Identity.Name)
-               .FirstOrDefault();
+               .FirstOrDefault(u => u.Email == User.Identity.Name);
 
-            var query = _context.Tickets
-                .Include(p => p.Departamento)
-                .Include(p => p.Responsavel)
-                .Include(p => p.Anexos)
-                .Where(p => p.Responsavel.Email == usuario.Email && (EF.Functions.Like(p.Titulo, "%" + search + "%") || (p.Id.ToString() == search) || (EF.Functions.Like(p.Descricao, "%" + search + "%") || (EF.Functions.Like(p.Departamento.Nome, "%" + search + "%")))))
-                .OrderBy(p => p.Id)
-                .AsQueryable();
+            var tickets = _context.Tickets
+                .Include(t => t.Departamento)
+                .Include(t => t.Responsavel)
+                .Include(t => t.Anexos)
+                .Where(t => t.Responsavel.Email == usuario.Email && (EF.Functions.Like(t.Titulo, "%" + search + "%") || (t.Id.ToString() == search) || (EF.Functions.Like(t.Descricao, "%" + search + "%") || (EF.Functions.Like(t.Departamento.Nome, "%" + search + "%")))))
+                .OrderBy(t => t.Id)
+                .ToList();
 
-            var viewModel = new TicketViewModel()
+            var viewModel = new TicketViewModel
             {
-                Tickets = query.Select(p => new Ticket
-                {
-                    Id = p.Id,
-                    Titulo = p.Titulo,
-                    Descricao = p.Descricao,
-                    DataCriacao = p.DataCriacao,
-                    Status = p.Status,
-                    DataStatus = p.DataStatus,
-                    Prioridade = p.Prioridade,
-                    Responsavel = p.Responsavel,
-                    Departamento = p.Departamento,
-                    SolicitanteId = p.SolicitanteId,
-                    Anexos = p.Anexos
-                }).ToList(),
+                Tickets = tickets,
                 Usuario = usuario
             };
 
@@ -136,93 +103,100 @@ namespace Tickest.Controllers
             return View(viewModel);
         }
 
-        // GET: TicketsController/Create
         public IActionResult Create()
         {
             var user = _context.Usuarios
-                .Include(p => p.Departamento)
-                .Where(p => p.Email == User.Identity.Name)
-                .FirstOrDefault();
+                .Include(u => u.Departamento)
+                .FirstOrDefault(u => u.Email == User.Identity.Name);
 
-            var query = _context.Departamentos
-                .OrderBy(p => p.Nome)
-                .AsQueryable();
+            var departamentos = _context.Departamentos
+                .OrderBy(d => d.Nome)
+                .ToList();
 
-            var query1 = _context.Especialidades
-                .OrderBy(p => p.Nome)
-                .AsQueryable();
+            var especialidades = _context.Especialidades
+                .OrderBy(e => e.Nome)
+                .ToList();
 
-            var viewModel = new TicketViewModel()
+            var viewModel = new TicketViewModel
             {
-                Departamentos = query.Select(p => new Departamento
-                {
-                    Id = p.Id,
-                    Nome = p.Nome,
-                    GerenciadorId = p.GerenciadorId
-                }).ToList(),
-                Especialidades = query1.Select(p => new Especialidade
-                {
-                    Id = p.Id,
-                    Nome = p.Nome,
-                    DepartamentoId = p.DepartamentoId
-                }).ToList()
+                Departamentos = departamentos,
+                Especialidades = especialidades
             };
 
             return View(viewModel);
         }
 
-        // POST: TicketsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Ticket ticket, int departamentoId, List<IFormFile> files)
         {
             ViewBag.Especialidades = _context.Especialidades.Where(s => s.DepartamentoId == departamentoId);
-            
-            var usuario = _context.Usuarios
-                .FirstOrDefault(p => p.Email == User.Identity.Name);
 
-            foreach (IFormFile file in files)
+            var usuario = _context.Usuarios
+                .FirstOrDefault(u => u.Email == User.Identity.Name);
+
+            foreach (var file in files)
             {
-                var path = WriteFile(file);
+                var path = await WriteFileAsync(file);
                 var fileName = Path.GetFileName(path);
                 var name = "anexos/" + fileName;
-                Anexo anexo = new Anexo();
-                anexo.Endereco = name;
+                var anexo = new Anexo { Endereco = name };
                 ticket.Anexos.Add(anexo);
             }
+
             ticket.DataCriacao = DateTime.Now;
-            ticket.Status = Ticket.Tipo.Criado;
+            ticket.Status = TicketStatusEnum.Aberto;
             ticket.DataStatus = DateTime.Now;
             ticket.SolicitanteId = usuario.Id;
-            ticket.DepartamentoId = ticket.DepartamentoId;
+            ticket.DepartamentoId = departamentoId; // Corrigido aqui
             _context.Add(ticket);
-            
-             await _context.SaveChangesAsync();
+
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: TicketsController/Edit/5
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> MudarStatus(int? id, [FromQuery(Name = "status")] TicketStatusEnum? status) // Corrigido aqui
         {
-            return View();
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.Email == User.Identity.Name);
+
+            var ticket = await _context.Tickets.FindAsync(id);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            ticket.SolicitanteId = usuario.Id;
+            ticket.Status = status ?? TicketStatusEnum.Aberto; // Corrigido aqui
+            ticket.DataStatus = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+
+            if (await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                return RedirectToAction("Index", "Admin", new { area = "Admin" });
+            }
+            else if (await _userManager.IsInRoleAsync(user, "Gerenciador"))
+            {
+                return RedirectToAction("Index", "Gerenciador");
+            }
+            else if (await _userManager.IsInRoleAsync(user, "Responsavel"))
+            {
+                return RedirectToAction("Index", "Responsaveis");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Desenvolvedores");
+            }
         }
 
-        // POST: TicketsController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        #endregion
 
-        public static string WriteFile(IFormFile file)
+        #region Helpers
+
+        public static async Task<string> WriteFileAsync(IFormFile file)
         {
             string caminhoCompleto = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\anexos");
 
@@ -230,72 +204,20 @@ namespace Tickest.Controllers
             {
                 Directory.CreateDirectory(caminhoCompleto);
             }
-            string path = caminhoCompleto + "\\" + GetTimestamp(DateTime.Now) + System.IO.Path.GetExtension(file.FileName);
+            string path = Path.Combine(caminhoCompleto, GetTimestamp(DateTime.Now) + Path.GetExtension(file.FileName));
             string name = Path.GetFileName(path);
             using (Stream stream = new FileStream(path, FileMode.Create))
             {
-                file.CopyTo(stream);
+                await file.CopyToAsync(stream);
             }
             return path;
-
-
-        }
-
-        public async Task<IActionResult> MudarStatus(int? id, [FromQuery(Name = "status")] int? status)
-        {
-            var usuario = _context.Usuarios
-                .Where(u => u.Email == User.Identity.Name)
-                .FirstOrDefault();
-
-            var ticket = _context.Tickets
-                .Where(t => t.Id == id)
-                .FirstOrDefault();
-
-            if (status == 1)
-            {
-                ticket.SolicitanteId = usuario.Id;
-                ticket.Status = Ticket.Tipo.Andamento;
-                ticket.DataStatus = DateTime.Now;
-            }
-            else if (status == 2)
-            {
-                ticket.Status = Ticket.Tipo.Teste;
-                ticket.DataStatus = DateTime.Now;
-            }
-
-            else if (status == 3)
-            {
-                ticket.Status = Ticket.Tipo.Concluido;
-                ticket.DataStatus = DateTime.Now;
-            }
-
-            else if (status == 4)
-            {
-                ticket.Status = Ticket.Tipo.Cancelado;
-                ticket.DataStatus = DateTime.Now;
-            }
-
-            await _context.SaveChangesAsync();
-
-            var user = await userManager.FindByEmailAsync(User.Identity.Name);
-
-            if (await userManager.IsInRoleAsync(user, "Admin"))
-                return RedirectToAction("Index", "Admin", new { area = "Admin" });
-
-            if (await userManager.IsInRoleAsync(user, "Gerenciador"))
-                return RedirectToAction("Index", "Gerenciador");
-
-            else if (await userManager.IsInRoleAsync(user, "Responsavel"))
-                return RedirectToAction("Index", "Responsaveis");
-
-            else
-                return RedirectToAction("Index", "Desenvolvedores");
         }
 
         public static String GetTimestamp(DateTime value)
         {
             return value.ToString("yyyyMMddHHmmssffff");
         }
-    }
 
+        #endregion
+    }
 }

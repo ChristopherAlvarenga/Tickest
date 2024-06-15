@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
 using Tickest.Data;
+using Tickest.Enums;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
 
@@ -11,103 +14,63 @@ namespace Tickest.Controllers
     [Authorize(Roles = "Gerenciador")]
     public class GerenciadorController : Controller
     {
-        private readonly UserManager<Usuario> userManager;
+        private readonly UserManager<Usuario> _userManager;
         private readonly TickestContext _context;
 
         public GerenciadorController(UserManager<Usuario> userManager, TickestContext context)
         {
-            this.userManager = userManager;
-            _context = context;
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public IActionResult Index()
         {
-            var usuario = _context.Usuarios
-                .Where(p => p.Email == User.Identity.Name)
-                .FirstOrDefault();
+            var usuario = _userManager.FindByEmailAsync(User.Identity.Name).Result;
 
-            var query = _context.Tickets
-                .Include(p => p.Departamento)
-                .Include(p => p.Responsavel)
-                .Include(p => p.Solicitante)
-                .Include(p => p.Anexos)
-                .Where(p => p.EspecialidadeId == usuario.EspecialidadeId)
-                .Where(p => p.Status != Ticket.Tipo.Concluido)
-                .Where(p => p.Status != Ticket.Tipo.Cancelado)
-                .AsQueryable();
+            var tickets = _context.Tickets
+                .Include(t => t.Departamento)
+                .Include(t => t.Responsavel)
+                .Include(t => t.Solicitante)
+                .Include(t => t.Anexos)
+                .Where(t => t.EspecialidadeId == usuario.EspecialidadeId &&
+                            (t.Status != TicketStatusEnum.Concluido && t.Status != TicketStatusEnum.Cancelado))
+                .ToList();
 
-            foreach (var ticket in query)
+            tickets.RemoveAll(t => t.Status != TicketStatusEnum.Aberto && t.SolicitanteId != usuario.Id);
+
+            var viewModel = new TicketViewModel
             {
-                if (ticket.Status != Ticket.Tipo.Criado && ticket.SolicitanteId != usuario.Id)
-                    query.ToList().RemoveAll(p => p.Id == ticket.Id);
-            }
-
-            var viewModel = new TicketViewModel()
-            {
-                Tickets = query.Select(p => new Ticket
-                {
-                    Id = p.Id,
-                    Titulo = p.Titulo,
-                    Descricao = p.Descricao,
-                    DataCriacao = p.DataCriacao,
-                    Status = p.Status,
-                    DataStatus = p.DataStatus,
-                    Prioridade = p.Prioridade,
-                    Responsavel = p.Responsavel,
-                    Departamento = p.Departamento,
-                    SolicitanteId = p.SolicitanteId,
-                    Solicitante = p.Solicitante,
-                    Anexos = p.Anexos
-                }).ToList(),
+                Tickets = tickets,
                 Usuario = usuario
             };
 
             ViewBag.TicketsAberto = _context.Tickets
-                .Where(p => p.SolicitanteId == usuario.Id)
-                .Where(p => p.Status != Ticket.Tipo.Cancelado && p.Status != Ticket.Tipo.Concluido)
-                .Count();
+                .Count(t => t.SolicitanteId == usuario.Id &&
+                            (t.Status != TicketStatusEnum.Cancelado && t.Status != TicketStatusEnum.Concluido));
 
             ViewBag.TicketsRecebidos = _context.Tickets
-                .Where(p => p.SolicitanteId == usuario.Id)
-                .Where(p => p.Status != Ticket.Tipo.Cancelado)
-                .Where(p => p.DataCriacao.Month == DateTime.Now.Month)
-                .Count();
+                .Count(t => t.SolicitanteId == usuario.Id &&
+                            (t.Status != TicketStatusEnum.Cancelado && t.DataCriacao.Month == DateTime.Now.Month));
 
             ViewBag.TicketConcluidos = _context.Tickets
-                .Where(p => p.SolicitanteId == usuario.Id)
-                .Where(p => p.Status == Ticket.Tipo.Concluido)
-                .Where(p => p.DataStatus.Month == DateTime.Now.Month)
-                .Count();
+                .Count(t => t.SolicitanteId == usuario.Id &&
+                            (t.Status == TicketStatusEnum.Concluido && t.DataStatus.Month == DateTime.Now.Month));
 
             return View(viewModel);
         }
 
         public IActionResult AllTickets()
         {
-            var query = _context.Tickets
-                .Include(p => p.Departamento)
-                .Include(p => p.Responsavel)
-                .Include(p => p.Solicitante)
-                .Include(p => p.Anexos)
-                .AsQueryable();
+            var tickets = _context.Tickets
+                .Include(t => t.Departamento)
+                .Include(t => t.Responsavel)
+                .Include(t => t.Solicitante)
+                .Include(t => t.Anexos)
+                .ToList();
 
-            var viewModel = new TicketViewModel()
+            var viewModel = new TicketViewModel
             {
-                Tickets = query.Select(p => new Ticket
-                {
-                    Id = p.Id,
-                    Titulo = p.Titulo,
-                    Descricao = p.Descricao,
-                    DataCriacao = p.DataCriacao,
-                    Status = p.Status,
-                    DataStatus = p.DataStatus,
-                    Prioridade = p.Prioridade,
-                    Responsavel = p.Responsavel,
-                    Departamento = p.Departamento,
-                    SolicitanteId = p.SolicitanteId,
-                    Solicitante = p.Solicitante,
-                    Anexos = p.Anexos
-                }).ToList(),
+                Tickets = tickets
             };
 
             return View(viewModel);

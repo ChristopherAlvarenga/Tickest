@@ -63,6 +63,11 @@ namespace Tickest.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
             var gerenciadores = await userManager.GetUsersInRoleAsync("Gerenciador");
 
             var departamento = await _context.Set<Departamento>()
@@ -79,8 +84,14 @@ namespace Tickest.Controllers
                  })
                  .FirstOrDefaultAsync(p => p.Id == id);
 
+            if (departamento == null)
+            {
+                return NotFound();
+            }
+
             return View(departamento);
         }
+
 
         [Authorize(Roles = "Gerenciador")]
         [HttpPost]
