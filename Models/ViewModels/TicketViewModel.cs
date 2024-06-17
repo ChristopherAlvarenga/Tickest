@@ -16,11 +16,11 @@ namespace Tickest.Models.ViewModels
         public Departamento Departamento { get; set; }
         public Especialidade Especialidade { get; set; }
         public Usuario Usuario { get; set; }
-        public List<Ticket> Tickets { get; set; }
+        public List<Ticket> Tickets { get; set; } = new List<Ticket>();
 
         // Listas de departamentos e especialidades
-        public List<Departamento> Departamentos { get; set; }
-        public List<Especialidade> Especialidades { get; set; }
+        public List<Departamento> Departamentos { get; set; } = new List<Departamento>();
+        public List<Especialidade> Especialidades { get; set; } = new List<Especialidade>();
 
         // IDs para associar departamento e especialidade ao ticket
         public int DepartamentoId { get; set; }
@@ -34,6 +34,7 @@ namespace Tickest.Models.ViewModels
         public string TicketsRecebidos { get; set; }
         public string TicketConcluidos { get; set; }
         public string TicketsAberto { get; set; }
+        public Ticket Ticket { get; set; }
 
         #endregion
     }

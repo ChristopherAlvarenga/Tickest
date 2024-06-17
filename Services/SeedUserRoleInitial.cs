@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
-using Tickest.Controllers;
 using Tickest.Models.Entities;
 
 namespace Tickest.Services
@@ -10,8 +8,7 @@ namespace Tickest.Services
         private readonly UserManager<Usuario> _userManager;
         private readonly RoleManager<Role> _roleManager;
 
-        public SeedUserRoleInitial(UserManager<Usuario> userManager,
-            RoleManager<Role> roleManager)
+        public SeedUserRoleInitial(UserManager<Usuario> userManager, RoleManager<Role> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -21,32 +18,32 @@ namespace Tickest.Services
         {
             if (!await _roleManager.RoleExistsAsync("Gerenciador"))
             {
-                Role role = new Role();
-                role.Name = "Gerenciador";
-                role.NormalizedName = "GERENCIADOR";
-                role.ConcurrencyStamp = Guid.NewGuid().ToString();
-
-                IdentityResult roleResult = await _roleManager.CreateAsync(role);
+                var role = new Role
+                {
+                    Name = "Gerenciador",
+                    NormalizedName = "GERENCIADOR"
+                };
+                await _roleManager.CreateAsync(role);
             }
 
             if (!await _roleManager.RoleExistsAsync("Analista"))
             {
-                Role role = new Role();
-                role.Name = "Analista";
-                role.NormalizedName = "Analista";
-                role.ConcurrencyStamp = Guid.NewGuid().ToString();
-
-                IdentityResult roleResult = await _roleManager.CreateAsync(role);
+                var role = new Role
+                {
+                    Name = "Analista",
+                    NormalizedName = "ANALISTA"
+                };
+                await _roleManager.CreateAsync(role);
             }
 
-            if (!await _roleManager.RoleExistsAsync("cliente"))
+            if (!await _roleManager.RoleExistsAsync("Cliente"))
             {
-                Role role = new Role();
-                role.Name = "Cliente";
-                role.NormalizedName = "CLIENTE";
-                role.ConcurrencyStamp = Guid.NewGuid().ToString();
-
-                IdentityResult roleResult = await _roleManager.CreateAsync(role);
+                var role = new Role
+                {
+                    Name = "Cliente",
+                    NormalizedName = "CLIENTE"
+                };
+                await _roleManager.CreateAsync(role);
             }
         }
 
@@ -54,46 +51,45 @@ namespace Tickest.Services
         {
             if (await _userManager.FindByEmailAsync("gerenciador@localhost") == null)
             {
-                Usuario user = new Usuario();
-                user.Nome = "Gerenciador";
-                user.UserName = "gerenciador@localhost";
-                user.Email = "gerenciador@localhost";
-                user.NormalizedUserName = "GERENCIADOR@LOCALHOST";
-                user.NormalizedEmail = "GERENCIADOR@LOCALHOST";
-                user.EmailConfirmed = true;
-                user.LockoutEnabled = false;
-                user.SecurityStamp = Guid.NewGuid().ToString();
-                //user.Cargo = "Gerenciador";
-                user.DepartamentoId = 1;
-                user.EspecialidadeId = 5;
+                var user = new Usuario
+                {
+                    Nome = "Gerenciador",
+                    UserName = "gerenciador@localhost",
+                    Email = "gerenciador@localhost",
+                    NormalizedUserName = "GERENCIADOR@LOCALHOST",
+                    NormalizedEmail = "GERENCIADOR@LOCALHOST",
+                    EmailConfirmed = true,
+                    LockoutEnabled = false,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    DepartamentoId = 1,
+                    EspecialidadeId = 5
+                };
 
-                IdentityResult userResult = await _userManager.CreateAsync(user, "#SecretPass456");
-
-                if (userResult.Succeeded)
+                var result = await _userManager.CreateAsync(user, "#SecretPass456");
+                if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "Gerenciador");
                 }
             }
 
-         
             if (await _userManager.FindByEmailAsync("rafael@localhost") == null)
             {
-                Usuario user = new Usuario();
-                user.Nome = string.Empty;
-                user.UserName = "rafael@localhost";
-                user.Email = "rafael@localhost";
-                user.NormalizedUserName = "RAFAEL@LOCALHOST";
-                user.NormalizedEmail = "RAFAEL@LOCALHOST";
-                user.EmailConfirmed = true;
-                user.LockoutEnabled = false;
-                user.SecurityStamp = Guid.NewGuid().ToString();
-                //user.Cargo = "Analista";
-                user.DepartamentoId = 1;
-                user.EspecialidadeId = 1;
+                var user = new Usuario
+                {
+                    Nome = "Rafael",
+                    UserName = "rafael@localhost",
+                    Email = "rafael@localhost",
+                    NormalizedUserName = "RAFAEL@LOCALHOST",
+                    NormalizedEmail = "RAFAEL@LOCALHOST",
+                    EmailConfirmed = true,
+                    LockoutEnabled = false,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    DepartamentoId = 1,
+                    EspecialidadeId = 1
+                };
 
-                IdentityResult userResult = await _userManager.CreateAsync(user, "#SecretPass456");
-
-                if (userResult.Succeeded)
+                var result = await _userManager.CreateAsync(user, "#SecretPass456");
+                if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "Cliente");
                 }
@@ -101,22 +97,22 @@ namespace Tickest.Services
 
             if (await _userManager.FindByEmailAsync("analista@localhost") == null)
             {
-                Usuario user = new Usuario();
-                user.Nome = string.Empty;
-                user.UserName = "analista@localhost";
-                user.Email = "analista@localhost";
-                user.NormalizedUserName = "ANALISTA@LOCALHOST";
-                user.NormalizedEmail = "ANALISTA@LOCALHOST";
-                user.EmailConfirmed = true;
-                user.LockoutEnabled = false;
-                user.SecurityStamp = Guid.NewGuid().ToString();
-                //user.Cargo = "Analista";
-                user.DepartamentoId = 1;
-                user.EspecialidadeId = 1;
+                var user = new Usuario
+                {
+                    Nome = "Analista",
+                    UserName = "analista@localhost",
+                    Email = "analista@localhost",
+                    NormalizedUserName = "ANALISTA@LOCALHOST",
+                    NormalizedEmail = "ANALISTA@LOCALHOST",
+                    EmailConfirmed = true,
+                    LockoutEnabled = false,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    DepartamentoId = 1,
+                    EspecialidadeId = 1
+                };
 
-                IdentityResult userResult = await _userManager.CreateAsync(user, "#SecretPass456");
-
-                if (userResult.Succeeded)
+                var result = await _userManager.CreateAsync(user, "#SecretPass456");
+                if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "Analista");
                 }
