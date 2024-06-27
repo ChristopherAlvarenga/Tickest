@@ -12,6 +12,7 @@ using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
 using Tickest.Enums;
+using Tickest.Helpers;
 
 namespace Tickest.Controllers
 {
@@ -163,12 +164,18 @@ namespace Tickest.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
+        // GET: Tickets/Editar/5
         [HttpGet]
-        public IActionResult Editar(int id)
+        public IActionResult Editar(int? id)
         {
+            if (id == null)
+            {
+                return BadRequest("O ID do ticket não pode ser nulo.");
+            }
+
             var ticket = _context.Tickets
                 .Include(t => t.Departamento)
+                .Include(t => t.Solicitante)
                 .FirstOrDefault(t => t.Id == id);
 
             if (ticket == null)
@@ -183,13 +190,14 @@ namespace Tickest.Controllers
                 Especialidades = _context.Especialidades.OrderBy(e => e.Nome).ToList()
             };
 
-            return View(viewModel);
+            return View("AllTickets", viewModel);
+
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "EditPolicy")]
-        public async Task<IActionResult> Editar(int id, Ticket ticket, int departamentoId, List<IFormFile> files)
+        public async Task<IActionResult> Editar(int id, [Bind("Id, Titulo, Descricao, Prioridade, EspecialidadeId, ResponsavelId, Status")] Ticket ticket, int departamentoId, List<IFormFile> files)
         {
             if (id != ticket.Id)
             {
@@ -205,13 +213,14 @@ namespace Tickest.Controllers
                     Especialidades = _context.Especialidades.OrderBy(e => e.Nome).ToList()
                 };
 
-                return View(viewModel);
+                return RedirectToAction("Index", "AllTickets", new { area = "Gerenciador" });
             }
 
             var usuario = await _userManager.GetUserAsync(User);
 
             var ticketExistente = await _context.Tickets
                 .Include(t => t.Anexos)
+                .Include(t => t.Solicitante)
                 .FirstOrDefaultAsync(t => t.Id == ticket.Id);
 
             if (ticketExistente == null)
@@ -225,29 +234,39 @@ namespace Tickest.Controllers
                 return Forbid();
             }
 
-            // Atualizar propriedades do ticket
-            ticketExistente.Titulo = ticket.Titulo;
-            ticketExistente.Descricao = ticket.Descricao;
-            ticketExistente.Prioridade = ticket.Prioridade;
-            ticketExistente.EspecialidadeId = ticket.EspecialidadeId;
-            ticketExistente.ResponsavelId = ticket.ResponsavelId;
-
-            // Adicionar anexos
-            if (files != null && files.Count > 0)
-            {
-                foreach (var file in files)
-                {
-                    var path = await WriteFileAsync(file);
-                    var fileName = Path.GetFileName(path);
-                    var name = "anexos/" + fileName;
-                    var anexo = new Anexo { Endereco = name };
-                    ticketExistente.Anexos.Add(anexo);
-                }
-            }
-
             try
             {
+                // Atualize apenas as propriedades necessárias do ticket existente
+                ticketExistente.Titulo = ticket.Titulo;
+                ticketExistente.Descricao = ticket.Descricao;
+                ticketExistente.Prioridade = ticket.Prioridade;
+                ticketExistente.EspecialidadeId = ticket.EspecialidadeId;
+                ticketExistente.ResponsavelId = ticket.ResponsavelId;
+
+                // Exemplo de utilização da extensão para obter o nome amigável do status
+                var status = TicketStatusEnum.Concluido;
+                var displayName = status.GetDisplayName(); // Retorna "Concluído"
+                ticketExistente.Status = status;
+
+                // Adicione anexos se houver novos arquivos
+                if (files != null && files.Count > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        var path = await WriteFileAsync(file);
+                        var fileName = Path.GetFileName(path);
+                        var name = "anexos/" + fileName;
+                        var anexo = new Anexo { Endereco = name };
+                        ticketExistente.Anexos.Add(anexo);
+                    }
+                }
+
+                // Salve as alterações no banco de dados
+                _context.Update(ticketExistente);
                 await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Tickets", new { area = "Gerenciador" });
+
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -266,9 +285,8 @@ namespace Tickest.Controllers
                 _logger.LogError($"Erro ao atualizar o ticket: {ex.Message}");
                 throw; // Ou redirecionamento para uma página de erro personalizada
             }
-
-            return RedirectToAction(nameof(Details), new { id = ticket.Id });
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)
@@ -291,9 +309,9 @@ namespace Tickest.Controllers
                 Usuario = await _userManager.GetUserAsync(User)
             };
 
-            return View(viewModel);
+            return View("Editar", viewModel);
         }
-
+        [Authorize(Roles = "Gerenciador, Analista")]
         public async Task<IActionResult> MudarStatus(int? id, [FromQuery(Name = "status")] TicketStatusEnum? status)
         {
             var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
@@ -308,13 +326,41 @@ namespace Tickest.Controllers
                 return NotFound();
             }
 
-            ticket.Status = status ?? TicketStatusEnum.Aberto;
+            // Verifica se o usuário atual está autorizado a mudar o status
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            if (!(await _userManager.IsInRoleAsync(user, "Gerenciador") || await _userManager.IsInRoleAsync(user, "Analista")))
+            {
+                return Forbid();
+            }
+
+            // Verifica se o status fornecido é válido
+            if (status == null || !Enum.IsDefined(typeof(TicketStatusEnum), status))
+            {
+                return BadRequest("Status de ticket inválido.");
+            }
+
+            // Define o status e a data do status do ticket
+            ticket.Status = status.Value;
             ticket.DataStatus = DateTime.Now;
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                // Salva as alterações no banco de dados
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TicketExists(ticket.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-
+            // Redirecionamentos conforme o papel do usuário
             if (await _userManager.IsInRoleAsync(user, "Admin"))
             {
                 return RedirectToAction("Index", "Admin", new { area = "Admin" });
@@ -332,6 +378,7 @@ namespace Tickest.Controllers
                 return RedirectToAction("Index", "Desenvolvedores");
             }
         }
+
 
         #region Helpers
 

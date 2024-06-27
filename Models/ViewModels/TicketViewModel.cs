@@ -17,7 +17,8 @@ namespace Tickest.Models.ViewModels
         public Especialidade Especialidade { get; set; }
         public Usuario Usuario { get; set; }
         public List<Ticket> Tickets { get; set; } = new List<Ticket>();
-
+        //public Ticket Ticket { get; set; }
+  
         // Listas de departamentos e especialidades
         public List<Departamento> Departamentos { get; set; } = new List<Departamento>();
         public List<Especialidade> Especialidades { get; set; } = new List<Especialidade>();

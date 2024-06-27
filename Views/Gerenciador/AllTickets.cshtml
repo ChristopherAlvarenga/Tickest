@@ -1,6 +1,6 @@
-﻿@using Microsoft.AspNetCore.Identity;
-@using Tickest.Enums;
-@using Tickest.Helpers;
+﻿@using Microsoft.AspNetCore.Identity
+@using Tickest.Enums
+@using Tickest.Helpers
 @using Tickest.Models.Entities
 
 @model Tickest.Models.ViewModels.TicketViewModel
@@ -65,15 +65,18 @@
 
     /* Ajustes para o modal "Ver mais" */
     .modal-dialog.modal-dialog-centered.modal-dialog-scrollable {
-        max-width: calc(25% + 5%);
-        height: 60%;
+        max-width: calc(30% - 5%);
+        width: calc(30% - 5%);
+        height: 55%; /* Ajuste conforme necessário */
     }
 
     /* Ajustes para a tabela */
-    .table td, .table th {
+    .table td,
+    .table th {
         vertical-align: middle;
     }
 </style>
+
 
 <!-- Inclusão de arquivos CSS -->
 <link rel="stylesheet" href="~/css/chat.css" />
@@ -104,74 +107,113 @@
                                         <td><strong>#@ticket.Id</strong></td>
                                         <td><strong>@ticket.Titulo</strong></td>
                                         <td>@ticket.Departamento.Nome</td>
-                                        <td>@ticket.Solicitante.Nome</td>
-                                        <td><span class="badge bg-label-dark me-1">@ticket.Status</span></td>
+                                        <td>@(ticket.Solicitante != null ? ticket.Solicitante.Nome : "Solicitante não disponível")</td>
+                                        <td><span class="badge bg-label-dark">@ticket.Status</span></td>
                                         <td class="align-middle">
-                                            <button type="button" class="btn btn-sm btn-primary modal-ticket mt-2" data-bs-toggle="modal" data-bs-target="#modalScrollable-@ticket.Id" ticket-id="@ticket.Id">
+                                            <button type="button" class="btn btn-sm btn-primary modal-ticket mt-2" data-bs-toggle="modal" data-bs-target="#modalDetalhes-@ticket.Id" ticket-id="@ticket.Id">
                                                 Ver mais
                                             </button>
 
                                             <!-- Modal "Ver mais" -->
-                                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                <div class="modal fade" id="modalScrollable-@ticket.Id" tabindex="-1" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header mt-4">
-                                                                <h5 class="modal-title">DETALHES DO TICKET #@ticket.Id</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="px-4 py-3">
-                                                                    <h4 class="mt-0 mb-3">@ticket.Titulo</h4>
-                                                                    <!-- Detalhes do ticket -->
-                                                                    <p><strong>Departamento:</strong> @ticket.Departamento.Nome</p>
-                                                                    <p><strong>Solicitante:</strong> @ticket.Solicitante.Nome</p>
-                                                                    <p><strong>Status:</strong> <span class="badge bg-label-dark">@ticket.Status</span></p>
-                                                                    <hr class="new1">
-                                                                    <!-- Chat -->
-                                                                    <div class="card card-chat mt-4">
-                                                                        <div class="card-header msg_head">
-                                                                            <div class="d-flex bd-highlight">
-                                                                                <div class="user_info">
-                                                                                    <span class="theme-color">@ticket.Solicitante.Nome</span>
-                                                                                </div>
-                                                                                <div class="action_menu">
-                                                                                    <ul>
-                                                                                        <li><i class="fas fa-user-circle"></i> Ver perfil</li>
-                                                                                        <li><i class="fas fa-users"></i> Adicionar aos amigos próximos</li>
-                                                                                        <li><i class="fas fa-plus"></i> Adicionar a grupo</li>
-                                                                                        <li><i class="fas fa-ban"></i> Bloquear</li>
-                                                                                    </ul>
-                                                                                </div>
+                                            <div class="modal fade" id="modalDetalhes-@ticket.Id" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header mt-4">
+                                                            <h5 class="modal-title">DETALHES DO TICKET #@ticket.Id</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="px-4 py-3">
+                                                                <h4 class="mt-0 mb-3">@ticket.Titulo</h4>
+                                                                <!-- Detalhes do ticket -->
+                                                                <p><strong>Departamento:</strong> @ticket.Departamento.Nome</p>
+                                                                <p><strong>Solicitante:</strong> @ticket.Solicitante.Nome</p>
+                                                                <p><strong>Status:</strong> <span class="badge bg-label-dark">@ticket.Status</span></p>
+                                                                <hr class="new1">
+                                                                <!-- Chat -->
+                                                                <div class="card card-chat mt-4">
+                                                                    <div class="card-header msg_head">
+                                                                        <div class="d-flex bd-highlight">
+                                                                            <div class="user_info">
+                                                                                <span class="theme-color">@ticket.Solicitante.Nome</span>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="card-body msg_card_body" id="chat-@ticket.Id">
-                                                                            <!-- Conteúdo do chat carregado dinamicamente -->
-                                                                        </div>
-                                                                        <div class="card-footer">
-                                                                            <div class="input-group">
-                                                                                <div class="input-group-append">
-                                                                                    <span ticket-id="@ticket.Id" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
-                                                                                    <input type="file" class="input-attach" ticket-id="@ticket.Id" id="attach-@ticket.Id" style="display:none;">
-                                                                                </div>
-                                                                                <textarea name="" id="text-@ticket.Id" class="form-control type_msg" placeholder="Escreva sua mensagem..." style="resize: none;"></textarea>
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text send_btn" id="enviar-@ticket.Id" ticket-id="@ticket.Id"><i class="fas fa-location-arrow"></i></span>
-                                                                                </div>
+                                                                            <div class="action_menu">
+                                                                                <ul>
+                                                                                    <li><i class="fas fa-user-circle"></i> Ver perfil</li>
+                                                                                    <li><i class="fas fa-users"></i> Adicionar aos amigos próximos</li>
+                                                                                    <li><i class="fas fa-plus"></i> Adicionar a grupo</li>
+                                                                                    <li><i class="fas fa-ban"></i> Bloquear</li>
+                                                                                </ul>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <!-- Fim do chat -->
+                                                                    <div class="card-body msg_card_body" id="chat-@ticket.Id">
+                                                                        <!-- Conteúdo do chat carregado dinamicamente -->
+                                                                    </div>
+                                                                    <div class="card-footer">
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-append">
+                                                                                <span ticket-id="@ticket.Id" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                                                                                <input type="file" class="input-attach" ticket-id="@ticket.Id" id="attach-@ticket.Id" style="display:none;">
+                                                                            </div>
+                                                                            <textarea name="" id="text-@ticket.Id" class="form-control type_msg" placeholder="Escreva sua mensagem..." style="resize: none;"></textarea>
+                                                                            <div class="input-group-append">
+                                                                                <span class="input-group-text send_btn" id="enviar-@ticket.Id" ticket-id="@ticket.Id"><i class="fas fa-location-arrow"></i></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
+                                                                <!-- Fim do chat -->
                                                             </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modalEditar-@ticket.Id">Editar</button>
-                                                            </div>
+                                                        </div>
+                                                        <!-- Dentro do modal de "Ver mais" -->
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditar-@ticket.Id" data-bs-dismiss="modal">Editar</button>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <!-- Fim Modal "Ver mais" -->
+                                            <!-- Modal de Edição -->
+                                            <div class="modal fade" id="modalEditar-@ticket.Id" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 40%;">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Editar Ticket #@(ticket.Id)</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form id="form-editar-@ticket.Id" asp-action="Editar" asp-controller="Tickets" asp-area="Gerenciador" method="post">
+                                                                <input type="hidden" name="Id" value="@ticket.Id" />
+                                                                <div class="mb-3">
+                                                                    <label for="Titulo" class="form-label">Título</label>
+                                                                    <input type="text" class="form-control" id="titulo" name="Titulo" value="@ticket.Titulo">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="Departamento" class="form-label">Departamento</label>
+                                                                    <input type="text" class="form-control" id="departamento" name="Departamento" value="@ticket.Departamento.Nome" readonly>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="Solicitante" class="form-label">Solicitante</label>
+                                                                    <input type="text" class="form-control" id="solicitante" name="Solicitante" value="@ticket.Solicitante.Nome" readonly>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="Status" class="form-label">Status</label>
+                                                                    <select class="form-select" id="status" name="Status">
+                                                                        @foreach (var status in Enum.GetValues(typeof(TicketStatusEnum)))
+                                                                        {
+                                                                            <option value="@status" selected="@(ticket.Status == (TicketStatusEnum)status)">@((TicketStatusEnum)status)</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                                <button type="submit" class="btn btn-primary">Salvar</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Fim Modal de Edição -->
+
                                         </td>
                                     </tr>
                                 }
@@ -184,47 +226,18 @@
     </div>
 </div>
 
+<!-- Scripts -->
+@section Scripts {
+    <script>
+        // Script para abrir o modal de "Ver mais" ao clicar em "Ver mais"
+        $('.modal-ticket').on('click', function () {
+            var ticketId = $(this).attr('ticket-id');
+            $('#modalDetalhes-' + ticketId).modal('show');
+        });
 
-@foreach (var ticket in Model.Tickets)
-{
-    <!-- Modal de Edição -->
-    <div class="modal fade" id="modalEditar-@ticket.Id" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 40%;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Ticket #@(ticket.Id)</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="form-editar-@ticket.Id" asp-action="Editar" asp-controller="Tickets" method="post">
-                        <input type="hidden" name="ticketId" value="@ticket.Id" />
-                        <div class="mb-3">
-                            <label for="titulo" class="form-label">Título</label>
-                            <input type="text" class="form-control" id="titulo" name="titulo" value="@ticket.Titulo">
-                        </div>
-                        <div class="mb-3">
-                            <label for="departamento" class="form-label">Departamento</label>
-                            <input type="text" class="form-control" id="departamento" name="departamento" value="@ticket.Departamento.Nome" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="solicitante" class="form-label">Solicitante</label>
-                            <input type="text" class="form-control" id="solicitante" name="solicitante" value="@ticket.Solicitante.Nome" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-select" id="status" name="status">
-                                <option value="@((int)TicketStatusEnum.Aberto)" selected="@(ticket.Status == TicketStatusEnum.Aberto)">@TicketStatusEnum.Aberto.GetDisplayName()</option>
-                                <option value="@((int)TicketStatusEnum.Recebido)" selected="@(ticket.Status == TicketStatusEnum.Recebido)">@TicketStatusEnum.Recebido.GetDisplayName()</option>
-                                <option value="@((int)TicketStatusEnum.EmAndamento)" selected="@(ticket.Status == TicketStatusEnum.EmAndamento)">@TicketStatusEnum.EmAndamento.GetDisplayName()</option>
-                                <option value="@((int)TicketStatusEnum.EmTeste)" selected="@(ticket.Status == TicketStatusEnum.EmTeste)">@TicketStatusEnum.EmTeste.GetDisplayName()</option>
-                                <option value="@((int)TicketStatusEnum.Concluido)" selected="@(ticket.Status == TicketStatusEnum.Concluido)">@TicketStatusEnum.Concluido.GetDisplayName()</option>
-                                <option value="@((int)TicketStatusEnum.Cancelado)" selected="@(ticket.Status == TicketStatusEnum.Cancelado)">@TicketStatusEnum.Cancelado.GetDisplayName()</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Salvar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+        // Evitar que o modal de edição se abra ao clicar em "Ver mais"
+        $('.modal-ticket').on('click', function (e) {
+            e.stopPropagation();
+        });
+    </script>
 }
