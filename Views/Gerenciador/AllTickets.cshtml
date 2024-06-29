@@ -14,8 +14,8 @@
     .d-flex1 {
         display: flex !important;
         flex-wrap: wrap !important;
-        word-break: break-all; /*  */
-        word-wrap: break-word; /* if you want to cut the complete word */
+        word-break: break-all;
+        word-wrap: break-word;
         white-space: normal;
     }
 
@@ -24,15 +24,15 @@
         cursor: pointer;
     }
 
-        .close:hover {
-            color: #000;
-        }
+    .close:hover {
+        color: #000;
+    }
 
     .theme-color {
         flex-wrap: wrap !important;
         color: #004cb9;
-        word-break: break-all; /*  */
-        word-wrap: break-word; /* if you want to cut the complete word */
+        word-break: break-all;
+        word-wrap: break-word;
         white-space: normal;
     }
 
@@ -191,18 +191,37 @@
                                                             <!-- Formulário de edição do Ticket -->
                                                             <form id="form-editar-@ticket.Id" asp-action="Editar" asp-controller="Tickets" asp-area="Gerenciador" method="post">
                                                                 <input type="hidden" name="Id" value="@ticket.Id" />
+
                                                                 <div class="mb-3">
                                                                     <label for="Titulo" class="form-label">Título</label>
                                                                     <input type="text" class="form-control" id="titulo" name="Titulo" value="@ticket.Titulo">
                                                                 </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="Descricao" class="form-label">Descrição</label>
+                                                                    <textarea class="form-control" id="descricao" name="Descricao">@ticket.Descricao</textarea>
+                                                                </div>
+
                                                                 <div class="mb-3">
                                                                     <label for="Departamento" class="form-label">Departamento</label>
                                                                     <input type="text" class="form-control" id="departamento" name="Departamento" value="@ticket.Departamento.Nome" readonly>
                                                                 </div>
+
                                                                 <div class="mb-3">
                                                                     <label for="Solicitante" class="form-label">Solicitante</label>
                                                                     <input type="text" class="form-control" id="solicitante" name="Solicitante" value="@ticket.Solicitante.Nome" readonly>
                                                                 </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="Prioridade" class="form-label">Prioridade</label>
+                                                                    <select class="form-select" id="prioridade" name="Prioridade">
+                                                                        @foreach (var prioridade in Enum.GetValues(typeof(TicketPrioridadeEnum)))
+                                                                        {
+                                                                            <option value="@prioridade" selected="@(ticket.Prioridade == (TicketPrioridadeEnum)prioridade)">@((TicketPrioridadeEnum)prioridade)</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+
                                                                 <div class="mb-3">
                                                                     <label for="Status" class="form-label">Status</label>
                                                                     <select class="form-select" id="status" name="Status">
@@ -212,13 +231,15 @@
                                                                         }
                                                                     </select>
                                                                 </div>
-                                                                <button type="submit" class="btn btn-primary">Salvar</button>
+
+                                                                <button type="submit" class="btn btn-primary">Salvar alterações</button>
                                                             </form>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <!-- Fim Modal de Edição do Ticket -->
+
                                         </td>
                                     </tr>
                                 }
@@ -230,6 +251,8 @@
         </div>
     </div>
 </div>
+
+
 
 @* Scripts para o funcionamento do modal e do chat *@
 @section Scripts {
@@ -421,5 +444,5 @@
 
 
     }
-                                                }
+                                                    }
 </script>

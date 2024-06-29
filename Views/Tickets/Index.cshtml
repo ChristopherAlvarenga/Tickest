@@ -3,7 +3,7 @@
 @using Tickest.Models.ViewModels;
 @using Tickest.Models.Entities
 
-@model Tickest.Models.ViewModels.TicketViewModel
+@model TicketViewModel
 
 @inject UserManager<Usuario> userManager
 
@@ -11,269 +11,103 @@
     ViewData["Title"] = "Tickest - Tickets Criados";
 
     var user = await userManager.FindByEmailAsync(User.Identity.Name);
+    string layout = "";
 
     if (await userManager.IsInRoleAsync(user, "Gerenciador"))
     {
-        Layout = "_LayoutGerenciador";
+        layout = "_LayoutGerenciador";
     }
     else if (await userManager.IsInRoleAsync(user, "Cliente"))
     {
-        Layout = "_LayoutCliente";
+        layout = "_LayoutCliente";
     }
     else if (await userManager.IsInRoleAsync(user, "Analista"))
     {
-        Layout = "_Layout";
+        layout = "_Layout";
     }
+    else
+    {
+        layout = "_Layout"; // Layout padrão caso o usuário não tenha nenhum dos papéis especificados
+    }
+
+    Layout = layout;
 }
+
 <style>
-    <style >
     .modal-body {
         background-color: #fff;
         border-color: #fff;
     }
 
-    .d-flex1 {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        word-break: break-all; /*  */
-        word-wrap: break-word; /* if you want to cut the complete word */
-        white-space: normal;
+    .table-responsive {
+        overflow-x: auto;
+        word-wrap: break-word; /* for long text in columns */
     }
 
-    .close {
-        color: #000;
-        cursor: pointer;
+    .badge-status {
+        display: inline-block;
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+        font-weight: 600;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25rem;
     }
-
-        .close:hover {
-            color: #000;
-        }
-
-
-    .theme-color {
-        flex-wrap: wrap !important;
-        color: #004cb9;
-        word-break: break-all; /*  */
-        word-wrap: break-word; /* if you want to cut the complete word */
-        white-space: normal;
-    }
-
-    hr.new1 {
-        border-top: 2px dashed #fff;
-        margin: 0.4rem 0;
-    }
-</style>
 </style>
 
 <link rel="stylesheet" href="~/css/chat.css" />
 
-<div class="row">
-    <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
-        <div class="card">
-            <div class="row row-bordered g-0">
-                <h5 class="card-title text-primary m-4">Tickets Criados</h5>
-                <div class="card">
-                    <div class="table-responsive text-nowrap p-4">
-                        <table class="table table-hover" id="Tickets">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Id</th>
-                                    <th scope="col">Título</th>
-                                    <th scope="col">Departamento</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Ação</th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-border-bottom-0">
-                                @foreach (var ticket in Model.Tickets)
-                                {
-                                    <tr>
-                                        <td><strong>#@ticket.Id</strong></td>
-                                        <td><strong>@ticket.Titulo</strong></td>
-                                        <td>@ticket.Departamento?.Nome</td>
-                                        <td><span class="badge bg-label-dark me-1">@ticket.Status</span></td>
-                                        <td>
-                                            <!-- Botão -->
-                                            <button type="button" class="btn btn modal-ticket" ticket_id="@ticket.Id" data-bs-toggle="modal" data-bs-target="#modalScrollable-@ticket.Id">
-                                                Ver mais
-                                            </button>
-                                            <!-- Informação -->
-                                            <div class="modal fade" ticket_id="@ticket.Id" id="modalScrollable-@ticket.Id" tabindex="-1" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <!-- Conteúdo da modal -->
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="container">
+    <h5 class="card-title text-primary mt-4 mb-3">Tickets Criados</h5>
+
+    <div class="table-responsive">
+        <table id="Tickets" class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Título</th>
+                    <th scope="col">Departamento</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ticket in Model.Tickets)
+                {
+                    <tr>
+                        <td>#@ticket.Id</td>
+                        <td>@ticket.Titulo</td>
+                        <td>@(ticket.Departamento?.Nome ?? "-")</td>
+                        <td><span class="badge badge-status bg-label-dark">@ticket.Status</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 
-<script>
-    window.onload = function () {
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
 
-        $(".modal-ticket").click(function () {
-            var ticket_id = $(this).attr("ticket_id");
-            var url = "/Chat/Mensagens/" + ticket_id;
-            $.get(url, function (data) {
-                $("#chat-" + ticket_id).html(data);
-                $("#chat-" + ticket_id).scrollTop($("#chat-" + ticket_id)[0].scrollHeight);
-            });
-        });
-
-        $(".modal").on('keypress', function (e) {
-            var ticket_id = $(this).attr("ticket_id");
-            if (e.which == 13) {
-                $("#enviar-" + ticket_id).click();
-            }
-        });
-
-        $(".attach_btn").click(function () {
-            var ticket_id = $(this).attr("ticket_id");
-            $("#attach-" + ticket_id).click();
-        });
-
-        $(".input-attach").change(function () {
-            var id = $(this).attr("ticket_id");
-            var filename = $(this).val();
-
-            if (filename == "" || filename == null) {
-                alert('Error');
-            } else {
-                var file = document.getElementById('attach-' + id).files[0];
-                var filename = document.getElementById('attach-' + id).files[0].name;
-
-                var formData = new FormData();
-                formData.append("file", file);
-                $.ajax({
-                    dataType: "json",
-                    type: "POST",
-                    url: "/Chat/Upload",
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    data: formData,
-                    success: function (retorno) {
-                        console.log(retorno);
-                        if (retorno['sucesso']) {
-                            var url = retorno['sucesso'];
-                            var html = '<a class="help-button col-sm-4 downloadupaddinvoice" download="' + filename + '" href="../' + url + '"  title="Baixar anexo" download><i class="icon-download-alt"></i>' + filename + '</a>';
-                            var formData = new FormData();
-                            formData.append("ticket_id", id);
-                            formData.append("msg", html);
-                            $.ajax({
-                                dataType: "json",
-                                type: "POST",
-                                url: "/Chat/Enviar",
-                                cache: false,
-                                contentType: false,
-                                processData: false,
-                                data: formData,
-                                success: function (retorno) {
-                                    console.log(retorno);
-                                    if (retorno['sucesso']) {
-                                        $("#text-" + id).val("");
-                                        var url = "/Chat/Mensagens/" + id;
-                                        $.get(url, function (data) {
-                                            $("#chat-" + id).html(data);
-                                            $("#chat-" + id).scrollTop($("#chat-" + id)[0].scrollHeight);
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-        });
-
-        $(".send_btn").click(function () {
-            var formData = new FormData();
-            var ticket_id = $(this).attr("ticket_id");
-            var msg = $("#text-" + ticket_id).val();
-            formData.append("ticket_id", ticket_id);
-            formData.append("msg", msg);
-            $.ajax({
-                dataType: "json",
-                type: "POST",
-                url: "/Chat/Enviar",
-                cache: false,
-                contentType: false,
-                processData: false,
-                data: formData,
-                success: function (retorno) {
-                    console.log(retorno);
-                    if (retorno['sucesso']) {
-                        $("#text-" + ticket_id).val("");
-                        var url = "/Chat/Mensagens/" + ticket_id;
-                        $.get(url, function (data) {
-                            $("#chat-" + ticket_id).html(data);
-                            $("#chat-" + ticket_id).scrollTop($("#chat-" + ticket_id)[0].scrollHeight);
-                        });
-                    }
+    <script>
+        $(document).ready(function () {
+            $('#Tickets').DataTable({
+                "paging": true,
+                "ordering": true,
+                "searching": true,
+                "lengthMenu": [10, 25, 50, 75, 100],
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "Nenhum registro encontrado",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Nenhum registro disponível",
+                    "infoFiltered": "(filtrado de _MAX_ registros totais)",
+                    "search": "Pesquisar:"
                 }
             });
         });
-
-        $('#Tickets').DataTable({
-            "ordering": true,
-            "paging": true,
-            "searching": true,
-            "oLanguage": {
-                "sEmptyTable": "Nenhum registro encontrado na tabela",
-                "sInfo": "Mostrar _START_ até _END_ de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrar 0 até 0 de 0 Registros",
-                "sInfoFiltered": "(Filtrar de _MAX_ total registros)",
-                "sInfoPostFix": "",
-                "sInfoThousands": ".",
-                "sLengthMenu": "Mostrar _MENU_ registros por pagina",
-                "sLoadingRecords": "Carregando...",
-                "sProcessing": "Processando...",
-                "sZeroRecords": "Nenhum registro encontrado",
-                "sSearch": "Pesquisar",
-                "oPaginate": {
-                    "sNext": "Proximo",
-                    "sPrevious": "Anterior",
-                    "sFirst": "Primeiro",
-                    "sLast": "Ultimo"
-                },
-                "oAria": {
-                    "sSortAscending": ": Ordenar colunas de forma ascendente",
-                    "sSortDescending": ": Ordenar colunas de forma descendente"
-                }
-            }
-        });
-
-    @foreach (var ticket in Model.Tickets)
-    {
-        <text>
-                setInterval(function () {
-                    var ticketId = "@ticket.Id";
-                    var url = "/Chat/Mensagens/" + ticketId;
-                    $.get(url, function (data) {
-                        var scroll = $("#chat-" + ticketId).scrollTop();
-                        if ($("#chat-" + ticketId)[0].scrollHeight - $("#chat-" + ticketId).scrollTop() == $("#chat-" + ticketId).outerHeight()) {
-                            $("#chat-" + ticketId).html(data);
-                            $("#chat-" + ticketId).scrollTop($("#chat-" + ticketId)[0].scrollHeight);
-                            console.log("entrou");
-                        } else {
-                            $("#chat-" + ticketId).html(data);
-                            $("#chat-" + ticketId).scrollTop(scroll);
-                        }
-                    }).fail(function () {
-                        console.error("Falha ao atualizar mensagens do ticket " + ticketId);
-                    });
-                    console.log("Atualização das mensagens do ticket " + ticketId + " executada.");
-                }, 3000);
-        </text>
-    }
-        }
-</script>
+    </script>
+}
