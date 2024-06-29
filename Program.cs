@@ -27,10 +27,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login";
     });
 
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("EditPolicy", policy => policy.RequireRole("Gerenciador"));
+//});
+
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("EditPolicy", policy => policy.RequireRole("Gerenciador"));
+    options.AddPolicy("EditPolicy", policy =>
+    {
+        policy.RequireRole("Gerenciador", "Analista");
+    });
 });
+
 
 builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
 

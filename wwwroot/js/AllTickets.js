@@ -162,38 +162,33 @@ $(document).ready(function () {
     </text>
 }
 
-// Envia formulário de edição de ticket via AJAX
-$(document).ready(function () {
-    // Função para lidar com a submissão do formulário de edição
-    $(".modal-body form").submit(function (e) {
-        e.preventDefault(); // Impede o comportamento padrão do formulário
+// Função para lidar com a submissão do formulário de edição
+$(".modal-body form").submit(function (e) {
+    e.preventDefault(); // Impede o comportamento padrão do formulário
+    var form = $(this);
+    var formData = form.serialize();
 
-        var form = $(this);
-        var formData = form.serialize();
+    $.ajax({
+        type: "POST",
+        url: form.attr("action"),
+        data: formData,
+        success: function (data) {
+            // Atualiza os dados na modal após a edição
+            var ticketId = form.find("input[name='ticketId']").val();
+            var titulo = form.find("input[name='titulo']").val();
+            var status = form.find("select[name='status']").val();
 
-        $.ajax({
-            type: "POST",
-            url: form.attr("action"),
-            data: formData,
-            success: function (data) {
-                // Atualiza os dados na modal após a edição
-                var ticketId = form.find("input[name='ticketId']").val();
-                var titulo = form.find("input[name='titulo']").val();
-                var status = form.find("select[name='status']").val();
+            // Atualiza os campos na tabela
+            $("#titulo-" + ticketId).text(titulo);
+            $("#status-" + ticketId).text(status);
 
-                // Atualiza os campos na tabela
-                $("#titulo-" + ticketId).text(titulo);
-                $("#status-" + ticketId).text(status);
-
-                // Fecha a modal após edição
-                form.closest(".modal").modal("hide");
-            },
-            error: function (error) {
-                console.error("Erro ao editar ticket:", error);
-                // Tratar erro, se necessário
-            }
-        });
+            // Fecha a modal após edição
+            form.closest(".modal").modal("hide");
+        },
+        error: function (error) {
+            console.error("Erro ao editar ticket:", error);
+            // Tratar erro, se necessário
+        }
     });
 });
-
-
+});

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,6 +12,7 @@ using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
 using Tickest.Enums;
 using Tickest.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Tickest.Controllers
 {
@@ -77,12 +77,11 @@ namespace Tickest.Controllers
             return View(viewModel);
         }
 
-        public IActionResult Search(string search)
+        public async Task<IActionResult> Search(string search)
         {
-            var usuario = _context.Usuarios
-                .FirstOrDefault(u => u.Email == User.Identity.Name);
+            var usuario = await _userManager.GetUserAsync(User);
 
-            var tickets = _context.Tickets
+            var tickets = await _context.Tickets
                 .Include(t => t.Departamento)
                 .Include(t => t.Responsavel)
                 .Include(t => t.Anexos)
@@ -92,7 +91,7 @@ namespace Tickest.Controllers
                     || EF.Functions.Like(t.Descricao, $"%{search}%")
                     || EF.Functions.Like(t.Departamento.Nome, $"%{search}%")))
                 .OrderBy(t => t.Id)
-                .ToList();
+                .ToListAsync();
 
             var viewModel = new TicketViewModel
             {
@@ -105,19 +104,17 @@ namespace Tickest.Controllers
             return View(viewModel);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var user = _context.Usuarios
-                .Include(u => u.Departamento)
-                .FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = await _userManager.GetUserAsync(User);
 
-            var departamentos = _context.Departamentos
+            var departamentos = await _context.Departamentos
                 .OrderBy(d => d.Nome)
-                .ToList();
+                .ToListAsync();
 
-            var especialidades = _context.Especialidades
+            var especialidades = await _context.Especialidades
                 .OrderBy(e => e.Nome)
-                .ToList();
+                .ToListAsync();
 
             var viewModel = new TicketViewModel
             {
@@ -132,51 +129,69 @@ namespace Tickest.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Ticket ticket, int departamentoId, List<IFormFile> files)
         {
-            ViewBag.Especialidades = _context.Especialidades.Where(s => s.DepartamentoId == departamentoId);
-
-            var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+            var usuario = await _userManager.GetUserAsync(User);
 
             if (usuario == null)
             {
                 return NotFound("Usuário não encontrado.");
             }
 
-            if (files != null && files.Count > 0)
+            if (ModelState.IsValid)
             {
-                foreach (var file in files)
+                if (files != null && files.Count > 0)
                 {
-                    var path = await WriteFileAsync(file);
-                    var fileName = Path.GetFileName(path);
-                    var name = "anexos/" + fileName;
-                    var anexo = new Anexo { Endereco = name };
-                    ticket.Anexos.Add(anexo);
+                    foreach (var file in files)
+                    {
+                        var path = await WriteFileAsync(file);
+                        var fileName = Path.GetFileName(path);
+                        var name = "anexos/" + fileName;
+                        var anexo = new Anexo { Endereco = name };
+                        ticket.Anexos.Add(anexo);
+                    }
                 }
+
+                ticket.DataCriacao = DateTime.Now;
+                ticket.Status = TicketStatusEnum.Aberto;
+                ticket.DataStatus = DateTime.Now;
+                ticket.SolicitanteId = usuario.Id;
+                ticket.DepartamentoId = departamentoId;
+
+                _context.Add(ticket);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
 
-            ticket.DataCriacao = DateTime.Now;
-            ticket.Status = TicketStatusEnum.Aberto;
-            ticket.DataStatus = DateTime.Now;
-            ticket.SolicitanteId = usuario.Id;
-            ticket.DepartamentoId = departamentoId;
-            _context.Add(ticket);
+            // Recarrega as listas de departamentos e especialidades para a ViewModel
+            var departamentos = await _context.Departamentos
+                .OrderBy(d => d.Nome)
+                .ToListAsync();
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var especialidades = await _context.Especialidades
+                .OrderBy(e => e.Nome)
+                .ToListAsync();
+
+            var viewModel = new TicketViewModel
+            {
+                Ticket = ticket,
+                Departamentos = departamentos,
+                Especialidades = especialidades
+            };
+
+            return View(viewModel);
         }
-        // GET: Tickets/Editar/5
+
         [HttpGet]
-        public IActionResult Editar(int? id)
+        public async Task<IActionResult> Editar(int? id)
         {
             if (id == null)
             {
                 return BadRequest("O ID do ticket não pode ser nulo.");
             }
 
-            var ticket = _context.Tickets
+            var ticket = await _context.Tickets
                 .Include(t => t.Departamento)
                 .Include(t => t.Solicitante)
-                .FirstOrDefault(t => t.Id == id);
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (ticket == null)
             {
@@ -186,36 +201,18 @@ namespace Tickest.Controllers
             var viewModel = new TicketViewModel
             {
                 Ticket = ticket,
-                Departamentos = _context.Departamentos.OrderBy(d => d.Nome).ToList(),
-                Especialidades = _context.Especialidades.OrderBy(e => e.Nome).ToList()
+                Departamentos = await _context.Departamentos.OrderBy(d => d.Nome).ToListAsync(),
+                Especialidades = await _context.Especialidades.OrderBy(e => e.Nome).ToListAsync()
             };
 
-            return View("AllTickets", viewModel);
-
+            return View("~/Views/Gerenciador/AllTickets.cshtml", viewModel);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "EditPolicy")]
-        public async Task<IActionResult> Editar(int id, [Bind("Id, Titulo, Descricao, Prioridade, EspecialidadeId, ResponsavelId, Status")] Ticket ticket, int departamentoId, List<IFormFile> files)
+        //public async Task<IActionResult> Editar(int id, [Bind("Id, Titulo, Descricao, Prioridade, EspecialidadeId, ResponsavelId, Status")] Ticket ticket, int departamentoId, List<IFormFile> files)
+        public async Task<IActionResult> Editar(Ticket ticket, List<IFormFile> files)
         {
-            if (id != ticket.Id)
-            {
-                return BadRequest();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                var viewModel = new TicketViewModel
-                {
-                    Ticket = ticket,
-                    Departamentos = _context.Departamentos.OrderBy(d => d.Nome).ToList(),
-                    Especialidades = _context.Especialidades.OrderBy(e => e.Nome).ToList()
-                };
-
-                return RedirectToAction("Index", "AllTickets", new { area = "Gerenciador" });
-            }
-
             var usuario = await _userManager.GetUserAsync(User);
 
             var ticketExistente = await _context.Tickets
@@ -224,67 +221,22 @@ namespace Tickest.Controllers
                 .FirstOrDefaultAsync(t => t.Id == ticket.Id);
 
             if (ticketExistente == null)
-            {
                 return NotFound();
-            }
 
             // Verifique se o usuário tem permissão para editar o ticket
             if (ticketExistente.ResponsavelId != usuario.Id && !User.IsInRole("Gerenciador"))
-            {
                 return Forbid();
-            }
 
-            try
-            {
-                // Atualize apenas as propriedades necessárias do ticket existente
-                ticketExistente.Titulo = ticket.Titulo;
-                ticketExistente.Descricao = ticket.Descricao;
-                ticketExistente.Prioridade = ticket.Prioridade;
-                ticketExistente.EspecialidadeId = ticket.EspecialidadeId;
-                ticketExistente.ResponsavelId = ticket.ResponsavelId;
+            // Atualize apenas as propriedades necessárias do ticket existente
+            ticketExistente.Titulo = ticket.Titulo;
+            ticketExistente.Status = ticket.Status;
 
-                // Exemplo de utilização da extensão para obter o nome amigável do status
-                var status = TicketStatusEnum.Concluido;
-                var displayName = status.GetDisplayName(); // Retorna "Concluído"
-                ticketExistente.Status = status;
+            // Salve as alterações no banco de dados
+            _context.Update(ticketExistente);
+            await _context.SaveChangesAsync();
 
-                // Adicione anexos se houver novos arquivos
-                if (files != null && files.Count > 0)
-                {
-                    foreach (var file in files)
-                    {
-                        var path = await WriteFileAsync(file);
-                        var fileName = Path.GetFileName(path);
-                        var name = "anexos/" + fileName;
-                        var anexo = new Anexo { Endereco = name };
-                        ticketExistente.Anexos.Add(anexo);
-                    }
-                }
-
-                // Salve as alterações no banco de dados
-                _context.Update(ticketExistente);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Index", "Tickets", new { area = "Gerenciador" });
-
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TicketExists(ticket.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    _logger.LogError("Erro de concorrência ao atualizar o ticket.");
-                    throw;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Erro ao atualizar o ticket: {ex.Message}");
-                throw; // Ou redirecionamento para uma página de erro personalizada
-            }
+            // Redirecione para a página desejada após salvar as alterações
+            return RedirectToAction("AllTickets", "Gerenciador");
         }
 
 
@@ -309,15 +261,15 @@ namespace Tickest.Controllers
                 Usuario = await _userManager.GetUserAsync(User)
             };
 
-            return View("Editar", viewModel);
+            return View(viewModel);
         }
+
         [Authorize(Roles = "Gerenciador, Analista")]
         public async Task<IActionResult> MudarStatus(int? id, [FromQuery(Name = "status")] TicketStatusEnum? status)
         {
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
-            if (usuario == null)
+            if (id == null)
             {
-                return NotFound("Usuário não encontrado.");
+                return BadRequest("O ID do ticket não pode ser nulo.");
             }
 
             var ticket = await _context.Tickets.FindAsync(id);
@@ -326,9 +278,14 @@ namespace Tickest.Controllers
                 return NotFound();
             }
 
+            var usuario = await _userManager.GetUserAsync(User);
+            if (usuario == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
+
             // Verifica se o usuário atual está autorizado a mudar o status
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-            if (!(await _userManager.IsInRoleAsync(user, "Gerenciador") || await _userManager.IsInRoleAsync(user, "Analista")))
+            if (!(await _userManager.IsInRoleAsync(usuario, "Gerenciador") || await _userManager.IsInRoleAsync(usuario, "Analista")))
             {
                 return Forbid();
             }
@@ -346,6 +303,7 @@ namespace Tickest.Controllers
             try
             {
                 // Salva as alterações no banco de dados
+                _context.Update(ticket);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -356,20 +314,26 @@ namespace Tickest.Controllers
                 }
                 else
                 {
+                    _logger.LogError("Erro de concorrência ao atualizar o ticket.");
                     throw;
                 }
             }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Erro ao atualizar o status do ticket: {ex.Message}");
+                throw;
+            }
 
-            // Redirecionamentos conforme o papel do usuário
-            if (await _userManager.IsInRoleAsync(user, "Admin"))
+            // Redireciona conforme o papel do usuário
+            if (await _userManager.IsInRoleAsync(usuario, "Admin"))
             {
                 return RedirectToAction("Index", "Admin", new { area = "Admin" });
             }
-            else if (await _userManager.IsInRoleAsync(user, "Gerenciador"))
+            else if (await _userManager.IsInRoleAsync(usuario, "Gerenciador"))
             {
                 return RedirectToAction("Index", "Gerenciador");
             }
-            else if (await _userManager.IsInRoleAsync(user, "Responsavel"))
+            else if (await _userManager.IsInRoleAsync(usuario, "Responsavel"))
             {
                 return RedirectToAction("Index", "Responsaveis");
             }
@@ -378,7 +342,6 @@ namespace Tickest.Controllers
                 return RedirectToAction("Index", "Desenvolvedores");
             }
         }
-
 
         #region Helpers
 
