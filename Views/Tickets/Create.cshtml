@@ -1,4 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Tickest.Enums
+@using Tickest.Helpers
 @using Tickest.Models.ViewModels;
 @using Tickest.Models.Entities;
 @model TicketViewModel
@@ -8,14 +10,19 @@
     var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
     if (await userManager.IsInRoleAsync(user, "Gerenciador"))
+    {
         Layout = "_LayoutGerenciador";
-
+    }
     else if (await userManager.IsInRoleAsync(user, "Cliente"))
+    {
         Layout = "_LayoutCliente";
-
+    }
     else
+    {
         Layout = "_Layout";
+    }
 }
+
 <style>
     .fa {
         color: red;
@@ -28,6 +35,7 @@
         color: #696cff !important;
     }
 </style>
+
 <!-- Content wrapper -->
 <div class="content-wrapper">
     <!-- Content -->
@@ -40,76 +48,69 @@
                         <h5 class="card-header">Criação de Ticket</h5>
                         <div class="card-body demo-vertical-spacing demo-only-element">
 
-                            <label asp-for="Ticket.Titulo" class="form-label" for="basic-default-password12">Título</label>
-                            <div class="input-group">
-                                <input asp-for="Ticket.Titulo" type="text"
-                                       class="form-control"
-                                       placeholder="Título"
-                                       aria-label="Username"
-                                       aria-describedby="basic-addon11" />
+                            <div class="mb-3">
+                                <label asp-for="Ticket.Titulo" class="form-label">Título</label>
+                                <input asp-for="Ticket.Titulo" class="form-control" />
                             </div>
 
-                            <label asp-for="Ticket.Prioridade" class="form-label" for="basic-default-password12">Prioridade</label>
-                            <div class="input-group">
-                                <div class="input-group">
-                                    <select asp-for="Ticket.Prioridade" class="form-select" id="inputGroupSelect02">
-                                        <option value="1" selected>Escolha...</option>
-                                        <option value="1">Baixa</option>
-                                        <option value="2">Média</option>
-                                        <option value="3">Alta</option>
-                                        <option value="4">Urgente</option>
-                                    </select>
-                                </div>
+                            <div class="mb-3">
+                                <label asp-for="Ticket.Prioridade" class="form-label">Prioridade</label>
+                                <select asp-for="Ticket.Prioridade" class="form-select" aria-label="Prioridade">
+                                    <option value="">Escolha...</option>
+                                    @foreach (TicketPrioridadeEnum prioridade in Enum.GetValues(typeof(TicketPrioridadeEnum)))
+                                    {
+                                        <option value="@((int)prioridade)">@prioridade.GetDisplayName()</option>
+                                    }
+                                </select>
                             </div>
 
-                            <label asp-for="Ticket.Descricao" class="form-label" for="basic-default-password12">Descrição</label>
-                            <div class="input-group">
-                                <textarea asp-for="Ticket.Descricao" class="form-control" aria-label="With textarea" placeholder="Descreva sua solicitação/problema"></textarea>
+                            <div class="mb-3">
+                                <label asp-for="Ticket.Status" class="form-label">Status</label>
+                                <select asp-for="Ticket.Status" class="form-select" aria-label="Status">
+                                    <option value="">Escolha...</option>
+                                    @foreach (TicketStatusEnum status in Enum.GetValues(typeof(TicketStatusEnum)))
+                                    {
+                                        <option value="@((int)status)">@status.GetDisplayName()</option>
+                                    }
+                                </select>
                             </div>
 
-                            <label for="Ticket.DepartamentoId" class="form-label control-label">Departamento</label>
-                            <div class="input-group form-group">
-                                <div class="input-group form-group">
-                                    <select asp-for="Ticket.DepartamentoId" id="Departamentos" class="form-select form-control">
-                                        <option value="">Escolha...</option>
-                                        @foreach (var departamento in Model.Departamentos)
-                                        {
-                                            <option value="@departamento.Id">@departamento.Nome</option>
-                                        }
-                                    </select>
-                                </div>
+                            <div class="mb-3">
+                                <label asp-for="Ticket.Descricao" class="form-label">Descrição</label>
+                                <textarea asp-for="Ticket.Descricao" class="form-control" rows="4"></textarea>
                             </div>
 
-
-                            <label for="Ticket.EspecialidadeId" id="AreaLabel" class="form-label control-label" style="display:none">Especialidade</label>
-                            <div class="input-group form-group">
-                                <div class="input-group form-group">
-                                    <select asp-for="Ticket.EspecialidadeId" id="Especialidades" class="form-select form-control">
-                                        <option value="">Escolha...</option>
-                                        @foreach (var especialidade in Model.Especialidades)
-                                        {
-                                            <option value="@especialidade.Id">@especialidade.Nome</option>
-                                        }
-                                    </select>
-                                </div>
+                            <div class="mb-3">
+                                <label asp-for="Ticket.DepartamentoId" class="form-label">Departamento</label>
+                                <select asp-for="Ticket.DepartamentoId" class="form-select">
+                                    <option value="">Escolha...</option>
+                                    @foreach (var departamento in Model.Departamentos)
+                                    {
+                                        <option value="@departamento.Id">@departamento.Nome</option>
+                                    }
+                                </select>
                             </div>
 
+                            <div class="mb-3">
+                                <label asp-for="Ticket.EspecialidadeId" class="form-label" style="display:none">Especialidade</label>
+                                <select asp-for="Ticket.EspecialidadeId" class="form-select" id="Especialidades" style="display:none">
+                                    <option value="">Escolha...</option>
+                                    @foreach (var especialidade in Model.Especialidades)
+                                    {
+                                        <option value="@especialidade.Id">@especialidade.Nome</option>
+                                    }
+                                </select>
+                            </div>
 
-                            <div>
+                            <div class="mb-3">
                                 <label for="formFileMultiple" class="form-label">Anexos</label>
-
-
-                                <div class="" id="files">
-                                </div>
-
-
+                                <div id="files"></div>
                                 <input id="anexo" class="form-control d-none" type="file" name="files" multiple />
-                                <button id="btn-anexo" type="button" class="btn btn-primary"><i class="fas fa-attach"></i>Anexar Arquivos</button>
+                                <button id="btn-anexo" type="button" class="btn btn-primary"><i class="fas fa-attach"></i> Anexar Arquivos</button>
                             </div>
-
-                            <br />
 
                             <button type="submit" class="btn btn-primary">Criar Ticket</button>
+
                         </div>
                     </div>
                 </div>
@@ -117,75 +118,55 @@
         </div>
     </div>
 </div>
+
 @section Scripts {
     <script>
-        var dt = new DataTransfer()
+        var dt = new DataTransfer();
+
         $(document).ready(function () {
-
             $('#anexo').change(function () {
-
                 $("#files").html("");
                 for (var i = 0; i < this.files.length; i++) {
                     var file = this.files[i];
-                    dt.items.add(file)
+                    dt.items.add(file);
                 }
-                this.files = dt.files
+                this.files = dt.files;
 
                 for (var i = 0; i < this.files.length; i++) {
                     var file = this.files[i];
-
-                    name = file.name.toLowerCase();
-                    size = file.size;
-                    type = file.type;
-
-                    var html = '<a id="btn-' + i + '" type="button" anexo_id="' + i + '" class="name" >  ' + name + '  <i onclick=delRef("' + i + '")  class="fa fa-times" aria-hidden="true"></i></a>'
+                    var name = file.name.toLowerCase();
+                    var html = '<div><span>' + name + '</span><i class="fa fa-times" onclick="delRef(' + i + ')" aria-hidden="true"></i></div>';
                     $("#files").append(html);
                 }
             });
 
-
             $("#btn-anexo").click(function () {
                 $("#anexo").click();
-            })
+            });
+        });
 
-        })
         function delRef(index) {
-
-            var input = document.getElementById('anexo')
-            var { files } = input
-            for (var i = 0; i < files.length; i++) {
-                var file = files[i]
-                if (index == i) {
-                    dt.items.remove(i)
-                }
-            }
-
-            $("#btn-" + index).remove();
-            $("#anexo").trigger("change");
+            dt.items.remove(index);
+            $("#files div").eq(index).remove();
         }
+
         document.getElementById("Departamentos").addEventListener("change", function () {
             var DepId = this.value;
+            var Areas = document.getElementById("Especialidades");
 
-            // Recupera os elementos do segundo dropdown
-            var Areas = document.getElementById("AreasDrop");
-
-            // Limpa as opções existentes no segundo dropdown
             Areas.innerHTML = '';
 
-            // Exibe ou oculta o segundo dropdown com base na escolha no primeiro dropdown
-            var AreaLabel = document.getElementById("AreaLabel");
-            Areas.style.display = DepId ? "block" : "none";
-            AreaLabel.style.display = DepId ? "block" : "none";
-
-            // Adiciona as opções relevantes ao segundo dropdown
         @foreach (var especialidade in Model.Especialidades)
         {
             <text>
-                                        if (DepId == "@especialidade.DepartamentoId") {
+                                if (DepId == "@especialidade.DepartamentoId") {
                     Areas.innerHTML += '<option value="@especialidade.Id">@especialidade.Nome</option>';
                 }
             </text>
         }
-                });
+
+                Areas.style.display = DepId ? "block" : "none";
+            document.getElementById("AreaLabel").style.display = DepId ? "block" : "none";
+        });
     </script>
 }

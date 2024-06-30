@@ -124,10 +124,9 @@ namespace Tickest.Controllers
 
             return View(viewModel);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Ticket ticket, int departamentoId, List<IFormFile> files)
+        public async Task<IActionResult> Create(TicketViewModel viewModel, List<IFormFile> files)
         {
             var usuario = await _userManager.GetUserAsync(User);
 
@@ -138,6 +137,21 @@ namespace Tickest.Controllers
 
             if (ModelState.IsValid)
             {
+                var ticket = viewModel.Ticket;
+                var departamentoId = viewModel.Ticket.DepartamentoId;
+
+                // Verifica se o departamentoId existe na base de dados
+                var departamentoExistente = await _context.Departamentos.FindAsync(departamentoId);
+                if (departamentoExistente == null)
+                {
+                    ModelState.AddModelError(nameof(Ticket.DepartamentoId), "Departamento não encontrado.");
+                    // Recarrega as listas de departamentos e especialidades para exibir no formulário
+                    viewModel.Departamentos = await _context.Departamentos.OrderBy(d => d.Nome).ToListAsync();
+                    viewModel.Especialidades = await _context.Especialidades.OrderBy(e => e.Nome).ToListAsync();
+                    return View(viewModel);
+                }
+
+                // Processa os anexos
                 if (files != null && files.Count > 0)
                 {
                     foreach (var file in files)
@@ -150,33 +164,20 @@ namespace Tickest.Controllers
                     }
                 }
 
+                // Configuração dos campos do ticket
                 ticket.DataCriacao = DateTime.Now;
                 ticket.Status = TicketStatusEnum.Aberto;
                 ticket.DataStatus = DateTime.Now;
                 ticket.SolicitanteId = usuario.Id;
-                ticket.DepartamentoId = departamentoId;
 
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            // Recarrega as listas de departamentos e especialidades para a ViewModel
-            var departamentos = await _context.Departamentos
-                .OrderBy(d => d.Nome)
-                .ToListAsync();
-
-            var especialidades = await _context.Especialidades
-                .OrderBy(e => e.Nome)
-                .ToListAsync();
-
-            var viewModel = new TicketViewModel
-            {
-                Ticket = ticket,
-                Departamentos = departamentos,
-                Especialidades = especialidades
-            };
-
+            // Se o modelo não for válido, recarrega as listas de departamentos e especialidades para exibir no formulário
+            viewModel.Departamentos = await _context.Departamentos.OrderBy(d => d.Nome).ToListAsync();
+            viewModel.Especialidades = await _context.Especialidades.OrderBy(e => e.Nome).ToListAsync();
             return View(viewModel);
         }
 
