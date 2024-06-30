@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Sockets;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
@@ -130,7 +131,9 @@ namespace Tickest.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        [HttpPost("API/App/Login")]
+       
+
+		[HttpPost("API/App/Login")]
         public async Task<IActionResult> Login_Mobile([FromBody] LoginViewModel loginModel)
         {
             if (ModelState.IsValid)
@@ -156,7 +159,9 @@ namespace Tickest.Controllers
                                 Título = p.Título,
                                 Descrição = p.Descrição,
                                 Data_Criação = p.Data_Criação,
-                                Status = p.Status,
+                                Etapa = p.Status.ToString(),
+                                Etapa_id = p.Status,
+                                Area = p.Area.Nome,
                                 Data_Status = p.Data_Status,
                                 Prioridade = p.Prioridade,
                                 Usuario = p.UsuarioId,
@@ -171,19 +176,21 @@ namespace Tickest.Controllers
                         .Where(p => p.DestinatarioId == userInfo.Id || (p.DestinatarioId == null && p.UsuarioId != userInfo.Id))
                         .Select(p => new
                         {
-                            Id = p.Id,
-                            Título = p.Título,
-                            Descrição = p.Descrição,
-                            Data_Criação = p.Data_Criação,
-                            Status = p.Status,
-                            Data_Status = p.Data_Status,
-                            Prioridade = p.Prioridade,
-                            Usuario = p.UsuarioId,
-                            Departamento = p.Departamento.Nome,
-                            DestinatarioId = p.DestinatarioId,
-                            Anexos = p.Anexos
+							Id = p.Id,
+							Título = p.Título,
+							Descrição = p.Descrição,
+							Data_Criação = p.Data_Criação,
+							Etapa = p.Status.ToString(),
+							Etapa_id = p.Status,
+							Area = p.Area.Nome,
+							Data_Status = p.Data_Status,
+							Prioridade = p.Prioridade,
+							Usuario = p.UsuarioId,
+							Departamento = p.Departamento.Nome,
+							DestinatarioId = p.DestinatarioId,
+							Anexos = p.Anexos
 
-                        })
+						})
                         .ToListAsync();
 
                     var userInfoApp = new

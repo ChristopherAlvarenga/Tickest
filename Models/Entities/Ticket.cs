@@ -42,6 +42,9 @@ namespace Tickest.Models.Entities
             Criado = 1, Andamento = 2, Teste = 3, Concluído = 4, Cancelado = 5
         }
 
+        [NotMapped]
+        public string status_nome { get; set; }
+
         public int? DepartamentoId { get; set; }
         [ForeignKey(nameof(DepartamentoId))]
         public virtual Departamento? Departamento { get; set; }
@@ -56,6 +59,7 @@ namespace Tickest.Models.Entities
         [ForeignKey(nameof(UsuarioId))]
         public virtual Usuario? Usuario { get; set; }
 
-        public List<Anexo> Anexos { get; set; }
+
+        public virtual List<Anexo> Anexos { get; set; }
     }
 }

@@ -8,10 +8,10 @@ namespace Tickest.Models.Entities
 
         public int? UsuarioId { get; set; }
         [ForeignKey(nameof(UsuarioId))]
-        public Usuario? Usuario { get; set; }
+        public virtual Usuario? Usuario { get; set; }
         
         public int? TicketId { get; set; }
         [ForeignKey(nameof(TicketId))]
-        public Ticket? Ticket { get; set; }
+        public virtual Ticket? Ticket { get; set; }
     }
 }

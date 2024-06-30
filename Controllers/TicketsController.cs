@@ -306,6 +306,54 @@ namespace Tickest.Controllers
         {
             return value.ToString("yyyyMMddHHmmssffff");
         }
-    }
 
+        [HttpGet("API/app/ticket/{ticket_id}")]
+        public async Task<JsonResult> GetTicket(int ticket_id)
+        {
+            if (ticket_id > 0)
+            {
+                Ticket ticket = _context.Tickets.Where(p => p.Id == ticket_id).FirstOrDefault();
+
+                if (ticket != null)
+                {
+
+
+                    ticket.status_nome = ticket.Status.ToString();
+                    TempData["ticket"] = ticket;
+                }
+                else
+                {
+                    TempData["error"] = "ticket não encontrado!";
+                }
+
+
+            }
+            else
+            {
+                TempData["error"] = "Ticket Inválido";
+            }
+
+            return Json(TempData);
+        }
+        [HttpGet("API/app/ticket/messages/{ticket_id}")]
+        public async Task<JsonResult> GetTicketMessages(int ticket_id)
+        {
+            if (ticket_id > 0)
+            {
+                List<Message> messages = _context.Mensagens.Where(p => p.ticket_id == ticket_id).ToList();
+
+                if(messages.Count > 0)
+                {
+                    TempData["messages"] = messages;
+
+                }
+                else
+                {
+                    TempData["no_messages"] = "yrds";
+                }
+
+            }
+			return Json(TempData);
+		}
+    }
 }

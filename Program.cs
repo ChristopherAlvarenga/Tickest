@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Services;
@@ -13,11 +14,15 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration
     .GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-builder.Services.AddDbContext<TickestContext>(options => options.UseSqlServer(connectionString));
 
+builder.Services.AddDbContext<TickestContext>(o => o.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<TickestContext>();
-
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+	options.JsonSerializerOptions.ReferenceHandler =
+	ReferenceHandler.IgnoreCycles;
+});
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -27,7 +32,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
-
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -51,10 +56,16 @@ app.UseAuthorization();
 
 app.UseCookiePolicy();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");
 
+app.UseEndpoints(endpoints =>
+{
+	endpoints.MapControllerRoute(
+		name: "default",
+	 pattern: "{controller=Account}/{action=Login}/{id?}");
+
+	// Mapear o Hub do SignalR
+	endpoints.MapHub<ChatHub>("/chatHub");
+});
 app.Run();
 
 async Task CriarPerfilUsuarioAsync(WebApplication app)

@@ -29,9 +29,9 @@ namespace Tickest.Models.Entities
         [ForeignKey(nameof(AreaId))]
         public virtual Area? Area { get; set; }
 
-        public ICollection<Ticket> Tickets { get; set; }
+        public virtual ICollection<Ticket> Tickets { get; set; }
 
-        public ICollection<Notificacao> Notificacoes { get; set; }
+        public virtual ICollection<Notificacao> Notificacoes { get; set; }
 
         public static implicit operator Usuario?(IdentityUser? v)
         {

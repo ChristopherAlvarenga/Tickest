@@ -1,10 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging.Signing;
+using NuGet.Protocol.Plugins;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Message = Tickest.Models.Entities.Message;
 
 namespace Tickest.Controllers
 {
@@ -12,10 +18,12 @@ namespace Tickest.Controllers
     public class ChatController : Controller
     {
 		private readonly TickestContext _context;
+		private readonly IHubContext<ChatHub> _hubContext;
 
-		public ChatController(TickestContext context) 
+		public ChatController(TickestContext context, IHubContext<ChatHub> hubContext) 
         {
 			_context = context;
+			_hubContext = hubContext;
 		}
 
 
@@ -77,11 +85,11 @@ namespace Tickest.Controllers
 
         }
 
-        public static String GetTimestamp(DateTime value)
+        public static System.String GetTimestamp(DateTime value)
         {
             return value.ToString("yyyyMMddHHmmssffff");
         }
-        public JsonResult Enviar(int ticket_id, string msg)
+		public async Task<JsonResult>Enviar(int ticket_id, string msg)
         {
             if (ModelState.IsValid)
             {
@@ -91,7 +99,8 @@ namespace Tickest.Controllers
                 Message mensagem = new Message();
 
 
-                mensagem.user_id_from = id;
+
+				mensagem.user_id_from = id;
                 mensagem.msg_content = msg;
                 mensagem.dataHora = DateTime.Now;
                 mensagem.visu_status = 0;
@@ -99,7 +108,14 @@ namespace Tickest.Controllers
 				_context.Mensagens.Add(mensagem);
 				_context.SaveChanges();
                 TempData["sucesso"] = "sim";
-                return Json(TempData);
+				await _hubContext.Clients.Group("Group-" + ticket_id).SendAsync("ReceiveGroupMessage", new
+				{
+					From = usuario.Nome,
+					From_id = usuario.Id,
+					Message = msg,
+					DateTime = mensagem.dataHora
+				});
+				return Json(TempData);
 
             }
             else
@@ -108,5 +124,41 @@ namespace Tickest.Controllers
                 return Json(TempData);
             }
         }
-    }
+
+		[HttpPost("enviarMobile")]
+		public async Task<JsonResult> EnviarMobile([FromBody] VMMessage message)
+		{
+			if (ModelState.IsValid)
+			{
+				var id = message.from;
+				var usuario = _context.Usuarios.Where(x => x.Id == id).FirstOrDefault();
+				Message mensagem = new Message();
+
+
+
+				mensagem.user_id_from = id;
+				mensagem.msg_content = message.msg;
+				mensagem.dataHora = DateTime.Now;
+				mensagem.visu_status = 0;
+				mensagem.ticket_id = message.ticket_id;
+				_context.Mensagens.Add(mensagem);
+				_context.SaveChanges();
+				TempData["sucesso"] = "sim";
+				await _hubContext.Clients.Group("Group-" + message.ticket_id).SendAsync("ReceiveGroupMessage", new
+				{
+					From = usuario.Nome,
+					From_id = usuario.Id,
+					Message = message.msg,
+					DateTime = mensagem.dataHora
+				});
+				return Json(TempData);
+
+			}
+			else
+			{
+				TempData["error"] = "Algum dado está incorreto ou faltando!";
+				return Json(TempData);
+			}
+		}
+	}
 }
