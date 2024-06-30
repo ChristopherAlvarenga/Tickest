@@ -12,7 +12,6 @@ namespace Tickest.Data
         {
 
         }
-
         public DbSet<Anexo> Anexos { get; set; }
         public DbSet<Especialidade> Especialidades { get; set; }
         public DbSet<Departamento> Departamentos { get; set; }
@@ -38,12 +37,12 @@ namespace Tickest.Data
                 .HasForeignKey(p => p.ResponsavelId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Especialidade>()
+                .HasOne(e => e.Departamento)
+                .WithMany(d => d.Especialidades)
+                .HasForeignKey(e => e.DepartamentoId)
+                .OnDelete(DeleteBehavior.Restrict); // Configuração de exclusão em cascata
 
-            //modelBuilder.Entity<Ticket>()
-            //    .HasOne(p => p.Solicitante)
-            //    .WithMany(p => p.TicketsResponsaveis)
-            //    .HasForeignKey(p => p.SolicitanteId)
-            //    .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Departamento>().HasData(
                 new Departamento

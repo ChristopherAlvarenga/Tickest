@@ -27,8 +27,6 @@
         return await userManager.IsInRoleAsync(user, "Cliente");
     }
 
-
-
     if (await Gerenciador())
         Layout = "_LayoutGerenciador";
 
@@ -52,7 +50,8 @@
                 {
                     <th>Nome</th>
                     <th>Responsável</th>
-                    <th>Ação</th>
+                    <th>Edição</th>
+                    <th>Deletar</th>
                 }
                 else
                 {
@@ -81,6 +80,7 @@
                     else if (await Gerenciador())
                     {
                         <td><a href="@Url.Action("Edit", "Departamentos", new { id = departamento.Id })">Editar</a></td>
+                        <td><a href="@Url.Action("Delete", "Departamentos", new { id = departamento.Id })">Deletar</a></td>
                     }
                 </tr>
             }

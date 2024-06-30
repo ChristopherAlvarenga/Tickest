@@ -19,8 +19,8 @@ namespace Tickest.Models.ViewModels
         [Required(ErrorMessage = "Gerenciador obrigatório")]
         public int? GerenciadorSelecionado { get; set; }
 
-        [Required(ErrorMessage = "Analista obrigatório")]
-        public int AnalistaSelecionado { get; set; }
+        //[Required(ErrorMessage = "Analista obrigatório")]
+        public int? AnalistaSelecionado { get; set; }
 
         public ICollection <AnalistaViewModel> AnalistasDisponiveis { get; set; }
         public ICollection<GerenciadorViewModel> GerenciadoresDisponiveis { get; set; }

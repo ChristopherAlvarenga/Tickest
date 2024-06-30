@@ -22,8 +22,6 @@
     }
 </style>
 
-
-
 <div class="row">
     <div class="col-md-12">
         <form method="post" asp-action="Register" asp-controller="Account">
@@ -74,29 +72,6 @@
                                                aria-label="Username"
                                                aria-describedby="basic-addon11" />
                                     </div>
-                                    @*
-                                    @Html.LabelFor(m => m.FuncaoId, "Atribuição...", new { @class = "control-label esconder-rotulo" })
-                                    @Html.DropDownListFor(m => m.FuncaoId, new SelectList(Model.OpcoesFuncoes, "Id", "Nome"), "Selecione...", new { @class = "form-select", id = "funcaoDropdown", onchange = "funcaoAlterada(this);" })
-
-                                    <div id="departamentoDropdownId">
-                                    @Html.LabelFor(m => m.DepartamentoId, "Departamento...", new { @class = "control-label esconder-rotulo" })
-                                    @Html.DropDownListFor(m => m.DepartamentoId, new SelectList(Model.OpcoesDepartamentos, "Id", "Nome"), "Selecione...", new { @class = "form-select", id = "departamentoDropdown1", onchange = "departamentoAlterado(this);" })
-                                    </div> *@
-
-                                    @* <div id="especialidadeDropdownId">
-                                    <label asp-for="EspecialidadeId" class="form-label" for="basic-default-password12">Especialidade</label>
-                                    <div class="input-group">
-
-                                    <select asp-for="EspecialidadeId" class="form-select" id="especialidadeDropdown">
-                                    <option value="">Selecione...</option>
-                                    @foreach (var item in ObterEspecialidades(Model.DepartamentoId))
-                                    {
-                                    <option value="@item.Id">@item.Nome</option>
-                                    }
-                                    </select>
-
-                                    </div>
-                                    </div> *@
 
                                     <div class="funcao-section">
                                         <label asp-for="FuncaoId" class="form-label">Atribuir função</label>
@@ -178,7 +153,6 @@
                         $.get(`/Departamentos/ObterDepartamentos`, (departamentos) => {
                             $("select#DepartamentoId").append(`<option value="">Selecione ...</option>`);
                             $.each(departamentos, function (i, item) {
-                                debugger
                                 $("select#DepartamentoId").append(`<option value="${item.id}">${item.nome}</option>`);
                             });
                         })
@@ -208,34 +182,4 @@
 
 
 <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
-
-
-
-@*
-<script type="text/javascript">
-
-    document.getElementById('departamentoDropdownId').style.display = 'none';
-    document.getElementById('especialidadeDropdownId').style.display = 'none';
-
-    function funcaoAlterada(element) {
-        if (!element.value) {
-            document.getElementById('departamentoDropdownId').style.display = 'none';
-            return;
-        }
-
-        var textoSelecionado = element.options[element.selectedIndex].text;
-        document.getElementById('departamentoDropdownId').style.display = textoSelecionado == 'Cliente' ? 'none' : 'block';
-    }
-
-    function departamentoAlterado(element) {
-        if (!element.value) {
-            document.getElementById('especialidadeDropdownId').style.display = 'none';
-            return;
-        }
-
-        document.getElementById('especialidadeDropdownId').style.display = 'block';
-    }
-
-</script> *@
-
 

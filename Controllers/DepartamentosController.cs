@@ -6,7 +6,6 @@ using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
 
-
 namespace Tickest.Controllers
 {
     [Authorize]
@@ -87,7 +86,7 @@ namespace Tickest.Controllers
                          Nome = responsavel.Email
                      }).ToList(),
                      AnalistaSelecionado = 0,
-                     AnalistasDisponiveis = usersAnalistas.Select(p => new AnalistaViewModel {Id = p.Id, Email = p.Email }).ToList()
+                     AnalistasDisponiveis = usersAnalistas.Select(p => new AnalistaViewModel { Id = p.Id, Email = p.Email }).ToList()
                  })
                  .FirstOrDefaultAsync(p => p.Id == id);
 
@@ -98,7 +97,6 @@ namespace Tickest.Controllers
 
             return View(departamento);
         }
-
 
         [Authorize(Roles = "Gerenciador")]
         [HttpPost]
@@ -111,6 +109,31 @@ namespace Tickest.Controllers
             departamento.Nome = viewModel.Nome;
             departamento.GerenciadorId = viewModel.GerenciadorSelecionado.Value;
 
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(List));
+        }
+
+        [Authorize(Roles = "Gerenciador")]
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var departamento = await _context.Departamentos.FirstOrDefaultAsync(p => p.Id == id);
+
+            var ticketsDepartamento = _context.Tickets.Where(p => p.DepartamentoId == id);
+            var especialidadeDepartamento = _context.Especialidades.Where(p => p.DepartamentoId == id);
+            var usuarioDepartamento = _context.Usuarios.Where(p => p.DepartamentoId == id);
+
+            foreach (var item in ticketsDepartamento)
+                item.DepartamentoId = null;
+
+            foreach (var item in especialidadeDepartamento)
+                item.DepartamentoId = null;
+
+            foreach (var item in usuarioDepartamento)
+                item.DepartamentoId = null;
+
+            _context.Remove(departamento);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(List));
@@ -132,7 +155,7 @@ namespace Tickest.Controllers
         }
 
         [HttpGet]
-        public async Task<List<DepartamentoListViewModel>> ObterDepartamentos()
+        public async Task<IActionResult> ObterDepartamentos()
         {
             List<DepartamentoListViewModel> departamentos = await _context.Set<Departamento>()
                 .Select(departamento => new DepartamentoListViewModel
@@ -142,7 +165,7 @@ namespace Tickest.Controllers
                     Gerenciador = _context.Set<Usuario>().First(p => p.Id == departamento.GerenciadorId).Nome
                 }).ToListAsync();
 
-            return departamentos;
+            return Json(departamentos);
         }
     }
 }
