@@ -8,10 +8,11 @@
 
 @if (ViewBag.Error != null)
 {
-    <span style="color: red">@ViewBag.Error</span>
+    <span class="text-danger">@ViewBag.Error</span>
 }
 
 <hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit" asp-controller="Usuarios">
@@ -24,13 +25,13 @@
                 <span asp-validation-for="Nome" class="text-danger"></span>
             </div>
 
-            <div class="form-group mt-3">
+            <div class="form-group">
                 <label asp-for="Funcao" class="control-label">Função</label>
                 <input asp-for="Funcao" class="form-control" />
                 <span asp-validation-for="Funcao" class="text-danger"></span>
             </div>
 
-            <div class="form-group mt-3">
+            <div class="form-group">
                 <label asp-for="DepartamentoId" class="control-label">Departamento</label>
                 <select asp-for="DepartamentoId" class="form-select form-control" id="Departamentos">
                     @foreach (var departamento in ViewBag.Departamentos)
@@ -40,14 +41,13 @@
                 </select>
             </div>
 
-            <div class="form-group mt-3">
-                <label asp-for="EspecialidadeId" class="control-label" id="EspecialidadeLabel" style="display:none">Especialidade</label>
-                <select asp-for="EspecialidadeId" class="form-select form-control" id="EspecialidadesDrop" style="display:none">
-                </select>
+            <div class="form-group" id="especialidadeGroup" style="display:none">
+                <label asp-for="EspecialidadeId" class="control-label">Especialidade</label>
+                <select asp-for="EspecialidadeId" class="form-select form-control" id="EspecialidadesDrop"></select>
             </div>
 
-            <div class="form-group mt-3">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Salvar</button>
             </div>
         </form>
     </div>
@@ -58,26 +58,31 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
+
     <script>
-        document.getElementById("Departamentos").addEventListener("change", function () {
-            var depId = this.value;
-            var especialidadesDrop = document.getElementById("EspecialidadesDrop");
-            var especialidadeLabel = document.getElementById("EspecialidadeLabel");
+        document.addEventListener("DOMContentLoaded", function () {
+            var departamentosDropdown = document.getElementById("Departamentos");
+            var especialidadeGroup = document.getElementById("especialidadeGroup");
 
-            especialidadesDrop.style.display = depId ? "block" : "none";
-            especialidadeLabel.style.display = depId ? "block" : "none";
+            departamentosDropdown.addEventListener("change", function () {
+                var depId = this.value;
+                var especialidadesDrop = document.getElementById("EspecialidadesDrop");
 
-            especialidadesDrop.innerHTML = '';
+                especialidadesDrop.innerHTML = '';
 
-            var especialidades = @Html.Raw(Json.Serialize(Model.Especialidades));
+                var especialidades = @Html.Raw(Json.Serialize(Model.Especialidades));
 
-            especialidades.forEach(function (especialidade) {
-                if (depId == especialidade.DepartamentoId) {
-                    especialidadesDrop.innerHTML += '<option value="' + especialidade.Id + '">' + especialidade.Nome + '</option>';
-                }
+                especialidades.forEach(function (especialidade) {
+                    if (depId == especialidade.DepartamentoId) {
+                        var option = document.createElement("option");
+                        option.value = especialidade.Id;
+                        option.textContent = especialidade.Nome;
+                        especialidadesDrop.appendChild(option);
+                    }
+                });
+
+                especialidadeGroup.style.display = depId ? "block" : "none";
             });
         });
     </script>

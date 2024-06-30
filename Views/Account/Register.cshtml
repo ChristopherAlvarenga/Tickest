@@ -100,7 +100,7 @@
 
                                     <div class="funcao-section">
                                         <label asp-for="FuncaoId" class="form-label">Atribuir função</label>
-                                        <select asp-for="FuncaoId" class="form-select" >
+                                        <select asp-for="FuncaoId" class="form-select">
                                             <option value="">Selecione ...</option>
                                             @foreach (var funcao in Model.OpcoesFuncoes)
                                             {
@@ -178,10 +178,11 @@
                         $.get(`/Departamentos/ObterDepartamentos`, (departamentos) => {
                             $("select#DepartamentoId").append(`<option value="">Selecione ...</option>`);
                             $.each(departamentos, function (i, item) {
+                                debugger
                                 $("select#DepartamentoId").append(`<option value="${item.id}">${item.nome}</option>`);
-                            }); 
+                            });
                         })
-                    } 
+                    }
                 });
             });
 
@@ -193,7 +194,7 @@
                 $.get(`/Especialidade/ObterEspecialidadesPorDepartamento?departamentoId=${departamentoId}`, (especialidades) => {
                     console.log('retorno especialidades', especialidades)
                     $(".especialidade-section").css("display", (especialidades && especialidades.length > 0 ? "block" : "none"))
-                    if(especialidades){
+                    if (especialidades) {
                         $("select#EspecialidadeId").append(`<option value="">Selecione ...</option>`);
                         $.each(especialidades, function (i, item) {
                             $("select#EspecialidadeId").append(`<option value="${item.id}">${item.nome}</option>`);

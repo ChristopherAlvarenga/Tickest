@@ -132,9 +132,9 @@ namespace Tickest.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObterDepartamentos()
+        public async Task<List<DepartamentoListViewModel>> ObterDepartamentos()
         {
-            var departamentos = await _context.Set<Departamento>()
+            List<DepartamentoListViewModel> departamentos = await _context.Set<Departamento>()
                 .Select(departamento => new DepartamentoListViewModel
                 {
                     Id = departamento.Id,
@@ -142,7 +142,7 @@ namespace Tickest.Controllers
                     Gerenciador = _context.Set<Usuario>().First(p => p.Id == departamento.GerenciadorId).Nome
                 }).ToListAsync();
 
-            return Json(departamentos);
+            return departamentos;
         }
     }
 }

@@ -39,6 +39,7 @@ namespace Tickest.Controllers
             var viewModel = new RegisterViewModel
             {
                 OpcoesFuncoes = roles.Select(p => new FuncaoViewModel { Id = p.Id, Nome = p.Name }).ToList(),
+                OpcoesDepartamentos = _context.Departamentos.Select(e => new DepartamentoListViewModel {Id = e.Id, Nome = e.Nome }).ToList()
             };
 
             return View(viewModel);
