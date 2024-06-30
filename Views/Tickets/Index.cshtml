@@ -1,35 +1,19 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Tickest.Enums
+@using Tickest.Helpers
 @using Tickest.Models.ViewModels;
-@using Tickest.Models.Entities
+@using Tickest.Models.Entities;
 
-@model TicketViewModel
-
+@model Tickest.Models.ViewModels.TicketViewModel
 @inject UserManager<Usuario> userManager
 
 @{
     ViewData["Title"] = "Tickest - Tickets Criados";
 
     var user = await userManager.FindByEmailAsync(User.Identity.Name);
-    string layout = "";
-
-    if (await userManager.IsInRoleAsync(user, "Gerenciador"))
-    {
-        layout = "_LayoutGerenciador";
-    }
-    else if (await userManager.IsInRoleAsync(user, "Cliente"))
-    {
-        layout = "_LayoutCliente";
-    }
-    else if (await userManager.IsInRoleAsync(user, "Analista"))
-    {
-        layout = "_Layout";
-    }
-    else
-    {
-        layout = "_Layout"; // Layout padrão caso o usuário não tenha nenhum dos papéis especificados
-    }
-
+    string layout = await userManager.IsInRoleAsync(user, "Gerenciador") ? "_LayoutGerenciador" :
+                    await userManager.IsInRoleAsync(user, "Cliente") ? "_LayoutCliente" :
+                    "_Layout";
     Layout = layout;
 }
 
@@ -39,74 +23,255 @@
         border-color: #fff;
     }
 
-    .table-responsive {
-        overflow-x: auto;
-        word-wrap: break-word; /* for long text in columns */
+    .d-flex1 {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        word-break: break-all;
+        word-wrap: break-word;
+        white-space: normal;
     }
 
-    .badge-status {
-        display: inline-block;
-        padding: 0.35em 0.65em;
-        font-size: 0.75em;
-        font-weight: 600;
-        line-height: 1;
-        text-align: center;
-        white-space: nowrap;
-        vertical-align: baseline;
-        border-radius: 0.25rem;
+    .close {
+        color: #000;
+        cursor: pointer;
+    }
+
+        .close:hover {
+            color: #000;
+        }
+
+    .theme-color {
+        flex-wrap: wrap !important;
+        color: #004cb9;
+        word-break: break-all;
+        word-wrap: break-word;
+        white-space: normal;
+    }
+
+    hr.new1 {
+        border-top: 2px dashed #fff;
+        margin: 0.4rem 0;
     }
 </style>
 
 <link rel="stylesheet" href="~/css/chat.css" />
 
-<div class="container">
-    <h5 class="card-title text-primary mt-4 mb-3">Tickets Criados</h5>
+<div class="row">
+    <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        <div class="card">
+            <div class="row row-bordered g-0">
+                <h5 class="card-title text-primary m-4">Tickets Criados</h5>
+                <div class="card">
+                    <div class="table-responsive text-nowrap p-4">
+                        <table class="table table-hover" id="Tickets">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Título</th>
+                                    <th scope="col">Departamento</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0">
+                                @foreach (var ticket in Model.Tickets)
+                                {
+                                    <tr>
+                                        <td><strong>#@ticket.Id</strong></td>
+                                        <td><strong>@ticket.Titulo</strong></td>
+                                        <td>@ticket.Departamento?.Nome</td>
+                                        <td><span class="badge bg-label-dark me-1">@ticket.Status.GetDisplayName()</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn modal-ticket" data-ticket-id="@ticket.Id" data-bs-toggle="modal" data-bs-target="#modalScrollable-@ticket.Id">
+                                                Ver mais
+                                            </button>
+                                            <div class="modal fade" id="modalScrollable-@ticket.Id" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-body">
+                                                            <div class="text-end"><i class="fa fa-close close" data-bs-dismiss="modal" aria-label="Close"></i></div>
+                                                            <div class="px-4 py-5">
+                                                                <h5 class="text-uppercase">#@ticket.Id</h5>
+                                                                <h4 class="mt-5 theme-color mb-5">@ticket.Titulo</h4>
+                                                                <div class="d-flex1 justify-content-between">
+                                                                    <span class="theme-color">@ticket.Descricao</span>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <hr class="new1">
+                                                                </div>
+                                                                <div class="d-flex1 justify-content-between">
+                                                                    <span class="font-weight-bold">Criado Em:</span>
+                                                                    <span class="text-muted">@ticket.DataCriacao.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                                                                </div>
+                                                                <div class="d-flex1 justify-content-between">
+                                                                    <span class="font-weight-bold">Prioridade</span>
+                                                                    <span class="text-muted">@ticket.Prioridade.GetDisplayName()</span>
+                                                                </div>
+                                                                <div class="d-flex1 justify-content-between">
+                                                                    <span class="font-weight-bold">Status</span>
+                                                                    <span class="text-muted">@ticket.Status.GetDisplayName()</span>
+                                                                </div>
+                                                                <div class="d-flex1 justify-content-between">
+                                                                    <span class="font-weight-bold">Enviado por:</span>
+                                                                    <span class="text-muted">@ticket.Solicitante.Nome (@ticket.Solicitante.Email)</span>
+                                                                </div>
+                                                                <div class="d-flex1 justify-content-between">
+                                                                    <span class="font-weight-bold">Departamento:</span>
+                                                                    <span class="text-muted">@ticket.Departamento?.Nome</span>
+                                                                </div>
+                                                                <div class="mt-3">
+                                                                    <span class="font-weight-bold">Anexos:</span>
+                                                                    <br />
+                                                                    @if (ticket.Anexos != null)
+                                                                    {
+                                                                        @foreach (var anexo in ticket.Anexos)
+                                                                        {
+                                                                            var name = System.IO.Path.GetFileName(anexo.Endereco);
+                                                                            <a href="~/@anexo.Endereco" download>@name</a>
 
-    <div class="table-responsive">
-        <table id="Tickets" class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Título</th>
-                    <th scope="col">Departamento</th>
-                    <th scope="col">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var ticket in Model.Tickets)
-                {
-                    <tr>
-                        <td>#@ticket.Id</td>
-                        <td>@ticket.Titulo</td>
-                        <td>@(ticket.Departamento?.Nome ?? "-")</td>
-                        <td><span class="badge badge-status bg-label-dark">@ticket.Status</span></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                                                                            <br />
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            <div class="card card-chat">
+                                                                <div class="card-header msg_head">
+                                                                    <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
+                                                                    <div class="action_menu">
+                                                                        <ul>
+                                                                            <li><i class="fas fa-user-circle"></i> View profile</li>
+                                                                            <li><i class="fas fa-users"></i> Add to close friends</li>
+                                                                            <li><i class="fas fa-plus"></i> Add to group</li>
+                                                                            <li><i class="fas fa-ban"></i> Block</li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card-body msg_card_body" id="chat-@ticket.Id">
+                                                                </div>
+                                                                <div class="card-footer">
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-append">
+                                                                            <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                                                                            <input type="file" class="input-attach" id="attach-@ticket.Id" style="display:none;">
+                                                                        </div>
+                                                                        <textarea id="text-@ticket.Id" class="form-control type_msg" placeholder="Escreva sua mensagem..."></textarea>
+                                                                        <div class="input-group-append">
+                                                                            <span class="input-group-text send_btn" data-ticket-id="@ticket.Id"><i class="fas fa-location-arrow"></i></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            @if (ticket.Status != TicketStatusEnum.Concluido && ticket.Status != TicketStatusEnum.Cancelado)
+                                                            {
+                                                                <form method="post" action="/Tickets/MudarStatus/@ticket.Id?status=@(TicketStatusEnum.Concluido)">
+                                                                    <div class="text-center mt-5">
+                                                                        <button class="btn btn-primary">Concluir Ticket</button>
+                                                                    </div>
+                                                                </form>
+                                                                <form method="post" action="/Tickets/MudarStatus/@ticket.Id?status=@(TicketStatusEnum.Cancelado)">
+                                                                    <div class="text-center mt-5">
+                                                                        <button class="btn btn-primary">Cancelar Ticket</button>
+                                                                    </div>
+                                                                </form>
+                                                            }
+                                                            else
+                                                            {
+                                                                <br />
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#Tickets').DataTable({
-                "paging": true,
-                "ordering": true,
-                "searching": true,
-                "lengthMenu": [10, 25, 50, 75, 100],
                 "language": {
-                    "lengthMenu": "Mostrar _MENU_ registros por página",
-                    "zeroRecords": "Nenhum registro encontrado",
-                    "info": "Mostrando página _PAGE_ de _PAGES_",
-                    "infoEmpty": "Nenhum registro disponível",
-                    "infoFiltered": "(filtrado de _MAX_ registros totais)",
-                    "search": "Pesquisar:"
+                    "sEmptyTable": "Nenhum registro encontrado na tabela",
+                    "sInfo": "Mostrar _START_ até _END_ de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrar 0 até 0 de 0 Registros",
+                    "sInfoFiltered": "(Filtrar de _MAX_ total registros)",
+                    "sInfoPostFix": "",
+                    "sInfoThousands": ".",
+                    "sLengthMenu": "Mostrar _MENU_ registros por página",
+                    "sLoadingRecords": "Carregando...",
+                    "sProcessing": "Processando...",
+                    "sZeroRecords": "Nenhum registro encontrado",
+                    "sSearch": "Pesquisar",
+                    "oPaginate": {
+                        "sNext": "Próximo",
+                        "sPrevious": "Anterior",
+                        "sFirst": "Primeiro",
+                        "sLast": "Último"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": Ordenar colunas de forma ascendente",
+                        "sSortDescending": ": Ordenar colunas de forma descendente"
+                    },
+                    "select": {
+                        "rows": {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    },
+                    "buttons": {
+                        "copy": "Copiar para a área de transferência",
+                        "copyTitle": "Cópia bem-sucedida",
+                        "copySuccess": {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        }
+                    }
                 }
+            });
+
+            $('.modal-ticket').on('click', function () {
+                var ticketId = $(this).data('ticket-id');
+                var chatDiv = $('#chat-' + ticketId);
+                chatDiv.load('/Tickets/ChatPartial/' + ticketId);
+            });
+
+            $('.send_btn').on('click', function () {
+                var ticketId = $(this).data('ticket-id');
+                var message = $('#text-' + ticketId).val();
+                var fileInput = $('#attach-' + ticketId)[0];
+                var formData = new FormData();
+                formData.append('ticketId', ticketId);
+                formData.append('message', message);
+                if (fileInput.files.length > 0) {
+                    formData.append('attachment', fileInput.files[0]);
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/Tickets/EnviarMensagem',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        $('#text-' + ticketId).val('');
+                        $('#attach-' + ticketId).val('');
+                        $('#chat-' + ticketId).load('/Tickets/ChatPartial/' + ticketId);
+                    },
+                    error: function (error) {
+                        console.error('Erro ao enviar mensagem: ' + JSON.stringify(error));
+                    }
+                });
             });
         });
     </script>
