@@ -78,7 +78,7 @@ namespace Tickest.Controllers
                 .Count(t => t.SolicitanteId == usuario.Id &&
                             (t.Status == TicketStatusEnum.Concluido && t.DataStatus.Month == DateTime.Now.Month)).ToString();
 
-            viewModel.TicketsAberto = _context.Tickets
+            viewModel.TicketsAbertos = _context.Tickets
                 .Count(t => t.SolicitanteId == usuario.Id && t.Status == TicketStatusEnum.Aberto).ToString();
         }
 

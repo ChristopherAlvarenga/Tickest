@@ -30,24 +30,29 @@ namespace MeuProjeto.Filtros
                 {
                     var viewModel = new TicketViewModel();
 
+                    // Contagem de tickets recebidos no mês atual
                     viewModel.TicketsRecebidos = _context.Tickets
                         .Count(t => t.SolicitanteId == usuarioId &&
                                     t.Status == TicketStatusEnum.Recebido &&
                                     t.DataCriacao.Month == DateTime.Now.Month).ToString();
 
+                    // Contagem de tickets concluídos no mês atual
                     viewModel.TicketConcluidos = _context.Tickets
                         .Count(t => t.SolicitanteId == usuarioId &&
                                     t.Status == TicketStatusEnum.Concluido &&
                                     t.DataStatus.Month == DateTime.Now.Month).ToString();
 
-                    viewModel.TicketsAberto = _context.Tickets
+                    // Contagem de tickets abertos
+                    viewModel.TicketsAbertos = _context.Tickets
                         .Count(t => t.SolicitanteId == usuarioId &&
                                     t.Status == TicketStatusEnum.Aberto).ToString();
 
+                    // Armazenando o viewModel na propriedade Items do contexto HTTP para ser acessível na view
                     context.HttpContext.Items["ContagensTicketsViewModel"] = viewModel;
                 }
             }
         }
+
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
