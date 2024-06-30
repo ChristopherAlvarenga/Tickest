@@ -1,4 +1,4 @@
-﻿namespace Tickest.Models.ViewModels
+﻿namespace Tickest.Models.ViewModels.Funcao
 {
     public class FuncaoViewModel
     {

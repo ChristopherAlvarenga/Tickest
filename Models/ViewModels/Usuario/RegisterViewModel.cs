@@ -1,5 +1,6 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
+using Tickest.Models.ViewModels.Funcao;
 
 namespace Tickest.Models.ViewModels
 {
@@ -12,15 +13,15 @@ namespace Tickest.Models.ViewModels
 
         [Required]
         [MaxLength(100)]
-        public string? Nome { get; set; }
+        public string Nome { get; set; }
 
         [Required]
         [EmailAddress]
-        public string? Email { get; set; }
+        public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        public string? Senha { get; set; }
+        public string Senha { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "Confimar Senha")]
@@ -34,6 +35,6 @@ namespace Tickest.Models.ViewModels
 
         public ICollection<FuncaoViewModel> OpcoesFuncoes { get; set; }
         //public ICollection<DepartamentoListViewModel> OpcoesDepartamentos { get; set; }
-        
+
     }
 }

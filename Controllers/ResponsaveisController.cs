@@ -9,6 +9,7 @@ using Tickest.Enums;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
 
+
 namespace Tickest.Controllers
 {
     [Authorize(Roles = "Gerenciador, Responsavel")]

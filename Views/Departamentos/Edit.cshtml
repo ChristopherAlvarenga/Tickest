@@ -1,9 +1,10 @@
 ﻿@using Tickest.Models.ViewModels
+
 @model DepartamentoEditViewModel
 
 @{
     Layout = "_LayoutGerenciador";
-    ViewData["Title"] = "Tickest - Adicionar Departamento";
+    ViewData["Title"] = "Tickest - Editar Departamento";
 }
 
 <div class="row">
@@ -12,23 +13,26 @@
         <div class="col-md-6">
             <div class="card mb-4">
                 <h5 class="card-header">Editar Departamento</h5>
-                <div class="card-body demo-vertical-spacing demo-only-element form-group">
-                    <label asp-for="Nome" class="form-label" for="basic-default-password12">Nome</label>
-                    <div class="input-group">
-                        <div class="input-group">
-                            @Html.DropDownListFor(model => model.GerenciadorSelecionado, new SelectList(Model.GerenciadorDisponiveis, "Id", "Nome"), "-- Selecione --", new { @class = "form-control" })
-                        </div>
-                        <input asp-for="Nome" type="text"
-                               class="form-control"
-                               placeholder="Nome do Departamento"
-                               aria-label="Nome do Departamento"
-                               aria-describedby="basic-addon11" />
+                <div class="card-body">
+                    <div class="form-group">
+                        <label asp-for="Nome" class="form-label">Nome</label>
+                        <input asp-for="Nome" class="form-control mb-3" placeholder="Nome do Departamento" />
+                        <span asp-validation-for="Nome" class="text-danger"></span>
                     </div>
-                    <label asp-for="GerenciadorSelecionado" class="form-label" for="basic-default-password12">Responsável pelo Departamento</label>
-                    <div class="input-group">
-                        @Html.DropDownListFor(model => model.GerenciadorSelecionado, new SelectList(Model.GerenciadorDisponiveis, "Id", "Nome"), "-- Selecione --", new { @class = "form-control" })
+
+                    <div class="form-group">
+                        <label asp-for="GerenciadorSelecionado" class="form-label">Responsável pelo Departamento</label>
+                        @Html.DropDownListFor(model => model.GerenciadorSelecionado, new SelectList(Model.GerenciadoresDisponiveis, "Id", "Nome"), "-- Selecione --", new { @class = "form-control mt-2 mb-3" })
+                        <span asp-validation-for="GerenciadorSelecionado" class="text-danger"></span>
                     </div>
-                    <button type="submit" class="btn btn-primary mt-3">Editar</button>
+
+                    <div class="form-group">
+                        <label asp-for="AnalistaSelecionado" class="form-label">Analista do Departamento</label>
+                        @Html.DropDownListFor(model => model.AnalistaSelecionado, new SelectList(Model.AnalistasDisponiveis, "Id", "Email"), "-- Selecione --", new { @class = "form-control mt-2 mb-3" })
+                        <span asp-validation-for="AnalistaSelecionado" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3">Salvar</button>
                 </div>
             </div>
         </div>

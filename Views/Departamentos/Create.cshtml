@@ -1,43 +1,42 @@
-﻿@using Tickest.Models.ViewModels;
-@model DepartamentoEditViewModel;
+﻿@using Tickest.Models.ViewModels
+@model DepartamentoEditViewModel
 
 @{
     Layout = "_LayoutGerenciador";
     ViewData["Title"] = "Tickest - Adicionar Departamento";
 }
 
-
 <div class="row">
-    <form method="post">
-        <!-- Basic -->
-        <div class="col-md-6">
-
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
             <div class="card mb-4">
                 <h5 class="card-header">Adicionar Departamento</h5>
-                <div class="card-body demo-vertical-spacing demo-only-element form-group">
-                    <label asp-for="Nome" class="form-label" for="basic-default-password12">Nome</label>
-                    <div class="input-group">
-                        <input asp-for="Nome" type="text"
-                               class="form-control"
-                               placeholder="Digite o nome"
-                               aria-label="Username"
-                               aria-describedby="basic-addon11" />
-
+                <div class="card-body">
+                    <div class="form-group mb-3">
+                        <label asp-for="Nome" class="form-label">Nome</label>
+                        <input asp-for="Nome" class="form-control" placeholder="Digite o nome" />
                         <span asp-validation-for="Nome" class="text-danger"></span>
                     </div>
-                    <label asp-for="GerenciadorSelecionado" class="form-label" for="basic-default-password12">Gerenciador do Departamento</label>
-                    <div class="input-group">
-                        <div class="input-group">
-                            @Html.DropDownListFor(model => model.GerenciadorSelecionado, new SelectList(Model.GerenciadorDisponiveis, "Id", "Email")
-                            ,"Selecione o Gerenciador", new { @class = "form-control" })
-                        </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="GerenciadorSelecionado" class="form-label">Gerenciador do Departamento</label>
+                        <select asp-for="GerenciadorSelecionado" asp-items="@Model.GerenciadoresDisponiveis.Select(p => new SelectListItem(p.Email, p.Id.ToString()))" class="form-control">
+                            <option value="">Selecione o Gerenciador</option>
+                        </select>
                         <span asp-validation-for="GerenciadorSelecionado" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="AnalistaSelecionado" class="form-label">Analistas do Departamento</label>
+                        <select asp-for="AnalistaSelecionado" asp-items="@Model.AnalistasDisponiveis.Select(e => new SelectListItem(e.Email, e.Id.ToString()))" class="form-control">
+                            <option value="">Selecione o Analista</option>
+                        </select>
+                        <span asp-validation-for="AnalistaSelecionado" class="text-danger"></span>
                     </div>
 
                     <button type="submit" class="btn btn-primary mt-3">Adicionar</button>
                 </div>
             </div>
-
-        </div>
-    </form>
+        </form>
+    </div>
 </div>

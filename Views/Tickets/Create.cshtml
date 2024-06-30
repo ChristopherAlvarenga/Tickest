@@ -1,8 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Tickest.Enums
 @using Tickest.Helpers
+@using Tickest.Models.Entities
 @using Tickest.Models.ViewModels;
-@using Tickest.Models.Entities;
+
 @model TicketViewModel
 @inject UserManager<Usuario> userManager
 
@@ -63,16 +64,6 @@
                                     }
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label asp-for="Ticket.Status" class="form-label">Status</label>
-                                <select asp-for="Ticket.Status" class="form-select" aria-label="Status">
-                                    <option value="">Escolha...</option>
-                                    @foreach (TicketStatusEnum status in Enum.GetValues(typeof(TicketStatusEnum)))
-                                    {
-                                        <option value="@((int)status)">@status.GetDisplayName()</option>
-                                    }
-                                </select>
-                            </div>
 
                             <div class="mb-3">
                                 <label asp-for="Ticket.Descricao" class="form-label">Descrição</label>
@@ -91,8 +82,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label asp-for="Ticket.EspecialidadeId" class="form-label" style="display:none">Especialidade</label>
-                                <select asp-for="Ticket.EspecialidadeId" class="form-select" id="Especialidades" style="display:none">
+                                <label asp-for="Ticket.EspecialidadeId" class="form-label">Especialidade</label>
+                                <select asp-for="Ticket.EspecialidadeId" class="form-select" id="Especialidades">
                                     <option value="">Escolha...</option>
                                     @foreach (var especialidade in Model.Especialidades)
                                     {
@@ -142,30 +133,33 @@
             $("#btn-anexo").click(function () {
                 $("#anexo").click();
             });
+
+            $("#DepartamentoId").change(function () {
+                var departamentoId = $(this).val();
+                var especialidadesDropdown = $("#EspecialidadeId");
+
+                // Limpa as opções anteriores
+                especialidadesDropdown.empty();
+
+                // Adiciona a opção padrão
+                especialidadesDropdown.append($('<option></option>').val('').html('Escolha...'));
+
+                // Filtra as especialidades pelo departamento selecionado
+                var especialidades = @Html.Raw(Json.Serialize(Model.Especialidades));
+                var especialidadesFiltradas = especialidades.filter(function (especialidade) {
+                    return especialidade.departamentoId == departamentoId;
+                });
+
+                // Adiciona as especialidades filtradas ao dropdown
+                especialidadesFiltradas.forEach(function (especialidade) {
+                    especialidadesDropdown.append($('<option></option>').val(especialidade.id).html(especialidade.nome));
+                });
+            });
         });
 
         function delRef(index) {
             dt.items.remove(index);
             $("#files div").eq(index).remove();
         }
-
-        document.getElementById("Departamentos").addEventListener("change", function () {
-            var DepId = this.value;
-            var Areas = document.getElementById("Especialidades");
-
-            Areas.innerHTML = '';
-
-        @foreach (var especialidade in Model.Especialidades)
-        {
-            <text>
-                                if (DepId == "@especialidade.DepartamentoId") {
-                    Areas.innerHTML += '<option value="@especialidade.Id">@especialidade.Nome</option>';
-                }
-            </text>
-        }
-
-                Areas.style.display = DepId ? "block" : "none";
-            document.getElementById("AreaLabel").style.display = DepId ? "block" : "none";
-        });
     </script>
 }

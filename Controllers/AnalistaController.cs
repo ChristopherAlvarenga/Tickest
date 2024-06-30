@@ -10,6 +10,7 @@ using Tickest.Enums;
 using Tickest.Models;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
+using Tickest.Models.ViewModels.Shared;
 
 namespace Tickest.Controllers
 {

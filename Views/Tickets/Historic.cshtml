@@ -1,7 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Tickest.Models.ViewModels;
 @using Tickest.Models.Entities;
-@model Tickest.Models.ViewModels.TicketViewModel
+
+@model TicketViewModel
 @inject UserManager<Usuario> userManager
 
 @{
@@ -10,14 +11,19 @@
     var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
     if (await userManager.IsInRoleAsync(user, "Gerenciador"))
+    {
         Layout = "_LayoutGerenciador";
-
+    }
     else if (await userManager.IsInRoleAsync(user, "Cliente"))
+    {
         Layout = "_LayoutCliente";
-
+    }
     else if (await userManager.IsInRoleAsync(user, "Analista"))
+    {
         Layout = "_Layout";
+    }
 }
+
 <style>
     .modal-body {
         background-color: #fff;
@@ -41,7 +47,6 @@
             color: #000;
         }
 
-
     .theme-color {
         flex-wrap: wrap !important;
         color: #004cb9;
@@ -57,6 +62,7 @@
 </style>
 
 <link rel="stylesheet" href="~/css/chat.css" />
+
 <div class="row">
     <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
         <div class="card">
@@ -91,11 +97,12 @@
                                             <div class="modal fade" ticket_id="@ticket.Id" id="modalScrollable-@ticket.Id" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-body ">
-                                                            <div class="text-right"> <i class="fa fa-close close" data-bs-dismiss="modal" aria-label="Close" data-dismiss="modal"></i> </div>
+                                                        <div class="modal-body">
+                                                            <div class="text-right">
+                                                                <i class="fa fa-close close" data-bs-dismiss="modal" aria-label="Close"></i>
+                                                            </div>
 
                                                             <div class="px-4 py-5">
-
                                                                 <h5 class="text-uppercase">#@ticket.Id</h5>
                                                                 <h4 class="mt-5 theme-color mb-5">@ticket.Titulo</h4>
 
@@ -110,35 +117,23 @@
                                                                     <span class="text-muted">@ticket.DataCriacao</span>
                                                                 </div>
                                                                 <div class="d-flex1 justify-content-between">
-                                                                    <span class="font-weight-bold">
-                                                                        Prioridade
-                                                                    </span>
+                                                                    <span class="font-weight-bold">Prioridade</span>
                                                                     <span class="text-muted">@ticket.Prioridade</span>
                                                                 </div>
-
                                                                 <div class="d-flex1 justify-content-between">
-                                                                    <span class="font-weight-bold">
-                                                                        Status
-                                                                    </span>
+                                                                    <span class="font-weight-bold">Status</span>
                                                                     <span class="text-muted">@ticket.Status</span>
                                                                 </div>
                                                                 <div class="d-flex1 justify-content-between">
-                                                                    <span class="font-weight-bold">
-                                                                        Enviado por:
-                                                                    </span>
+                                                                    <span class="font-weight-bold">Enviado por:</span>
                                                                     <span class="text-muted">@ticket.Solicitante.Nome (@ticket.Solicitante.Email)</span>
                                                                 </div>
                                                                 <div class="d-flex1 justify-content-between">
-                                                                    <span class="font-weight-bold">
-                                                                        Departamento:
-                                                                    </span>
+                                                                    <span class="font-weight-bold">Departamento:</span>
                                                                     <span class="text-muted">@ticket.Departamento.Nome</span>
                                                                 </div>
                                                                 <div class="mt-3">
-                                                                    <span class="font-weight-bold">
-                                                                        Anexos:
-                                                                    </span>
-                                                                    <br>
+                                                                    <span class="font-weight-bold">Anexos:</span><br>
                                                                     @if (ticket.Anexos != null)
                                                                     {
                                                                         @foreach (var anexo in ticket.Anexos)
@@ -146,11 +141,13 @@
                                                                             var name = anexo.Endereco.Substring(anexo.Endereco.IndexOf('/') + 1);
 
                                                                             <a href="~/@anexo.Endereco" download>@name</a>
+
                                                                             <br />
                                                                         }
                                                                     }
                                                                 </div>
                                                             </div>
+
                                                             <div class="card card-chat">
                                                                 <div class="card-header msg_head">
                                                                     <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
@@ -164,19 +161,20 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="card-body msg_card_body" id="chat-@ticket.Id">
+                                                                    <!-- Chat messages will be loaded dynamically here -->
                                                                 </div>
                                                                 @*<div class="card-footer">
-                                                                    <div class="input-group">
-                                                                        <div class="input-group-append">
-                                                                            <span ticket_id="@ticket.Id" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
-                                                                            <input type="file" class="input-attach" ticket_id="@ticket.Id" id="attach-@ticket.Id" style="display:none;">
-                                                                        </div>
-                                                                        <textarea name="" id="text-@ticket.Id" class="form-control type_msg" placeholder="Escreva sua mensagem..."></textarea>
-                                                                        <div class="input-group-append">
-                                                                            <span class="input-group-text send_btn" id="enviar-@ticket.Id" ticket_id="@ticket.Id"><i class="fas fa-location-arrow"></i></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>*@
+                                                            <div class="input-group">
+                                                            <div class="input-group-append">
+                                                            <span ticket_id="@ticket.Id" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                                                            <input type="file" class="input-attach" ticket_id="@ticket.Id" id="attach-@ticket.Id" style="display:none;">
+                                                            </div>
+                                                            <textarea name="" id="text-@ticket.Id" class="form-control type_msg" placeholder="Escreva sua mensagem..."></textarea>
+                                                            <div class="input-group-append">
+                                                            <span class="input-group-text send_btn" id="enviar-@ticket.Id" ticket_id="@ticket.Id"><i class="fas fa-location-arrow"></i></span>
+                                                            </div>
+                                                            </div>
+                                                            </div>*@
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -200,8 +198,6 @@
 
 <script>
     window.onload = function () {
-
-
         $(".modal-ticket").click(function () {
             var ticket_id = $(this).attr("ticket_id");
             var url = "/Chat/Mensagens/" + ticket_id;
@@ -209,7 +205,8 @@
                 $("#chat-" + ticket_id).html(data);
                 $("#chat-" + ticket_id).scrollTop($("#chat-" + ticket_id)[0].scrollHeight);
             });
-        })
+        });
+
         $(".modal").on('keypress', function (e) {
             var ticket_id = $(this).attr("ticket_id");
             if (e.which == 13) {
@@ -219,12 +216,10 @@
 
         $(".attach_btn").click(function () {
             var ticket_id = $(this).attr("ticket_id");
-
             $("#attach-" + ticket_id).click();
-        })
+        });
 
         $(".input-attach").change(function () {
-
             var id = $(this).attr("ticket_id");
             var filename = $(this).val();
 
@@ -235,9 +230,8 @@
                 var filename = document.getElementById('attach-' + id).files[0].name;
 
                 var formData = new FormData();
-
-
                 formData.append("file", file);
+
                 $.ajax({
                     dataType: "json",
                     type: "POST",
@@ -248,136 +242,39 @@
                     data: formData,
                     success: function (retorno) {
                         console.log(retorno);
-                        if (retorno['sucesso']) {
-                            var url = retorno['sucesso'];
-                            var html = '<a class="help-button col-sm-4 downloadupaddinvoice" download="' + filename + '" href="../' + url + '"  title="Baixar anexo" download><i class="icon-download-alt"></i>' + filename + '</a>';
-                            var formData = new FormData();
-                            formData.append("ticket_id", id);
-                            formData.append("msg", html);
-                            $.ajax({
-                                dataType: "json",
-                                type: "POST",
-                                url: "/Chat/Enviar",
-                                cache: false,
-                                contentType: false,
-                                processData: false,
-                                data: formData,
-                                success: function (retorno) {
-                                    console.log(retorno);
-                                    if (retorno['sucesso']) {
-                                        $("#text-" + id).val("");
-                                        var url = "/Chat/Mensagens/" + id;
-                                        $.get(url, function (data) {
-                                            $("#chat-" + id).html(data);
-                                            $("#chat-" + id).scrollTop($("#chat-" + id)[0].scrollHeight);
-                                        });
-
-                                    }
-
-                                }
-                            });
-
-
+                        if (retorno != null) {
+                            $("#" + id).val('');
+                            $("#" + id).append('<input type="file" id="attach-' + id + '" class="form-control attach" ticket_id="' + id + '"/>');
+                            var html = '<div class="col-3" id="attach' + retorno.Id + '" >' + filename + '<br />' + retorno.Id + '</div>';
+                            $('#' + id).append(html);
                         }
-
+                    },
+                    error: function (retorno) {
+                        console.log(retorno);
                     }
                 });
-
-            }
-
-        })
-
-        $(".send_btn").click(function () {
-
-            var formData = new FormData();
-            var ticket_id = $(this).attr("ticket_id");
-            var msg = $("#text-" + ticket_id).val();
-            formData.append("ticket_id", ticket_id);
-            formData.append("msg", msg);
-            $.ajax({
-                dataType: "json",
-                type: "POST",
-                url: "/Chat/Enviar",
-                cache: false,
-                contentType: false,
-                processData: false,
-                data: formData,
-                success: function (retorno) {
-                    console.log(retorno);
-                    if (retorno['sucesso']) {
-                        $("#text-" + ticket_id).val("");
-                        var url = "/Chat/Mensagens/" + ticket_id;
-                        $.get(url, function (data) {
-                            $("#chat-" + ticket_id).html(data);
-                            $("#chat-" + ticket_id).scrollTop($("#chat-" + ticket_id)[0].scrollHeight);
-                        });
-
-                    }
-
-                }
-            });
-        })
-        $('#Tickets').DataTable({
-            "ordering": true,
-            "paging": true,
-            "searching": true,
-            "oLanguage": {
-                "sEmptyTable": "Nenhum registro encontrado na tabela",
-                "sInfo": "Mostrar _START_ até _END_ de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrar 0 até 0 de 0 Registros",
-                "sInfoFiltered": "(Filtrar de _MAX_ total registros)",
-                "sInfoPostFix": "",
-                "sInfoThousands": ".",
-                "sLengthMenu": "Mostrar _MENU_ registros por pagina",
-                "sLoadingRecords": "Carregando...",
-                "sProcessing": "Processando...",
-                "sZeroRecords": "Nenhum registro encontrado",
-                "sSearch": "Pesquisar",
-                "oPaginate": {
-                    "sNext": "Proximo",
-                    "sPrevious": "Anterior",
-                    "sFirst": "Primeiro",
-                    "sLast": "Ultimo"
-                },
-                "oAria": {
-                    "sSortAscending": ": Ordenar colunas de forma ascendente",
-                    "sSortDescending": ": Ordenar colunas de forma descendente"
-                }
             }
         });
 
-
-    @foreach (var ticket in Model.Tickets)
-    {
-        <text>
-                setInterval(function () {
-
-
-
-
-                    var url = "/Chat/Mensagens/@ticket.Id";
-                    $.get(url, function (data) {
-                        var scroll = $("#chat-@ticket.Id").scrollTop();
-
-
-                        if ($("#chat-@ticket.Id")[0].scrollHeight - $("#chat-@ticket.Id").scrollTop() == $("#chat-@ticket.Id").outerHeight()) {
-                            $("#chat-@ticket.Id").html(data);
-                            $("#chat-@ticket.Id").scrollTop($("#chat-@ticket.Id")[0].scrollHeight);
-                            console.log("entrou");
-                        } else {
-                            $("#chat-@ticket.Id").html(data);
-                            $("#chat-@ticket.Id").scrollTop(scroll);
-                        }
-                    });
-                    console.log("foi");
-
-
-
-                }, 3000);
-        </text>
-
-
-
+        $(".send_btn").click(function () {
+            var ticket_id = $(this).attr("ticket_id");
+            var message = $("#text-" + ticket_id).val();
+            var url = "/Chat/EnviarMensagem";
+            var data = { TicketId: ticket_id, Mensagem: message };
+            $.post(url, data, function (retorno) {
+                if (retorno != null && retorno.Sucesso) {
+                    $("#text-" + ticket_id).val('');
+                    $("#text-" + ticket_id).focus();
+                    $("#chat-" + ticket_id).append(retorno.Mensagem);
+                    $("#chat-" + ticket_id).scrollTop($("#chat-" + ticket_id)[0].scrollHeight);
+                } else {
+                    alert('Error');
+                }
+            });
+        });
     }
-        }
 </script>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/chat.js"></script>

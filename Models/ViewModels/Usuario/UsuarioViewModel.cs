@@ -1,4 +1,5 @@
-﻿using Tickest.Models.Entities;
+﻿using System.Collections.Generic;
+using Tickest.Models.Entities;
 
 namespace Tickest.Models.ViewModels
 {

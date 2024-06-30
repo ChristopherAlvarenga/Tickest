@@ -1,4 +1,5 @@
-﻿using Tickest.Models.Entities;
+﻿using System.Collections.Generic;
+using Tickest.Models.Entities;
 
 namespace Tickest.Models.ViewModels
 {
@@ -8,10 +9,11 @@ namespace Tickest.Models.ViewModels
 
         public string Nome { get; set; }
 
-        public string Cargo { get; set;}
+        public string Funcao { get; set; }
 
         public int DepartamentoId { get; set; }
         public int EspecialidadeId { get; set; }
+
         public ICollection<Departamento> Departamentos { get; set; }
         public ICollection<Especialidade> Especialidades { get; set; }
     }

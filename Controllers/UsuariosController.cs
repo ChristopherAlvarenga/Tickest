@@ -79,7 +79,7 @@ namespace Tickest.Controllers
 
                 viewModel.Id = usuarioEntidade.Id;
                 viewModel.Nome = usuarioEntidade.Nome;
-                viewModel.Cargo = string.Join(", ", await userManager.GetRolesAsync(usuarioEntidade));
+                viewModel.Funcao = string.Join(", ", await userManager.GetRolesAsync(usuarioEntidade));
 
             }
 

@@ -9,10 +9,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tickest.Data;
 using Tickest.Models.Entities;
-using Tickest.Models.ViewModels;
 using Tickest.Enums;
 using Tickest.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Tickest.Models.ViewModels;
+
 
 namespace Tickest.Controllers
 {

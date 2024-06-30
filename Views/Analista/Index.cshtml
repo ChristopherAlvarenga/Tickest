@@ -1,6 +1,6 @@
-﻿@model Tickest.Models.ViewModels.TicketViewModel
+﻿@using Tickest.Models
+@using Tickest.Enums
 
-@using Tickest.Enums;
 
 @{
     Layout = "_Layout";
@@ -92,55 +92,50 @@
                                         <td><span class="badge bg-label-dark me-1">@ticket.Status</span></td>
                                         <td>
                                             <!-- Botão -->
-                                            <button type="button" class="btn btn modal-ticket" data-ticket-id="@ticket.Id" data-bs-toggle="modal" data-bs-target="#modalScrollable-@ticket.Id">
+                                            <button type="button" class="btn btn-primary modal-ticket" data-ticket-id="@ticket.Id" data-bs-toggle="modal" data-bs-target="#modalScrollable-@ticket.Id">
                                                 Ver mais
                                             </button>
-                                            <!-- Informação -->
+                                            <!-- Modal -->
                                             <div class="modal fade" id="modalScrollable-@ticket.Id" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">#@ticket.Id - @ticket.Titulo</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
                                                         <div class="modal-body">
-                                                            <div class="text-right">
-                                                                <i class="fa fa-close close" data-bs-dismiss="modal" aria-label="Close" data-dismiss="modal"></i>
-                                                            </div>
                                                             <div class="px-4 py-5">
-                                                                <h5 class="text-uppercase">#@ticket.Id</h5>
-                                                                <h4 class="mt-5 theme-color mb-5">@ticket.Titulo</h4>
-                                                                <div class="d-flex1 justify-content-between">
-                                                                    <span class="theme-color">@ticket.Descricao</span>
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <hr class="new1">
-                                                                </div>
-                                                                <div class="d-flex1 justify-content-between">
+                                                                <div class="theme-color">@ticket.Descricao</div>
+                                                                <hr class="new1">
+                                                                <div class="d-flex justify-content-between">
                                                                     <span class="font-weight-bold">Criado Em:</span>
                                                                     <span class="text-muted">@ticket.DataCriacao</span>
                                                                 </div>
-                                                                <div class="d-flex1 justify-content-between">
+                                                                <div class="d-flex justify-content-between">
                                                                     <span class="font-weight-bold">Prioridade:</span>
                                                                     <span class="text-muted">@ticket.Prioridade</span>
                                                                 </div>
-                                                                <div class="d-flex1 justify-content-between">
+                                                                <div class="d-flex justify-content-between">
                                                                     <span class="font-weight-bold">Status:</span>
                                                                     <span class="text-muted">@ticket.Status</span>
                                                                 </div>
-                                                                <div class="d-flex1 justify-content-between">
+                                                                <div class="d-flex justify-content-between">
                                                                     <span class="font-weight-bold">Enviado por:</span>
                                                                     <span class="text-muted">@ticket.Solicitante.Nome (@ticket.Solicitante.Email)</span>
                                                                 </div>
-                                                                <div class="d-flex1 justify-content-between">
+                                                                <div class="d-flex justify-content-between">
                                                                     <span class="font-weight-bold">Departamento:</span>
                                                                     <span class="text-muted">@ticket.Departamento.Nome</span>
                                                                 </div>
                                                                 <div class="mt-3">
-                                                                    <span class="font-weight-bold">Anexos:</span>
-                                                                    <br>
+                                                                    <span class="font-weight-bold">Anexos:</span><br />
                                                                     @if (ticket.Anexos != null)
                                                                     {
                                                                         @foreach (var anexo in ticket.Anexos)
                                                                         {
-                                                                            var name = anexo.Endereco.Substring(anexo.Endereco.IndexOf('/') + 1);
-                                                                            <a href="~/@anexo.Endereco" download>@name</a>
+                                                                            var name = anexo.Endereco.Substring(anexo.Endereco.LastIndexOf('/') + 1);
+                                                                            <a href="~/@anexo.Endereco" download="@name">@name</a>
+
                                                                             <br />
                                                                         }
                                                                     }
@@ -151,10 +146,10 @@
                                                                     <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
                                                                     <div class="action_menu">
                                                                         <ul>
-                                                                            <li><i class="fas fa-user-circle"></i> View profile</li>
-                                                                            <li><i class="fas fa-users"></i> Add to close friends</li>
-                                                                            <li><i class="fas fa-plus"></i> Add to group</li>
-                                                                            <li><i class="fas fa-ban"></i> Block</li>
+                                                                            <li><i class="fas fa-user-circle"></i> Ver perfil</li>
+                                                                            <li><i class="fas fa-users"></i> Adicionar aos amigos</li>
+                                                                            <li><i class="fas fa-plus"></i> Adicionar ao grupo</li>
+                                                                            <li><i class="fas fa-ban"></i> Bloquear</li>
                                                                         </ul>
                                                                     </div>
                                                                 </div>
@@ -163,7 +158,7 @@
                                                                 {
                                                                     <div class="card-footer">
                                                                         <div class="input-group">
-                                                                            <div class="input-group-append">
+                                                                            <div class="input-group-prepend">
                                                                                 <span class="input-group-text attach_btn" data-ticket-id="@ticket.Id"><i class="fas fa-paperclip"></i></span>
                                                                                 <input type="file" class="input-attach" id="attach-@ticket.Id" style="display:none;">
                                                                             </div>
@@ -189,20 +184,22 @@
                                                             {
                                                                 <form method="post" action="/Tickets/MudarStatus/@ticket.Id?status=@TicketStatusEnum.EmTeste">
                                                                     <div class="text-center mt-5">
-                                                                        <button class="btn btn-primary">Colocar para Teste</button>
+                                                                        <button class="btn btn-primary">Colocar em teste</button>
                                                                     </div>
                                                                 </form>
                                                             }
-                                                            else
+                                                            else if (ticket.Status == TicketStatusEnum.EmTeste)
                                                             {
-                                                                <br />
+                                                                <form method="post" action="/Tickets/MudarStatus/@ticket.Id?status=@TicketStatusEnum.Concluido">
+                                                                    <div class="text-center mt-5">
+                                                                        <button class="btn btn-primary">Concluir Ticket</button>
+                                                                    </div>
+                                                                </form>
                                                             }
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Informação -->
                                         </td>
                                     </tr>
                                 }
@@ -215,156 +212,43 @@
     </div>
 </div>
 
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.1/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.1/js/buttons.colVis.min.js"></script>
 
-
-<script>
-    window.onload = function () {
-        // Evento para abrir o modal e carregar mensagens
-        $(".modal-ticket").click(function () {
-            var ticketId = $(this).data("ticket-id");
-            var url = "/Chat/Mensagens/" + ticketId;
-            $.get(url, function (data) {
-                $("#chat-" + ticketId).html(data);
-                $("#chat-" + ticketId).scrollTop($("#chat-" + ticketId)[0].scrollHeight);
+    <script>
+        $(document).ready(function () {
+            $('#Tickets').DataTable({
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/Portuguese-Brasil.json'
+                },
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, 'Todos']],
+                buttons: [
+                    'copy', 'excel', 'pdf', 'print', 'colvis'
+                ]
             });
         });
 
-        // Enviar mensagem ao pressionar Enter
-        $(".modal").on('keypress', function (e) {
-            if (e.which == 13) {
-                var ticketId = $(this).find(".send_btn").data("ticket-id");
-                $("#enviar-" + ticketId).click();
-            }
-        });
-
-        // Abrir o input de anexo ao clicar no ícone de clipe
-        $(".attach_btn").click(function () {
-            var ticketId = $(this).data("ticket-id");
-            $("#attach-" + ticketId).click();
-        });
-
-        // Enviar anexo
-        $(".input-attach").change(function () {
-            var ticketId = $(this).attr("id").split('-')[1];
-            var fileInput = this;
-            if (fileInput.files && fileInput.files[0]) {
-                var formData = new FormData();
-                formData.append("file", fileInput.files[0]);
-                $.ajax({
-                    dataType: "json",
-                    type: "POST",
-                    url: "/Chat/Upload",
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    data: formData,
-                    success: function (retorno) {
-                        if (retorno.sucesso) {
-                            var url = retorno.sucesso;
-                            var filename = fileInput.files[0].name;
-                            var html = '<a class="help-button col-sm-4 downloadupaddinvoice" download="' + filename + '" href="../' + url + '" title="Baixar anexo"><i class="icon-download-alt"></i>' + filename + '</a>';
-                            var formData = new FormData();
-                            formData.append("ticket_id", ticketId);
-                            formData.append("msg", html);
-                            $.ajax({
-                                dataType: "json",
-                                type: "POST",
-                                url: "/Chat/Enviar",
-                                cache: false,
-                                contentType: false,
-                                processData: false,
-                                data: formData,
-                                success: function (retorno) {
-                                    if (retorno.sucesso) {
-                                        $("#text-" + ticketId).val("");
-                                        var url = "/Chat/Mensagens/" + ticketId;
-                                        $.get(url, function (data) {
-                                            $("#chat-" + ticketId).html(data);
-                                            $("#chat-" + ticketId).scrollTop($("#chat-" + ticketId)[0].scrollHeight);
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-            }
+        // Anexar arquivo
+        $('.attach_btn').click(function () {
+            var ticketId = $(this).data('ticket-id');
+            $('#attach-' + ticketId).click();
         });
 
         // Enviar mensagem
-        $(".send_btn").click(function () {
-            var ticketId = $(this).data("ticket-id");
-            var msg = $("#text-" + ticketId).val();
-            var formData = new FormData();
-            formData.append("ticket_id", ticketId);
-            formData.append("msg", msg);
-            $.ajax({
-                dataType: "json",
-                type: "POST",
-                url: "/Chat/Enviar",
-                cache: false,
-                contentType: false,
-                processData: false,
-                data: formData,
-                success: function (retorno) {
-                    if (retorno.sucesso) {
-                        $("#text-" + ticketId).val("");
-                        var url = "/Chat/Mensagens/" + ticketId;
-                        $.get(url, function (data) {
-                            $("#chat-" + ticketId).html(data);
-                            $("#chat-" + ticketId).scrollTop($("#chat-" + ticketId)[0].scrollHeight);
-                        });
-                    }
-                }
+        $('.send_btn').click(function () {
+            var ticketId = $(this).data('ticket-id');
+            var message = $('#text-' + ticketId).val();
+            $('#text-' + ticketId).val('');
+            $.post('/Tickets/EnviarMensagem/' + ticketId, { message: message }, function (data) {
+                $('#chat-' + ticketId).append('<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">' + message + '</div></div>');
             });
         });
-
-        // Configuração do DataTable
-        $('#Tickets').DataTable({
-            ordering: true,
-            paging: true,
-            searching: true,
-            oLanguage: {
-                sEmptyTable: "Nenhum registro encontrado na tabela",
-                sInfo: "Mostrar _START_ até _END_ de _TOTAL_ registros",
-                sInfoEmpty: "Mostrar 0 até 0 de 0 Registros",
-                sInfoFiltered: "(Filtrar de _MAX_ total registros)",
-                sLengthMenu: "Mostrar _MENU_ registros por pagina",
-                sLoadingRecords: "Carregando...",
-                sProcessing: "Processando...",
-                sZeroRecords: "Nenhum registro encontrado",
-                sSearch: "Pesquisar",
-                oPaginate: {
-                    sNext: "Proximo",
-                    sPrevious: "Anterior",
-                    sFirst: "Primeiro",
-                    sLast: "Ultimo"
-                },
-                oAria: {
-                    sSortAscending: ": Ordenar colunas de forma ascendente",
-                    sSortDescending: ": Ordenar colunas de forma descendente"
-                }
-            }
-        });
-
-        // Atualização automática do chat a cada 3 segundos
-    @foreach (var ticket in Model.Tickets)
-    {
-        <text>
-                setInterval(function () {
-                    var url = "/Chat/Mensagens/@ticket.Id";
-                    $.get(url, function (data) {
-                        var scroll = $("#chat-@ticket.Id").scrollTop();
-                        if ($("#chat-@ticket.Id")[0].scrollHeight - $("#chat-@ticket.Id").scrollTop() == $("#chat-@ticket.Id").outerHeight()) {
-                            $("#chat-@ticket.Id").html(data);
-                            $("#chat-@ticket.Id").scrollTop($("#chat-@ticket.Id")[0].scrollHeight);
-                        } else {
-                            $("#chat-@ticket.Id").html(data);
-                            $("#chat-@ticket.Id").scrollTop(scroll);
-                        }
-                    });
-                }, 3000);
-        </text>
-    }
-            }
-</script>
+    </script>
+}

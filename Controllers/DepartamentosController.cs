@@ -6,6 +6,7 @@ using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
 
+
 namespace Tickest.Controllers
 {
     [Authorize]
@@ -31,12 +32,15 @@ namespace Tickest.Controllers
         public async Task<IActionResult> Create()
         {
             var usersGerenciador = await userManager.GetUsersInRoleAsync("Gerenciador");
+            var usersAnalista = await userManager.GetUsersInRoleAsync("Analista");
 
             var viewModel = new DepartamentoEditViewModel()
             {
                 Nome = string.Empty,
                 GerenciadorSelecionado = 0,
-                GerenciadorDisponiveis = usersGerenciador.Where(p => p.DepartamentoId == null).Select(p => new GerenciadorViewModel { Id = p.Id, Email = p.Email }).ToList()
+                GerenciadoresDisponiveis = usersGerenciador.Where(p => p.DepartamentoId == null).Select(p => new GerenciadorViewModel { Id = p.Id, Email = p.Email }).ToList(),
+                AnalistaSelecionado = 0,
+                AnalistasDisponiveis = usersAnalista.Select(e => new AnalistaViewModel { Id = e.Id, Email = e.Email }).ToList()
             };
 
             return View(viewModel);
@@ -68,7 +72,8 @@ namespace Tickest.Controllers
                 return NotFound();
             }
 
-            var gerenciadores = await userManager.GetUsersInRoleAsync("Gerenciador");
+            var usersGerenciador = await userManager.GetUsersInRoleAsync("Gerenciador");
+            var usersAnalistas = await userManager.GetUsersInRoleAsync("Analista");
 
             var departamento = await _context.Set<Departamento>()
                  .Select(departamento => new DepartamentoEditViewModel
@@ -76,11 +81,13 @@ namespace Tickest.Controllers
                      Id = departamento.Id,
                      Nome = departamento.Nome,
                      GerenciadorSelecionado = departamento.GerenciadorId,
-                     GerenciadorDisponiveis = gerenciadores.Select(responsavel => new GerenciadorViewModel
+                     GerenciadoresDisponiveis = usersGerenciador.Select(responsavel => new GerenciadorViewModel
                      {
                          Id = responsavel.Id,
                          Nome = responsavel.Email
-                     }).ToList()
+                     }).ToList(),
+                     AnalistaSelecionado = 0,
+                     AnalistasDisponiveis = usersAnalistas.Select(p => new AnalistaViewModel {Id = p.Id, Email = p.Email }).ToList()
                  })
                  .FirstOrDefaultAsync(p => p.Id == id);
 

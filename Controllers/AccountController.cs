@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
+using Tickest.Models.ViewModels.Funcao;
+
 
 namespace Tickest.Controllers
 {

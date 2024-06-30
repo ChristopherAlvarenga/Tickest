@@ -1,4 +1,6 @@
-﻿namespace Tickest.Models.ViewModels
+﻿using Tickest.Models.ViewModels;
+
+namespace Tickest.Models.ViewModels
 {
     public class DepartamentoListViewModel
     {

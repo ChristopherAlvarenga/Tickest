@@ -23,9 +23,6 @@ namespace Tickest.Models.Entities
 
         public ICollection<Notificacao> Notificacoes { get; set; }
 
-        //public static implicit operator Usuario?(IdentityUser? v)
-        //{
-        //    throw new NotImplementedException();
-        //}
+    
     }
 }
