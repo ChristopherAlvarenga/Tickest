@@ -10,56 +10,18 @@
 
     var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
+    string layout = "_Layout";
     if (await userManager.IsInRoleAsync(user, "Gerenciador"))
     {
-        Layout = "_LayoutGerenciador";
+        layout = "_LayoutGerenciador";
     }
     else if (await userManager.IsInRoleAsync(user, "Cliente"))
     {
-        Layout = "_LayoutCliente";
+        layout = "_LayoutCliente";
     }
-    else if (await userManager.IsInRoleAsync(user, "Analista"))
-    {
-        Layout = "_Layout";
-    }
+
+    Layout = layout;
 }
-
-<style>
-    .modal-body {
-        background-color: #fff;
-        border-color: #fff;
-    }
-
-    .d-flex1 {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        word-break: break-all; /*  */
-        word-wrap: break-word; /* if you want to cut the complete word */
-        white-space: normal;
-    }
-
-    .close {
-        color: #000;
-        cursor: pointer;
-    }
-
-        .close:hover {
-            color: #000;
-        }
-
-    .theme-color {
-        flex-wrap: wrap !important;
-        color: #004cb9;
-        word-break: break-all; /*  */
-        word-wrap: break-word; /* if you want to cut the complete word */
-        white-space: normal;
-    }
-
-    hr.new1 {
-        border-top: 2px dashed #fff;
-        margin: 0.4rem 0;
-    }
-</style>
 
 <link rel="stylesheet" href="~/css/chat.css" />
 
@@ -86,14 +48,12 @@
                                     <tr>
                                         <td><strong>#@ticket.Id</strong></td>
                                         <td><strong>@ticket.Titulo</strong></td>
-                                        <td>@ticket.Departamento.Nome</td>
+                                        <td>@(ticket.Departamento != null ? ticket.Departamento.Nome : "Departamento não especificado")</td>
                                         <td><span class="badge bg-label-dark me-1">@ticket.Status</span></td>
                                         <td>
-                                            <!-- Botão -->
                                             <button type="button" class="btn btn modal-ticket" ticket_id="@ticket.Id" data-bs-toggle="modal" data-bs-target="#modalScrollable-@ticket.Id">
                                                 Ver mais
                                             </button>
-                                            <!-- Informação -->
                                             <div class="modal fade" ticket_id="@ticket.Id" id="modalScrollable-@ticket.Id" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
@@ -126,11 +86,11 @@
                                                                 </div>
                                                                 <div class="d-flex1 justify-content-between">
                                                                     <span class="font-weight-bold">Enviado por:</span>
-                                                                    <span class="text-muted">@ticket.Solicitante.Nome (@ticket.Solicitante.Email)</span>
+                                                                    <span class="text-muted">@ticket.Solicitante?.Nome (@ticket.Solicitante?.Email)</span>
                                                                 </div>
                                                                 <div class="d-flex1 justify-content-between">
                                                                     <span class="font-weight-bold">Departamento:</span>
-                                                                    <span class="text-muted">@ticket.Departamento.Nome</span>
+                                                                    <span class="text-muted">@ticket.Departamento?.Nome</span>
                                                                 </div>
                                                                 <div class="mt-3">
                                                                     <span class="font-weight-bold">Anexos:</span><br>
@@ -139,9 +99,7 @@
                                                                         @foreach (var anexo in ticket.Anexos)
                                                                         {
                                                                             var name = anexo.Endereco.Substring(anexo.Endereco.IndexOf('/') + 1);
-
                                                                             <a href="~/@anexo.Endereco" download>@name</a>
-
                                                                             <br />
                                                                         }
                                                                     }
@@ -161,29 +119,13 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="card-body msg_card_body" id="chat-@ticket.Id">
-                                                                    <!-- Chat messages will be loaded dynamically here -->
+                                                                    <!-- Dynamic chat messages will load here -->
                                                                 </div>
-                                                                @*<div class="card-footer">
-                                                            <div class="input-group">
-                                                            <div class="input-group-append">
-                                                            <span ticket_id="@ticket.Id" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
-                                                            <input type="file" class="input-attach" ticket_id="@ticket.Id" id="attach-@ticket.Id" style="display:none;">
                                                             </div>
-                                                            <textarea name="" id="text-@ticket.Id" class="form-control type_msg" placeholder="Escreva sua mensagem..."></textarea>
-                                                            <div class="input-group-append">
-                                                            <span class="input-group-text send_btn" id="enviar-@ticket.Id" ticket_id="@ticket.Id"><i class="fas fa-location-arrow"></i></span>
-                                                            </div>
-                                                            </div>
-                                                            </div>*@
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <br />
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Informação -->
                                         </td>
                                     </tr>
                                 }
@@ -224,7 +166,7 @@
             var filename = $(this).val();
 
             if (filename == "" || filename == null) {
-                alert('Error');
+                alert('Erro ao anexar arquivo');
             } else {
                 var file = document.getElementById('attach-' + id).files[0];
                 var filename = document.getElementById('attach-' + id).files[0].name;
@@ -251,6 +193,7 @@
                     },
                     error: function (retorno) {
                         console.log(retorno);
+                        alert('Erro ao anexar arquivo');
                     }
                 });
             }
@@ -262,19 +205,11 @@
             var url = "/Chat/EnviarMensagem";
             var data = { TicketId: ticket_id, Mensagem: message };
             $.post(url, data, function (retorno) {
-                if (retorno != null && retorno.Sucesso) {
-                    $("#text-" + ticket_id).val('');
-                    $("#text-" + ticket_id).focus();
-                    $("#chat-" + ticket_id).append(retorno.Mensagem);
-                    $("#chat-" + ticket_id).scrollTop($("#chat-" + ticket_id)[0].scrollHeight);
-                } else {
-                    alert('Error');
-                }
+                $("#text-" + ticket_id).val('');
+                var html = '<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">' + message + '</div><div class="img_cont_msg"><img src="https://pt.123rf.com/450/thumb-18661224.jpg" class="rounded-circle user_img_msg"></div></div>';
+                $('#chat-' + ticket_id).append(html);
+                $('#chat-' + ticket_id).scrollTop($('#chat-' + ticket_id)[0].scrollHeight);
             });
         });
     }
 </script>
-
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/chat.js"></script>

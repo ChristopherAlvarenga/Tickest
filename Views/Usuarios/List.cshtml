@@ -5,7 +5,8 @@
 @inject UserManager<Usuario> userManager
 
 @{
-    ViewData["Title"] = "Tickest - Usuarios";
+    Layout = "_LayoutGerenciador";
+    ViewData["Title"] = "Tickest - Usuários";
 
     var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
@@ -13,21 +14,12 @@
     {
         return await userManager.IsInRoleAsync(user, "Gerenciador");
     }
-
-    if (await userManager.IsInRoleAsync(user, "Gerenciador"))
-        Layout = "_LayoutGerenciador";
-
-    else if (await userManager.IsInRoleAsync(user, "Cliente"))
-        Layout = "_LayoutCliente";
-
-    else
-        Layout = "_Layout";
 }
 
-<div class="container p-4">
+<div class="container-fluid" style="background-color: #ffffff; padding: 20px;">
     <h2>Usuários</h2>
     <p>Usuários cadastrados no sistema:</p>
-    <table class="table table-condensed" id="Tickets">
+    <table class="table table-condensed" id="Usuarios">
         <thead>
             <tr>
                 <th>Nome</th>
@@ -62,35 +54,39 @@
     </table>
 </div>
 
-<script>
-    window.onload = function () {
-        $('#Tickets').DataTable({
-            "ordering": true,
-            "paging": true,
-            "searching": true,
-            "oLanguage": {
-                "sEmptyTable": "Nenhum registro encontrado na tabela",
-                "sInfo": "Mostrar _START_ até _END_ de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrar 0 até 0 de 0 Registros",
-                "sInfoFiltered": "(Filtrar de _MAX_ total registros)",
-                "sInfoPostFix": "",
-                "sInfoThousands": ".",
-                "sLengthMenu": "Mostrar _MENU_ registros por pagina",
-                "sLoadingRecords": "Carregando...",
-                "sProcessing": "Processando...",
-                "sZeroRecords": "Nenhum registro encontrado",
-                "sSearch": "Pesquisar",
-                "oPaginate": {
-                    "sNext": "Proximo",
-                    "sPrevious": "Anterior",
-                    "sFirst": "Primeiro",
-                    "sLast": "Ultimo"
-                },
-                "oAria": {
-                    "sSortAscending": ": Ordenar colunas de forma ascendente",
-                    "sSortDescending": ": Ordenar colunas de forma descendente"
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            $('#Usuarios').DataTable({
+                "ordering": true,
+                "paging": true,
+                "searching": true,
+                "language": {
+                    "emptyTable": "Nenhum registro encontrado na tabela",
+                    "info": "Mostrando _START_ até _END_ de _TOTAL_ registros",
+                    "infoEmpty": "Mostrando 0 até 0 de 0 Registros",
+                    "infoFiltered": "(Filtrado de _MAX_ total registros)",
+                    "infoPostFix": "",
+                    "thousands": ".",
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "loadingRecords": "Carregando...",
+                    "processing": "Processando...",
+                    "zeroRecords": "Nenhum registro encontrado",
+                    "search": "Pesquisar",
+                    "paginate": {
+                        "next": "Próximo",
+                        "previous": "Anterior",
+                        "first": "Primeiro",
+                        "last": "Último"
+                    },
+                    "aria": {
+                        "sortAscending": ": Ordenar colunas de forma ascendente",
+                        "sortDescending": ": Ordenar colunas de forma descendente"
+                    }
                 }
-            }
+            });
         });
-    }
-</script>
+    </script>
+}

@@ -48,6 +48,7 @@ builder.Services.AddAuthorization(options =>
 
 
 builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
+builder.Services.AddScoped<ISelectListService, SelectListService>();
 
 var app = builder.Build();
 

@@ -1,5 +1,4 @@
 ﻿@using Tickest.Models.ViewModels
-
 @model DepartamentoEditViewModel
 
 @{
@@ -7,11 +6,11 @@
     ViewData["Title"] = "Tickest - Editar Departamento";
 }
 
-<div class="row">
-    @using (Html.BeginForm("Edit", "Departamentos", FormMethod.Post))
-    {
-        <div class="col-md-6">
-            <div class="card mb-4">
+<div class="container-fluid bg-white py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            @using (Html.BeginForm("Edit", "Departamentos", FormMethod.Post, new { @class = "card mb-4" }))
+            {
                 <h5 class="card-header">Editar Departamento</h5>
                 <div class="card-body">
                     <div class="form-group">
@@ -25,9 +24,10 @@
                         @Html.DropDownListFor(model => model.GerenciadorSelecionado, new SelectList(Model.GerenciadoresDisponiveis, "Id", "Nome"), "-- Selecione --", new { @class = "form-control mt-2 mb-3" })
                         <span asp-validation-for="GerenciadorSelecionado" class="text-danger"></span>
                     </div>
+
                     <button type="submit" class="btn btn-primary mt-3">Salvar</button>
                 </div>
-            </div>
+            }
         </div>
-    }
+    </div>
 </div>

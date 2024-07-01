@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
 
 namespace Tickest.Controllers
 {
@@ -15,11 +17,14 @@ namespace Tickest.Controllers
     {
         private readonly UserManager<Usuario> userManager;
         private readonly TickestContext _context;
-
-        public UsuariosController(UserManager<Usuario> userManager, TickestContext context)
+        private readonly UserManager<Usuario> _userManager;
+        private readonly ISelectListService _selectListService;
+        public UsuariosController(UserManager<Usuario> userManager, TickestContext context, ISelectListService selectListService)
         {
             this.userManager = userManager;
             _context = context;
+            _userManager = userManager;
+            _selectListService = selectListService;
         }
 
         // GET: Usuarios
@@ -62,88 +67,248 @@ namespace Tickest.Controllers
             return View(result);
         }
 
+        //[HttpGet]
+        //[Authorize(Roles = "Gerenciador")]
+        //public async Task<IActionResult> Edit(int? id)
+        //{
+        //    var usuarioEntidade = await _context.Usuarios
+        //        .Include(p => p.Departamento)
+        //        .Include(p => p.Especialidade)
+
+        //        .FirstOrDefaultAsync(usuario => usuario.Id == id);
+
+        //    var viewModel = new UsuarioEditViewModel();
+
+        //    if (usuarioEntidade != null)
+        //    {
+
+        //        viewModel.Id = usuarioEntidade.Id;
+        //        viewModel.Nome = usuarioEntidade.Nome;
+        //        viewModel.Funcao = string.Join(", ", await userManager.GetRolesAsync(usuarioEntidade));
+
+        //    }
+
+        //    var query = _context.Departamentos
+        //        .OrderBy(p => p.Nome)
+        //        .AsQueryable();
+
+        //    var query1 = _context.Especialidades
+        //        .OrderBy(p => p.Nome)
+        //        .AsQueryable();
+
+        //    viewModel.Departamentos = query.Select(p => new Departamento
+        //    {
+        //        Id = p.Id,
+        //        Nome = p.Nome,
+        //        GerenciadorId = p.GerenciadorId
+        //    }).ToList();
+
+        //    viewModel.Especialidades = query1.Select(p => new Especialidade
+        //    {
+        //        Id = p.Id,
+        //        Nome = p.Nome,
+        //        DepartamentoId = p.DepartamentoId
+        //    }).ToList();
+
+        //    ViewBag.Departamentos = _context.Departamentos.OrderBy(p => p.Nome).ToList();
+        //    ViewBag.Especialidades = new SelectList(query1);
+
+        //    return View(viewModel);
+        //}
+
+        //[HttpPost]
+        //[Authorize(Roles = "Gerenciador")]
+        //public async Task<IActionResult> Edit(UsuarioEditViewModel viewModel)
+        //{
+        //    //if (!ModelState.IsValid)
+        //    //    return View(viewModel);
+
+        //    var identityUser = await userManager.GetUserAsync(User);
+        //    var usuarioLogado = await _context.Usuarios.FirstOrDefaultAsync(usuario => usuario.Email == identityUser.Email);
+
+        //    var usuarioEditar = await _context.Usuarios
+        //        .Include(p => p.Departamento)
+        //        .Include(p => p.Especialidade)
+        //        .FirstOrDefaultAsync(usuario => usuario.Id == viewModel.Id);
+
+        //    bool isResponsavel = await userManager.IsInRoleAsync(identityUser, "Responsavel");
+        //    bool mesmoDepartamento = usuarioEditar.DepartamentoId == usuarioLogado.DepartamentoId;
+
+        //    if (isResponsavel && !mesmoDepartamento)
+        //    {
+        //        ViewBag.Error = "Não pode alterar usuario de outro departamento";
+        //        return RedirectToAction(nameof(Edit));
+        //    }
+
+        //    usuarioEditar.Nome = viewModel.Nome;
+        //    //usuarioEditar.Cargo = string.Join(", ", userManager.GetRolesAsync(usuarioLogado).GetAwaiter().GetResult());
+        //    usuarioEditar.DepartamentoId = viewModel.DepartamentoId;
+        //    usuarioEditar.EspecialidadeId = viewModel.EspecialidadeId;
+
+        //    await _context.SaveChangesAsync();
+
+        //    return RedirectToAction(nameof(List));
+        //}
+
         [HttpGet]
         [Authorize(Roles = "Gerenciador")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string id)
         {
-            var usuarioEntidade = await _context.Usuarios
-                .Include(p => p.Departamento)
-                .Include(p => p.Especialidade)
+            var user = await _userManager.FindByIdAsync(id);
 
-                .FirstOrDefaultAsync(usuario => usuario.Id == id);
-
-            var viewModel = new UsuarioEditViewModel();
-
-            if (usuarioEntidade != null)
+            if (user == null)
             {
-
-                viewModel.Id = usuarioEntidade.Id;
-                viewModel.Nome = usuarioEntidade.Nome;
-                viewModel.Funcao = string.Join(", ", await userManager.GetRolesAsync(usuarioEntidade));
-
+                return NotFound();
             }
 
-            var query = _context.Departamentos
-                .OrderBy(p => p.Nome)
-                .AsQueryable();
-
-            var query1 = _context.Especialidades
-                .OrderBy(p => p.Nome)
-                .AsQueryable();
-
-            viewModel.Departamentos = query.Select(p => new Departamento
+            var viewModel = new UsuarioEditViewModel
             {
-                Id = p.Id,
-                Nome = p.Nome,
-                GerenciadorId = p.GerenciadorId
-            }).ToList();
+                Id = user.Id.ToString(),
+                Nome = user.Nome,
+                Email = user.Email,
+                Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault(), // Obtenha a role do usuário
+                DepartamentoId = user.DepartamentoId ?? 0, // Ajuste para definir um valor padrão em caso de nulo
+                EspecialidadeId = (int)user.EspecialidadeId
+                // Outras propriedades necessárias
+            };
 
-            viewModel.Especialidades = query1.Select(p => new Especialidade
-            {
-                Id = p.Id,
-                Nome = p.Nome,
-                DepartamentoId = p.DepartamentoId
-            }).ToList();
-
-            ViewBag.Departamentos = _context.Departamentos.OrderBy(p => p.Nome).ToList();
-            ViewBag.Especialidades = new SelectList(query1);
+            // Carregar departamentos e especialidades para dropdowns, se necessário
+            ViewBag.Departamentos = await _context.Departamentos.ToListAsync();
+            ViewBag.Especialidades = await _context.Especialidades.ToListAsync();
 
             return View(viewModel);
         }
 
         [HttpPost]
         [Authorize(Roles = "Gerenciador")]
-        public async Task<IActionResult> Edit(UsuarioEditViewModel viewModel)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(UsuarioEditViewModel model)
         {
-            //if (!ModelState.IsValid)
-            //    return View(viewModel);
-
-            var identityUser = await userManager.GetUserAsync(User);
-            var usuarioLogado = await _context.Usuarios.FirstOrDefaultAsync(usuario => usuario.Email == identityUser.Email);
-
-            var usuarioEditar = await _context.Usuarios
-                .Include(p => p.Departamento)
-                .Include(p => p.Especialidade)
-                .FirstOrDefaultAsync(usuario => usuario.Id == viewModel.Id);
-
-            bool isResponsavel = await userManager.IsInRoleAsync(identityUser, "Responsavel");
-            bool mesmoDepartamento = usuarioEditar.DepartamentoId == usuarioLogado.DepartamentoId;
-
-            if (isResponsavel && !mesmoDepartamento)
+            if (!ModelState.IsValid)
             {
-                ViewBag.Error = "Não pode alterar usuario de outro departamento";
-                return RedirectToAction(nameof(Edit));
+                ViewBag.Departamentos = await GetDepartamentosSelectListAsync();
+                ViewBag.Especialidades = await GetEspecialidadesSelectListAsync();
+                return View(model);
             }
 
-            usuarioEditar.Nome = viewModel.Nome;
-            //usuarioEditar.Cargo = string.Join(", ", userManager.GetRolesAsync(usuarioLogado).GetAwaiter().GetResult());
-            usuarioEditar.DepartamentoId = viewModel.DepartamentoId;
-            usuarioEditar.EspecialidadeId = viewModel.EspecialidadeId;
+            try
+            {
+                var user = await _userManager.FindByIdAsync(model.Id);
 
-            await _context.SaveChangesAsync();
+                if (user == null)
+                {
+                    return NotFound();
+                }
 
-            return RedirectToAction(nameof(List));
+                // Verificando se os IDs de Departamento e Especialidade são válidos
+                if (!await IsDepartamentoIdValid(model.DepartamentoId) || !await IsEspecialidadeIdValid(model.EspecialidadeId))
+                {
+                    ModelState.AddModelError(string.Empty, "Departamento ou Especialidade inválidos.");
+                    ViewBag.Departamentos = await GetDepartamentosSelectListAsync();
+                    ViewBag.Especialidades = await GetEspecialidadesSelectListAsync();
+                    return View(model);
+                }
+
+                user.Nome = model.Nome;
+                user.Email = model.Email;
+                user.DepartamentoId = model.DepartamentoId;
+                user.EspecialidadeId = model.EspecialidadeId;
+
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                var currentRole = currentRoles.FirstOrDefault();
+
+                if (currentRole != model.Role)
+                {
+                    // Remover todas as funções do usuário
+                    var rolesToRemove = currentRoles.ToList();
+                    var resultRemove = await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+
+                    if (!resultRemove.Succeeded)
+                    {
+                        AddErrors(resultRemove.Errors);
+                        return await PrepareViewModelAndReturnView(model);
+                    }
+
+                    // Adicionar a nova função
+                    var resultAdd = await _userManager.AddToRoleAsync(user, model.Role);
+                    if (!resultAdd.Succeeded)
+                    {
+                        AddErrors(resultAdd.Errors);
+                        return await PrepareViewModelAndReturnView(model);
+                    }
+                }
+
+                var resultUpdate = await _userManager.UpdateAsync(user);
+                if (!resultUpdate.Succeeded)
+                {
+                    AddErrors(resultUpdate.Errors);
+                    return await PrepareViewModelAndReturnView(model);
+                }
+
+                return RedirectToAction("List");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Ocorreu um erro durante a atualização do usuário: {ex.Message}");
+                ViewBag.Departamentos = await GetDepartamentosSelectListAsync();
+                ViewBag.Especialidades = await GetEspecialidadesSelectListAsync();
+                return View(model);
+            }
         }
+
+        private async Task<bool> IsDepartamentoIdValid(int departamentoId)
+        {
+            // Verifica se o ID do departamento é válido
+            return await _context.Departamentos.AnyAsync(d => d.Id == departamentoId);
+        }
+
+        private async Task<bool> IsEspecialidadeIdValid(int especialidadeId)
+        {
+            // Verifica se o ID da especialidade é válido
+            return await _context.Especialidades.AnyAsync(e => e.Id == especialidadeId);
+        }
+
+        private async Task<IActionResult> PrepareViewModelAndReturnView(UsuarioEditViewModel model)
+        {
+            ViewBag.Departamentos = await GetDepartamentosSelectListAsync();
+            ViewBag.Especialidades = await GetEspecialidadesSelectListAsync();
+            return View(model);
+        }
+
+        private void AddErrors(IEnumerable<IdentityError> errors)
+        {
+            foreach (var error in errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+        }
+
+        public async Task<IEnumerable<SelectListItem>> GetDepartamentosSelectListAsync()
+        {
+            var departamentos = await _context.Departamentos.ToListAsync();
+            return departamentos.Select(d => new SelectListItem
+            {
+                Value = d.Id.ToString(),
+                Text = d.Nome
+            });
+        }
+
+        public async Task<IEnumerable<SelectListItem>> GetEspecialidadesSelectListAsync()
+        {
+            var especialidades = await _context.Especialidades.ToListAsync();
+            return especialidades.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.Nome
+            });
+        }
+
+
+
+
+
+
+
 
         [HttpGet]
         [Authorize(Roles = "Gerenciador")]

@@ -1,88 +1,118 @@
 ﻿@model Tickest.Models.ViewModels.UsuarioEditViewModel
+@inject ISelectListService _selectListService
+
+
 
 @{
     ViewData["Title"] = "Editar Usuário";
 }
 
-<h1>Editar Usuário</h1>
+<div class="container-fluid bg-white py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="display-4 mb-4">Editar Usuário</h1>
 
-@if (ViewBag.Error != null)
-{
-    <span class="text-danger">@ViewBag.Error</span>
-}
+            <form asp-action="Edit" asp-controller="Usuarios" method="post" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
 
-<hr />
+                <div class="form-group">
+                    <label asp-for="Nome" class="form-label">Nome</label>
+                    <input asp-for="Nome" class="form-control" required />
+                    <div class="invalid-feedback">Por favor, informe o nome.</div>
+                </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" asp-controller="Usuarios">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label">Email</label>
+                    <input asp-for="Email" class="form-control" required />
+                    <div class="invalid-feedback">Por favor, informe um email válido.</div>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label">Nome</label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="NovaSenha" class="form-label">Nova Senha</label>
+                            <input asp-for="NovaSenha" type="password" class="form-control" autocomplete="new-password" />
+                            <div class="invalid-feedback">A senha deve conter pelo menos 8 caracteres.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ConfirmarNovaSenha" class="form-label">Confirme a Nova Senha</label>
+                            <input asp-for="ConfirmarNovaSenha" type="password" class="form-control" autocomplete="new-password" />
+                            <div class="invalid-feedback">As senhas não correspondem.</div>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="Funcao" class="control-label">Função</label>
-                <input asp-for="Funcao" class="form-control" />
-                <span asp-validation-for="Funcao" class="text-danger"></span>
-            </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label asp-for="Role" class="form-label">Função</label>
+                        <select asp-for="Role" asp-items="@(await _selectListService.GetRolesSelectListAsync())" class="form-select" required>
+                            <option value="">Selecione uma função</option>
+                        </select>
+                        <div class="invalid-feedback">Por favor, selecione uma função.</div>
+                    </div>
 
-            <div class="form-group">
-                <label asp-for="DepartamentoId" class="control-label">Departamento</label>
-                <select asp-for="DepartamentoId" class="form-select form-control" id="Departamentos">
-                    @foreach (var departamento in ViewBag.Departamentos)
-                    {
-                        <option value="@departamento.Id">@departamento.Nome</option>
-                    }
-                </select>
-            </div>
+                    <div class="form-group col-md-6">
+                        <label asp-for="EspecialidadeId" class="form-label">Especialidade</label>
+                        <select asp-for="EspecialidadeId" asp-items="@(await _selectListService.GetEspecialidadesSelectListAsync())" class="form-select" required>
+                            <option value="">Selecione uma especialidade</option>
+                        </select>
+                        <div class="invalid-feedback">Por favor, selecione uma especialidade.</div>
+                    </div>
 
-            <div class="form-group" id="especialidadeGroup" style="display:none">
-                <label asp-for="EspecialidadeId" class="control-label">Especialidade</label>
-                <select asp-for="EspecialidadeId" class="form-select form-control" id="EspecialidadesDrop"></select>
-            </div>
 
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-            </div>
-        </form>
+                    <div class="form-group col-md-6">
+                        <label asp-for="DepartamentoId" class="form-label">Departamento</label>
+                        <select asp-for="DepartamentoId" asp-items="@(await _selectListService.GetDepartamentosSelectListAsync())" class="form-select" required>
+                            <option value="">Selecione um departamento</option>
+                        </select>
+                        <div class="invalid-feedback">Por favor, selecione um departamento.</div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-end">
+                    <a asp-area="" asp-controller="Usuarios" asp-action="List" class="btn btn-secondary me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<div class="mt-3">
-    <a asp-area="" asp-controller="Usuarios" asp-action="List">Voltar para a Lista</a>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var departamentosDropdown = document.getElementById("Departamentos");
-            var especialidadeGroup = document.getElementById("especialidadeGroup");
+        // Validação customizada para confirmar que as senhas correspondem
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.querySelector('.needs-validation');
 
-            departamentosDropdown.addEventListener("change", function () {
-                var depId = this.value;
-                var especialidadesDrop = document.getElementById("EspecialidadesDrop");
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
 
-                especialidadesDrop.innerHTML = '';
+                form.classList.add('was-validated');
+            });
 
-                var especialidades = @Html.Raw(Json.Serialize(Model.Especialidades));
+            var novaSenha = document.getElementById('NovaSenha');
+            var confirmarNovaSenha = document.getElementById('ConfirmarNovaSenha');
 
-                especialidades.forEach(function (especialidade) {
-                    if (depId == especialidade.DepartamentoId) {
-                        var option = document.createElement("option");
-                        option.value = especialidade.Id;
-                        option.textContent = especialidade.Nome;
-                        especialidadesDrop.appendChild(option);
-                    }
-                });
+            confirmarNovaSenha.addEventListener('input', function () {
+                if (novaSenha.value !== confirmarNovaSenha.value) {
+                    confirmarNovaSenha.setCustomValidity('As senhas não correspondem.');
+                } else {
+                    confirmarNovaSenha.setCustomValidity('');
+                }
+            });
 
-                especialidadeGroup.style.display = depId ? "block" : "none";
+            novaSenha.addEventListener('input', function () {
+                confirmarNovaSenha.setCustomValidity('');
             });
         });
     </script>
