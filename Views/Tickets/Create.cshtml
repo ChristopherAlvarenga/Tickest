@@ -2,26 +2,26 @@
 @using Tickest.Enums
 @using Tickest.Helpers
 @using Tickest.Models.Entities
-@using Tickest.Models.ViewModels;
-
+@using Tickest.Models.ViewModels
 @model TicketViewModel
+
 @inject UserManager<Usuario> userManager
 
 @{
-    var user = await userManager.FindByEmailAsync(User.Identity.Name);
+    ViewData["Title"] = "Create";
+    var user = await userManager.GetUserAsync(User);
 
+    string layoutName = "_Layout";
     if (await userManager.IsInRoleAsync(user, "Gerenciador"))
     {
-        Layout = "_LayoutGerenciador";
+        layoutName = "_LayoutGerenciador";
     }
     else if (await userManager.IsInRoleAsync(user, "Cliente"))
     {
-        Layout = "_LayoutCliente";
+        layoutName = "_LayoutCliente";
     }
-    else
-    {
-        Layout = "_Layout";
-    }
+
+    Layout = layoutName;
 }
 
 <style>
@@ -37,21 +37,21 @@
     }
 </style>
 
-<!-- Content wrapper -->
 <div class="content-wrapper">
-    <!-- Content -->
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="row">
-            <form method="post" enctype="multipart/form-data">
-                <!-- Basic -->
-                <div class="col-md-6">
-                    <div class="card mb-4">
-                        <h5 class="card-header">Criação de Ticket</h5>
-                        <div class="card-body demo-vertical-spacing demo-only-element">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <h5 class="card-header">Criação de Ticket</h5>
+                    <div class="card-body demo-vertical-spacing demo-only-element">
+
+                        <form asp-action="Create" method="post" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
 
                             <div class="mb-3">
                                 <label asp-for="Ticket.Titulo" class="form-label">Título</label>
                                 <input asp-for="Ticket.Titulo" class="form-control" />
+                                <span asp-validation-for="Ticket.Titulo" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
@@ -63,11 +63,13 @@
                                         <option value="@((int)prioridade)">@prioridade.GetDisplayName()</option>
                                     }
                                 </select>
+                                <span asp-validation-for="Ticket.Prioridade" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label asp-for="Ticket.Descricao" class="form-label">Descrição</label>
                                 <textarea asp-for="Ticket.Descricao" class="form-control" rows="4"></textarea>
+                                <span asp-validation-for="Ticket.Descricao" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
@@ -79,6 +81,7 @@
                                         <option value="@departamento.Id">@departamento.Nome</option>
                                     }
                                 </select>
+                                <span asp-validation-for="Ticket.DepartamentoId" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
@@ -90,30 +93,31 @@
                                         <option value="@especialidade.Id">@especialidade.Nome</option>
                                     }
                                 </select>
+                                <span asp-validation-for="Ticket.EspecialidadeId" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
-                                <label for="formFileMultiple" class="form-label">Anexos</label>
-                                <div id="files"></div>
-                                <input id="anexo" class="form-control d-none" type="file" name="files" multiple />
-                                <button id="btn-anexo" type="button" class="btn btn-primary"><i class="fas fa-attach"></i> Anexar Arquivos</button>
+                                <label class="form-label">Anexos</label>
+                                <input type="file" name="files" multiple />
                             </div>
 
                             <button type="submit" class="btn btn-primary">Criar Ticket</button>
+                        </form>
 
-                        </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        var dt = new DataTransfer();
+    <partial name="_ValidationScriptsPartial" />
 
+    <script>
         $(document).ready(function () {
+            var dt = new DataTransfer();
+
             $('#anexo').change(function () {
                 $("#files").html("");
                 for (var i = 0; i < this.files.length; i++) {
@@ -155,11 +159,11 @@
                     especialidadesDropdown.append($('<option></option>').val(especialidade.id).html(especialidade.nome));
                 });
             });
-        });
 
-        function delRef(index) {
-            dt.items.remove(index);
-            $("#files div").eq(index).remove();
-        }
+            function delRef(index) {
+                dt.items.remove(index);
+                $("#files div").eq(index).remove();
+            }
+        });
     </script>
 }

@@ -55,19 +55,37 @@ namespace Tickest.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Gerenciador,Analista,Cliente")]
         public async Task<IActionResult> Historic()
         {
             var usuarioAtual = await _userManager.GetUserAsync(User);
+            var userRole = (await _userManager.GetRolesAsync(usuarioAtual)).FirstOrDefault();
 
-            var tickets = await _context.Tickets
+            IQueryable<Ticket> query = _context.Tickets
                 .Include(t => t.Departamento)
                 .Include(t => t.Responsavel)
                 .Include(t => t.Solicitante)
-                .Include(t => t.Anexos)
-                .Where(t => t.Responsavel.Email == usuarioAtual.Email || t.SolicitanteId == usuarioAtual.Id)
-                .Where(t => t.Status == TicketStatusEnum.Concluido || t.Status == TicketStatusEnum.Cancelado)
-                .OrderBy(t => t.Id)
-                .ToListAsync();
+                .Include(t => t.Anexos);
+
+            if (userRole == "Gerenciador")
+            {
+                // Gerenciador: Ver todos os tickets concluídos ou cancelados
+                query = query.Where(t => t.Status == TicketStatusEnum.Concluido || t.Status == TicketStatusEnum.Cancelado);
+            }
+            else if (userRole == "Analista")
+            {
+                // Analista: Ver todos os tickets que ele é responsável e estão concluídos ou cancelados
+                query = query.Where(t => t.Responsavel.Email == usuarioAtual.Email &&
+                                          (t.Status == TicketStatusEnum.Concluido || t.Status == TicketStatusEnum.Cancelado));
+            }
+            else if (userRole == "Cliente")
+            {
+                // Cliente: Ver todos os tickets que ele solicitou e estão concluídos ou cancelados
+                query = query.Where(t => t.SolicitanteId == usuarioAtual.Id &&
+                                          (t.Status == TicketStatusEnum.Concluido || t.Status == TicketStatusEnum.Cancelado));
+            }
+
+            var tickets = await query.OrderBy(t => t.Id).ToListAsync();
 
             var viewModel = new TicketViewModel
             {
@@ -77,6 +95,9 @@ namespace Tickest.Controllers
 
             return View(viewModel);
         }
+
+
+
 
         public async Task<IActionResult> Search(string search)
         {
@@ -105,9 +126,91 @@ namespace Tickest.Controllers
             return View(viewModel);
         }
 
+        //public async Task<IActionResult> Create()
+        //{
+        //    var user = await _userManager.GetUserAsync(User);
+
+        //    var departamentos = await _context.Departamentos
+        //        .OrderBy(d => d.Nome)
+        //        .ToListAsync();
+
+        //    var especialidades = await _context.Especialidades
+        //        .OrderBy(e => e.Nome)
+        //        .ToListAsync();
+
+        //    var viewModel = new TicketViewModel
+        //    {
+        //        Departamentos = departamentos,
+        //        Especialidades = especialidades
+        //    };
+
+        //    return View(viewModel);
+        //}
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create(TicketViewModel viewModel, List<IFormFile> files)
+        //{
+        //    var usuario = await _userManager.GetUserAsync(User);
+
+        //    if (usuario == null)
+        //    {
+        //        return NotFound("Usuário não encontrado.");
+        //    }
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        var ticket = viewModel.Ticket;
+        //        var departamentoId = viewModel.Ticket.DepartamentoId;
+
+        //        // Verifica se o departamentoId existe na base de dados
+        //        var departamentoExistente = await _context.Departamentos.FindAsync(departamentoId);
+        //        if (departamentoExistente == null)
+        //        {
+        //            ModelState.AddModelError(nameof(Ticket.DepartamentoId), "Departamento não encontrado.");
+        //            // Recarrega as listas de departamentos e especialidades para exibir no formulário
+        //            viewModel.Departamentos = await _context.Departamentos.OrderBy(d => d.Nome).ToListAsync();
+        //            viewModel.Especialidades = await _context.Especialidades.OrderBy(e => e.Nome).ToListAsync();
+        //            return View(viewModel);
+        //        }
+
+        //        // Processa os anexos
+        //        if (files != null && files.Count > 0)
+        //        {
+        //            foreach (var file in files)
+        //            {
+        //                var path = await WriteFileAsync(file);
+        //                var fileName = Path.GetFileName(path);
+        //                var name = "anexos/" + fileName;
+        //                var anexo = new Anexo { Endereco = name };
+        //                ticket.Anexos.Add(anexo);
+        //            }
+        //        }
+
+        //        // Configuração dos campos do ticket
+        //        ticket.DataCriacao = DateTime.Now;
+        //        ticket.Status = TicketStatusEnum.Aberto;
+        //        ticket.DataStatus = DateTime.Now;
+        //        ticket.SolicitanteId = usuario.Id;
+
+        //        _context.Add(ticket);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+
+        //    // Se o modelo não for válido, recarrega as listas de departamentos e especialidades para exibir no formulário
+        //    viewModel.Departamentos = await _context.Departamentos.OrderBy(d => d.Nome).ToListAsync();
+        //    viewModel.Especialidades = await _context.Especialidades.OrderBy(e => e.Nome).ToListAsync();
+        //    return View(viewModel);
+        //}
+
         public async Task<IActionResult> Create()
         {
             var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
 
             var departamentos = await _context.Departamentos
                 .OrderBy(d => d.Nome)
@@ -119,68 +222,14 @@ namespace Tickest.Controllers
 
             var viewModel = new TicketViewModel
             {
+                Ticket = new Ticket(), // Inicializa um novo Ticket
                 Departamentos = departamentos,
                 Especialidades = especialidades
             };
 
             return View(viewModel);
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TicketViewModel viewModel, List<IFormFile> files)
-        {
-            var usuario = await _userManager.GetUserAsync(User);
 
-            if (usuario == null)
-            {
-                return NotFound("Usuário não encontrado.");
-            }
-
-            if (ModelState.IsValid)
-            {
-                var ticket = viewModel.Ticket;
-                var departamentoId = viewModel.Ticket.DepartamentoId;
-
-                // Verifica se o departamentoId existe na base de dados
-                var departamentoExistente = await _context.Departamentos.FindAsync(departamentoId);
-                if (departamentoExistente == null)
-                {
-                    ModelState.AddModelError(nameof(Ticket.DepartamentoId), "Departamento não encontrado.");
-                    // Recarrega as listas de departamentos e especialidades para exibir no formulário
-                    viewModel.Departamentos = await _context.Departamentos.OrderBy(d => d.Nome).ToListAsync();
-                    viewModel.Especialidades = await _context.Especialidades.OrderBy(e => e.Nome).ToListAsync();
-                    return View(viewModel);
-                }
-
-                // Processa os anexos
-                if (files != null && files.Count > 0)
-                {
-                    foreach (var file in files)
-                    {
-                        var path = await WriteFileAsync(file);
-                        var fileName = Path.GetFileName(path);
-                        var name = "anexos/" + fileName;
-                        var anexo = new Anexo { Endereco = name };
-                        ticket.Anexos.Add(anexo);
-                    }
-                }
-
-                // Configuração dos campos do ticket
-                ticket.DataCriacao = DateTime.Now;
-                ticket.Status = TicketStatusEnum.Aberto;
-                ticket.DataStatus = DateTime.Now;
-                ticket.SolicitanteId = usuario.Id;
-
-                _context.Add(ticket);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-
-            // Se o modelo não for válido, recarrega as listas de departamentos e especialidades para exibir no formulário
-            viewModel.Departamentos = await _context.Departamentos.OrderBy(d => d.Nome).ToListAsync();
-            viewModel.Especialidades = await _context.Especialidades.OrderBy(e => e.Nome).ToListAsync();
-            return View(viewModel);
-        }
 
         [HttpGet]
         public async Task<IActionResult> Editar(int? id)

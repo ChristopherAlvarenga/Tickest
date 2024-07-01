@@ -1,35 +1,20 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using Tickest.Models.ViewModels;
-@using Tickest.Models.Entities;
+@using Tickest.Models.ViewModels
+@using Tickest.Models.Entities
 
 @model TicketViewModel
 @inject UserManager<Usuario> userManager
 
 @{
-    ViewData["Title"] = "Tickest - Histórico";
-
-    var user = await userManager.FindByEmailAsync(User.Identity.Name);
-
-    string layout = "_Layout";
-    if (await userManager.IsInRoleAsync(user, "Gerenciador"))
-    {
-        layout = "_LayoutGerenciador";
-    }
-    else if (await userManager.IsInRoleAsync(user, "Cliente"))
-    {
-        layout = "_LayoutCliente";
-    }
-
-    Layout = layout;
+    ViewData["Title"] = "Histórico de Tickets";
+    var userRole = (await userManager.GetRolesAsync(Model.Usuario)).FirstOrDefault();
 }
-
-<link rel="stylesheet" href="~/css/chat.css" />
 
 <div class="row">
     <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
         <div class="card">
             <div class="row row-bordered g-0">
-                <h5 class="card-title text-primary m-4">Histórico de Tickets</h5>
+                <h5 class="card-title text-primary m-4">Histórico de Tickets - @userRole</h5>
                 <div class="card">
                     <div class="table-responsive text-nowrap p-4">
                         <table class="table table-hover" id="Tickets">
@@ -158,58 +143,7 @@
 
         $(".attach_btn").click(function () {
             var ticket_id = $(this).attr("ticket_id");
-            $("#attach-" + ticket_id).click();
+            $("#anexarArquivo-" + ticket_id).trigger("click");
         });
-
-        $(".input-attach").change(function () {
-            var id = $(this).attr("ticket_id");
-            var filename = $(this).val();
-
-            if (filename == "" || filename == null) {
-                alert('Erro ao anexar arquivo');
-            } else {
-                var file = document.getElementById('attach-' + id).files[0];
-                var filename = document.getElementById('attach-' + id).files[0].name;
-
-                var formData = new FormData();
-                formData.append("file", file);
-
-                $.ajax({
-                    dataType: "json",
-                    type: "POST",
-                    url: "/Chat/Upload",
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    data: formData,
-                    success: function (retorno) {
-                        console.log(retorno);
-                        if (retorno != null) {
-                            $("#" + id).val('');
-                            $("#" + id).append('<input type="file" id="attach-' + id + '" class="form-control attach" ticket_id="' + id + '"/>');
-                            var html = '<div class="col-3" id="attach' + retorno.Id + '" >' + filename + '<br />' + retorno.Id + '</div>';
-                            $('#' + id).append(html);
-                        }
-                    },
-                    error: function (retorno) {
-                        console.log(retorno);
-                        alert('Erro ao anexar arquivo');
-                    }
-                });
-            }
-        });
-
-        $(".send_btn").click(function () {
-            var ticket_id = $(this).attr("ticket_id");
-            var message = $("#text-" + ticket_id).val();
-            var url = "/Chat/EnviarMensagem";
-            var data = { TicketId: ticket_id, Mensagem: message };
-            $.post(url, data, function (retorno) {
-                $("#text-" + ticket_id).val('');
-                var html = '<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">' + message + '</div><div class="img_cont_msg"><img src="https://pt.123rf.com/450/thumb-18661224.jpg" class="rounded-circle user_img_msg"></div></div>';
-                $('#chat-' + ticket_id).append(html);
-                $('#chat-' + ticket_id).scrollTop($('#chat-' + ticket_id)[0].scrollHeight);
-            });
-        });
-    }
+    };
 </script>

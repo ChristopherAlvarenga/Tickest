@@ -1,24 +1,31 @@
+/* Cores */
+:root {
+    --cor-em-analise: #999999;
+    --cor-em-desenvolvimento: #e6b13e;
+    --cor-concluido: #6aa84f;
+    --cor-cancelado: #f44336;
+    --cor-primary: #696CFF;
+    --cor-background: #f8f9fa; /* Cor de fundo padrão */
+}
+
+/* Estilos gerais */
 .card-chat {
     height: 500px;
     border-radius: 15px !important;
     background-color: white !important;
-    border: 1px solid #7375f8;
+    border: 1px solid var(--cor-primary);
 }
 
-.contacts_body {
+.contacts_body, .msg_card_body {
     overflow-y: scroll;
     overflow-x: hidden;
     white-space: nowrap;
 }
 
-.msg_card_body {
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
-
 .card-header {
     border-radius: 15px 15px 0 0 !important;
     border-bottom: 0 !important;
+    background-color: var(--cor-em-analise);
 }
 
 .card-footer {
@@ -39,11 +46,11 @@
 
     .search:focus {
         box-shadow: none !important;
-        outline: 0px !important;
+        outline: 0 !important;
     }
 
 .type_msg {
-    background-color: #7375f8 !important;
+    background-color: var(--cor-primary) !important;
     border: 0 !important;
     color: white !important;
     margin-top: 1px;
@@ -57,7 +64,7 @@
 
 .attach_btn {
     border-radius: 15px 0 0 15px !important;
-    background-color: #7375f8 !important;
+    background-color: var(--cor-primary) !important;
     margin-right: 1px;
     color: white !important;
     cursor: pointer;
@@ -66,7 +73,7 @@
 
 .send_btn {
     border-radius: 0 15px 15px 0 !important;
-    background-color: #7375f8 !important;
+    background-color: var(--cor-primary) !important;
     margin-left: 1px;
     color: white !important;
     cursor: pointer;
@@ -96,27 +103,16 @@
     background-color: rgba(0, 0, 0, 0.3);
 }
 
-.user_img {
+.user_img, .user_img_msg {
     height: 60px;
     width: 60px;
     border: 1.5px solid #f5f6fa;
 }
 
-.user_img_msg {
-    height: 40px;
-    width: 40px;
-    border: 1.5px solid #f5f6fa;
-}
-
-.img_cont {
+.img_cont, .img_cont_msg {
     position: relative;
     height: 70px;
     width: 70px;
-}
-
-.img_cont_msg {
-    height: 40px;
-    width: 40px;
 }
 
 .online_icon {
@@ -131,7 +127,7 @@
 }
 
 .offline {
-    background-color: #c23616 !important;
+    background-color: var(--cor-cancelado) !important;
 }
 
 .user_info {
@@ -162,43 +158,40 @@
         margin-right: 20px;
     }
 
-.msg_cotainer {
+.msg_cotainer, .msg_cotainer_send {
     margin-top: auto;
     margin-bottom: auto;
-    margin-left: 10px;
     border-radius: 25px;
-    background-color: #7375f8;
     padding: 10px;
     position: relative;
     color: white;
 }
 
+.msg_cotainer {
+    margin-left: 10px;
+    background-color: var(--cor-primary);
+}
+
 .msg_cotainer_send {
-    margin-top: auto;
-    margin-bottom: auto;
     margin-right: 10px;
-    border-radius: 25px;
-    border: 1px solid #7375f8;
+    border: 1px solid var(--cor-primary);
     background-color: white;
-    padding: 10px;
-    position: relative;
-    color: #7375f8;
+    color: var(--cor-primary);
+}
+
+.msg_time, .msg_time_send {
+    position: absolute;
+    bottom: -15px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 10px;
 }
 
 .msg_time {
-    position: absolute;
     left: 0;
-    bottom: -15px;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 10px;
 }
 
 .msg_time_send {
-    position: absolute;
     right: 0;
-    bottom: -15px;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 10px;
 }
 
 .msg_head {
@@ -247,36 +240,28 @@
                 background-color: rgba(0, 0, 0, 0.2);
             }
 
-
-/* width */
-
+/* Barra de rolagem */
 ::-webkit-scrollbar {
     width: 4px;
 }
 
-
 /* Track */
-
 ::-webkit-scrollbar-track {
-    background: #7375f8;
+    background: var(--cor-primary);
 }
 
-
 /* Handle */
-
 ::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 50%;
 }
 
-
-    /* Handle on hover */
-
+    /* Handle ao passar o mouse */
     ::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
 
-@@media(max-width: 576px) {
+@media (max-width: 576px) {
     .contacts_card {
         margin-bottom: 15px !important;
     }
