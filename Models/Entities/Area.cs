@@ -12,8 +12,6 @@ namespace Tickest.Models.Entities
         [ForeignKey(nameof(DepartamentoId))]
         public virtual Departamento Departamento { get; set; }
 
-
-
         public virtual ICollection<Usuario> Usuarios { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Tickest.Models.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using Tickest.Models.Entities;
 
 namespace Tickest.Models.ViewModels
 {
@@ -13,4 +14,12 @@ namespace Tickest.Models.ViewModels
         public ICollection<Departamento> Departamentos { get; set; }
         public ICollection<Area> Areas { get; set; }
     }
+
+    public class FilterViewModel
+    {
+        public int? StatusId { get; set; }
+        public string? searchText { get; set; }
+        public int? userId { get; set; }
+    }
+
 }

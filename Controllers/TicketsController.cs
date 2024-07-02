@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Tickest.Data;
 using Tickest.Models.Entities;
 using Tickest.Models.ViewModels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Tickest.Controllers
 {
@@ -211,6 +213,42 @@ namespace Tickest.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost("api/mobile/createTicket")]
+        public async Task<IActionResult> CreateTicketApp([FromBody] Ticket ticket, List<IFormFile> files)
+        {
+            ticket.Anexos = new List<Anexo>();
+            var usuario = _context.Usuarios
+                .Where(p => p.Email == User.Identity.Name).FirstOrDefault();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (ticket.Anexos != null && ticket.Anexos.Any())
+            {
+                foreach (IFormFile file in files)
+                {
+                    var path = WriteFile(file);
+                    var fileName = Path.GetFileName(path);
+                    var name = "anexos/" + fileName;
+                    Anexo anexo = new Anexo();
+                    anexo.Endereco = name;
+                    ticket.Anexos.Add(anexo);
+                }
+            }
+
+            ticket.Data_Criação = DateTime.Now;
+            ticket.Status = Ticket.Tipo.Criado;
+            ticket.Data_Status = DateTime.Now;
+            ticket.UsuarioId = usuario.Id;
+            ticket.DepartamentoId = usuario.DepartamentoId;
+            _context.Add(ticket);
+            await _context.SaveChangesAsync();
+
+            return Ok(ticket); // Retorna o ticket criado com sucesso
+        }
+
         // GET: TicketsController/Edit/5
         public IActionResult Edit(int id)
         {
@@ -302,7 +340,7 @@ namespace Tickest.Controllers
                 return RedirectToAction("Index", "Desenvolvedores");
         }
 
-        public static String GetTimestamp(DateTime value)
+        public static string GetTimestamp(DateTime value)
         {
             return value.ToString("yyyyMMddHHmmssffff");
         }
@@ -316,8 +354,6 @@ namespace Tickest.Controllers
 
                 if (ticket != null)
                 {
-
-
                     ticket.status_nome = ticket.Status.ToString();
                     TempData["ticket"] = ticket;
                 }
@@ -335,6 +371,7 @@ namespace Tickest.Controllers
 
             return Json(TempData);
         }
+
         [HttpGet("API/app/ticket/messages/{ticket_id}")]
         public async Task<JsonResult> GetTicketMessages(int ticket_id)
         {
@@ -342,7 +379,7 @@ namespace Tickest.Controllers
             {
                 List<Message> messages = _context.Mensagens.Where(p => p.ticket_id == ticket_id).ToList();
 
-                if(messages.Count > 0)
+                if (messages.Count > 0)
                 {
                     TempData["messages"] = messages;
 
@@ -353,7 +390,250 @@ namespace Tickest.Controllers
                 }
 
             }
-			return Json(TempData);
-		}
+            return Json(TempData);
+        }
+
+        [HttpPost("api/mobile/home")]
+        public IActionResult GetAllTickets([FromBody] FilterViewModel filter)
+        {
+            try
+            {
+                var search = 0;
+                if (filter.StatusId != null)
+                {
+                    if (filter.searchText != null || filter.searchText != "")
+                    {
+                        var tickets = _context.Tickets
+                            .Where(a => ((int)a.Status) == filter.StatusId)
+                            .Where(a => EF.Functions.Like(a.Título, "%" + filter.searchText + "%") || EF.Functions.Like(a.Descrição, "%" + filter.searchText + "%"))
+                            .Where(p => p.DestinatarioId == filter.userId || (p.DestinatarioId == null && p.UsuarioId != filter.userId))
+                            .Where(p => p.Status != Ticket.Tipo.Concluído && p.Status != Ticket.Tipo.Cancelado)
+                            .Select(a => new
+                            {
+                                Id = a.Id,
+                                Título = a.Título,
+                                Descrição = a.Descrição,
+                                Data_Criação = a.Data_Criação,
+                                Etapa = a.Status.ToString(),
+                                Etapa_id = a.Status,
+                                Area = a.Area.Nome,
+                                Data_Status = a.Data_Status,
+                                Prioridade = a.Prioridade,
+                                Usuario = a.UsuarioId,
+                                Departamento = a.Departamento.Nome,
+                                DestinatarioId = a.DestinatarioId,
+                                Anexos = a.Anexos
+                            })
+                        .ToList();
+                        return Ok(tickets);
+                    }
+                    else
+                    {
+                        var tickets = _context.Tickets
+                            .Where(a => ((int)a.Status) == filter.StatusId)
+                            .Where(p => p.DestinatarioId == filter.userId || (p.DestinatarioId == null && p.UsuarioId != filter.userId))
+                            .Where(p => p.Status != Ticket.Tipo.Concluído && p.Status != Ticket.Tipo.Cancelado)
+                            .Select(a => new
+                            {
+                                Id = a.Id,
+                                Título = a.Título,
+                                Descrição = a.Descrição,
+                                Data_Criação = a.Data_Criação,
+                                Etapa = a.Status.ToString(),
+                                Etapa_id = a.Status,
+                                Area = a.Area.Nome,
+                                Data_Status = a.Data_Status,
+                                Prioridade = a.Prioridade,
+                                Usuario = a.UsuarioId,
+                                Departamento = a.Departamento.Nome,
+                                DestinatarioId = a.DestinatarioId,
+                                Anexos = a.Anexos
+                            })
+                        .ToList();
+                        return Ok(tickets);
+                    }
+
+                }
+                else
+                {
+                    if (filter.searchText != null || filter.searchText != "")
+                    {
+                        var tickets = _context.Tickets
+                            .Where(p => p.DestinatarioId == filter.userId || (p.DestinatarioId == null && p.UsuarioId != filter.userId))
+                            .Where(a => EF.Functions.Like(a.Título, "%" + filter.searchText + "%") || EF.Functions.Like(a.Descrição, "%" + filter.searchText + "%"))
+                            .Where(p => p.Status != Ticket.Tipo.Concluído && p.Status != Ticket.Tipo.Cancelado)
+                            .Select(a => new
+                            {
+                                Id = a.Id,
+                                Título = a.Título,
+                                Descrição = a.Descrição,
+                                Data_Criação = a.Data_Criação,
+                                Etapa = a.Status.ToString(),
+                                Etapa_id = a.Status,
+                                Area = a.Area.Nome,
+                                Data_Status = a.Data_Status,
+                                Prioridade = a.Prioridade,
+                                Usuario = a.UsuarioId,
+                                Departamento = a.Departamento.Nome,
+                                DestinatarioId = a.DestinatarioId,
+                                Anexos = a.Anexos
+                            })
+                        .ToList();
+                        return Ok(tickets);
+                    }
+                    else
+                    {
+                        var tickets = _context.Tickets
+                        .Where(p => p.DestinatarioId == filter.userId || (p.DestinatarioId == null && p.UsuarioId != filter.userId))
+                        .Where(p => p.Status != Ticket.Tipo.Concluído && p.Status != Ticket.Tipo.Cancelado)
+                        .Select(a => new
+                        {
+                            Id = a.Id,
+                            Título = a.Título,
+                            Descrição = a.Descrição,
+                            Data_Criação = a.Data_Criação,
+                            Etapa = a.Status.ToString(),
+                            Etapa_id = a.Status,
+                            Area = a.Area.Nome,
+                            Data_Status = a.Data_Status,
+                            Prioridade = a.Prioridade,
+                            Usuario = a.UsuarioId,
+                            Departamento = a.Departamento.Nome,
+                            DestinatarioId = a.DestinatarioId,
+                            Anexos = a.Anexos
+                        })
+                        .ToList();
+                        return Ok(tickets);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
+            }
+        }
+
+        [HttpPost("api/mobile/historico")]
+        public IActionResult GetTicketsHitoric([FromBody] FilterViewModel filter)
+        {
+            try
+            {
+                var search = 0;
+                if (filter.StatusId != null)
+                {
+                    if (filter.searchText != null || filter.searchText != "")
+                    {
+                        var tickets = _context.Tickets
+                            .Where(a => ((int)a.Status) == filter.StatusId)
+                            .Where(a => EF.Functions.Like(a.Título, "%" + filter.searchText + "%") || EF.Functions.Like(a.Descrição, "%" + filter.searchText + "%"))
+                            .Where(p => p.DestinatarioId == filter.userId)
+                            .Where(p => p.Status == Ticket.Tipo.Concluído || p.Status == Ticket.Tipo.Cancelado)
+                            .Select(a => new
+                            {
+                                Id = a.Id,
+                                Título = a.Título,
+                                Descrição = a.Descrição,
+                                Data_Criação = a.Data_Criação,
+                                Etapa = a.Status.ToString(),
+                                Etapa_id = a.Status,
+                                Area = a.Area.Nome,
+                                Data_Status = a.Data_Status,
+                                Prioridade = a.Prioridade,
+                                Usuario = a.UsuarioId,
+                                Departamento = a.Departamento.Nome,
+                                DestinatarioId = a.DestinatarioId,
+                                Anexos = a.Anexos
+                            })
+                        .ToList();
+                        return Ok(tickets);
+                    }
+                    else
+                    {
+                        var tickets = _context.Tickets
+                            .Where(a => ((int)a.Status) == filter.StatusId)
+                            .Where(p => p.DestinatarioId == filter.userId)
+                            .Where(p => p.Status == Ticket.Tipo.Concluído || p.Status == Ticket.Tipo.Cancelado)
+                            .Select(a => new
+                            {
+                                Id = a.Id,
+                                Título = a.Título,
+                                Descrição = a.Descrição,
+                                Data_Criação = a.Data_Criação,
+                                Etapa = a.Status.ToString(),
+                                Etapa_id = a.Status,
+                                Area = a.Area.Nome,
+                                Data_Status = a.Data_Status,
+                                Prioridade = a.Prioridade,
+                                Usuario = a.UsuarioId,
+                                Departamento = a.Departamento.Nome,
+                                DestinatarioId = a.DestinatarioId,
+                                Anexos = a.Anexos
+                            })
+                        .ToList();
+                        return Ok(tickets);
+                    }
+
+                }
+                else
+                {
+                    if (filter.searchText != null || filter.searchText != "")
+                    {
+                        var tickets = _context.Tickets
+                            .Where(p => p.DestinatarioId == filter.userId)
+                            .Where(a => EF.Functions.Like(a.Título, "%" + filter.searchText + "%") || EF.Functions.Like(a.Descrição, "%" + filter.searchText + "%"))
+                            .Where(p => p.Status == Ticket.Tipo.Concluído || p.Status == Ticket.Tipo.Cancelado)
+                            .Select(a => new
+                            {
+                                Id = a.Id,
+                                Título = a.Título,
+                                Descrição = a.Descrição,
+                                Data_Criação = a.Data_Criação,
+                                Etapa = a.Status.ToString(),
+                                Etapa_id = a.Status,
+                                Area = a.Area.Nome,
+                                Data_Status = a.Data_Status,
+                                Prioridade = a.Prioridade,
+                                Usuario = a.UsuarioId,
+                                Departamento = a.Departamento.Nome,
+                                DestinatarioId = a.DestinatarioId,
+                                Anexos = a.Anexos
+                            })
+                        .ToList();
+                        return Ok(tickets);
+                    }
+                    else
+                    {
+                        var tickets = _context.Tickets
+                        .Where(p => p.DestinatarioId == filter.userId)
+                        .Where(p => p.Status == Ticket.Tipo.Concluído || p.Status == Ticket.Tipo.Cancelado)
+                        .Select(a => new
+                        {
+                            Id = a.Id,
+                            Título = a.Título,
+                            Descrição = a.Descrição,
+                            Data_Criação = a.Data_Criação,
+                            Etapa = a.Status.ToString(),
+                            Etapa_id = a.Status,
+                            Area = a.Area.Nome,
+                            Data_Status = a.Data_Status,
+                            Prioridade = a.Prioridade,
+                            Usuario = a.UsuarioId,
+                            Departamento = a.Departamento.Nome,
+                            DestinatarioId = a.DestinatarioId,
+                            Anexos = a.Anexos
+                        })
+                        .ToList();
+                        return Ok(tickets);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
+            }
+        }
+
     }
 }

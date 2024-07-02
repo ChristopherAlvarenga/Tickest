@@ -23,9 +23,6 @@ namespace Tickest.Models.Entities
         [Required]
         public DateTime Data_Status { get; set; }
 
-        //[Required]
-        //public DateTime Data_Status { get; set; }
-
         [Required]
         [EnumDataType(typeof(Escolha))]
         public Escolha Prioridade { get; set; }
@@ -58,7 +55,6 @@ namespace Tickest.Models.Entities
         public int? UsuarioId { get; set; }
         [ForeignKey(nameof(UsuarioId))]
         public virtual Usuario? Usuario { get; set; }
-
 
         public virtual List<Anexo> Anexos { get; set; }
     }

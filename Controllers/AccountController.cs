@@ -174,6 +174,7 @@ namespace Tickest.Controllers
 
                     var userTicketsRecebidos = await _context.Tickets
                         .Where(p => p.DestinatarioId == userInfo.Id || (p.DestinatarioId == null && p.UsuarioId != userInfo.Id))
+                        .Where(p => p.Status != Ticket.Tipo.Concluído && p.Status != Ticket.Tipo.Cancelado)
                         .Select(p => new
                         {
 							Id = p.Id,
@@ -193,6 +194,28 @@ namespace Tickest.Controllers
 						})
                         .ToListAsync();
 
+                    var userHistoricoTickets = await _context.Tickets
+                        .Where(p => p.DestinatarioId == userInfo.Id &&
+                            p.Status == Ticket.Tipo.Concluído || p.Status == Ticket.Tipo.Cancelado)
+                        .Select(p => new
+                        {
+                            Id = p.Id,
+                            Título = p.Título,
+                            Descrição = p.Descrição,
+                            Data_Criação = p.Data_Criação,
+                            Etapa = p.Status.ToString(),
+                            Etapa_id = p.Status,
+                            Area = p.Area.Nome,
+                            Data_Status = p.Data_Status,
+                            Prioridade = p.Prioridade,
+                            Usuario = p.UsuarioId,
+                            Departamento = p.Departamento.Nome,
+                            DestinatarioId = p.DestinatarioId,
+                            Anexos = p.Anexos
+
+                        })
+                        .ToListAsync();
+
                     var userInfoApp = new
                     {
                         Id = userInfo.Id,
@@ -202,16 +225,76 @@ namespace Tickest.Controllers
                         Departamento = userInfo.Departamento.Nome,
                         Cargo = userInfo.Cargo,
                         TicketsCriados = userTicketsCriados,
-                        TicketsRecebidos = userTicketsRecebidos
+                        TicketsRecebidos = userTicketsRecebidos,
+                        TicketsHistorico = userHistoricoTickets,
+
+                        TicketsEmAberto = userTicketsRecebidos.Where(p => p.DestinatarioId == userInfo.Id &&
+                            p.Etapa != Ticket.Tipo.Concluído.ToString() && p.Etapa != Ticket.Tipo.Cancelado.ToString()).Count(),
+
+                        TicketsConcluidos = userHistoricoTickets.Where(p => p.DestinatarioId == userInfo.Id &&
+                            p.Etapa == Ticket.Tipo.Concluído.ToString() || p.Etapa == Ticket.Tipo.Cancelado.ToString()).Count(),
+
+                        TicketsAbertosMes = userTicketsRecebidos.Where(p => p.DestinatarioId == userInfo.Id &&
+                            p.Etapa != Ticket.Tipo.Concluído.ToString() && p.Etapa != Ticket.Tipo.Cancelado.ToString() &&
+                            p.Data_Criação.Year == DateTime.Now.Year && p.Data_Criação.Month == DateTime.Now.Month).Count(),
+
+                        TicketsConcluidosMes = userHistoricoTickets.Where(p => p.DestinatarioId == userInfo.Id &&
+                            p.Etapa == Ticket.Tipo.Concluído.ToString() || p.Etapa == Ticket.Tipo.Cancelado.ToString() &&
+                            p.Data_Criação.Year == DateTime.Now.Year && p.Data_Criação.Month == DateTime.Now.Month).Count()
                     };
 
                     return Ok(userInfoApp);
-
                 }
 
                 return BadRequest("Login Inválido");
             }
             return BadRequest("Login Inválido");
         }
+
+        [HttpGet("API/App/GetLists/{departmentId}")]
+        public async Task<IActionResult> GetDepartments(int departmentId)
+        {
+            if (ModelState.IsValid)
+            {
+                var departamentos = await _context.Departamentos
+                    .Where(p => p.Id == departmentId)
+                    .Select(p => new
+                    {
+                        Id = p.Id,
+                        Nome = p.Nome,
+                        ResponsavelId = p.ResponsavelId,
+                        Areas = p.Areas
+                            .Where(p => p.DepartamentoId == departmentId)
+                            .Select(p => new
+                            {
+                                Id = p.Id,
+                                Nome = p.Nome,
+                                DepartamentoId = p.DepartamentoId
+                            }).ToList()
+                    })
+                    .ToListAsync();
+
+                return Ok(departamentos);
+            }
+            return BadRequest("Inválido");
+        }
+
+        [HttpGet("API/App/GetEditTicket/{ticketId}/{userId}")]
+        public async Task<IActionResult> GetEditTicket(int ticketId, int userId)
+        {
+            if (ModelState.IsValid)
+            {
+                var ticket = await _context.Tickets
+                    .Where(p => p.Id == ticketId)
+                    .FirstOrDefaultAsync();
+
+                ticket.DestinatarioId = userId;
+                ticket.Status = Ticket.Tipo.Andamento;
+                await _context.SaveChangesAsync();
+                return Ok(ticket);
+            }
+            return BadRequest("Inválido");
+        }
+
     }
 }
