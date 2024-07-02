@@ -67,7 +67,7 @@ namespace Tickest.Controllers
             _context.Add(departamento);
             await _context.SaveChangesAsync();
 
-            return View();
+            return RedirectToAction("Index", "Gerenciador");
         }
 
         [Authorize(Roles = "Gerenciador")]
